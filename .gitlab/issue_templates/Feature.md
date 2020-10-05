@@ -1,6 +1,7 @@
 /label ~feature
 /label ~"wf::backlog"
-/label ~"area::relativity"
+/label ~"relativity" 
+/label ~"area::connectors" 
 
 ## Story
 
