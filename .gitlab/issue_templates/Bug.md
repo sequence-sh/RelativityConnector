@@ -2,7 +2,8 @@
 /label ~"severity::3" 
 /label ~"priority::3" 
 /label ~"wf::backlog" 
-/label ~"area::relativity" 
+/label ~"relativity" 
+/label ~"area::connectors" 
 ## Summary
 
 Concise description of the bug.

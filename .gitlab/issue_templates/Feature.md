@@ -1,7 +1,8 @@
 /label ~feature
 /label ~"wf::backlog"
-/label ~"area::relativity"
-/epic <https://gitlab.com/groups/reductech/-/epics/10>
+/label ~"relativity" 
+/label ~"area::connectors" 
+
 ## Story
 
 In a couple of sentences, using simple, non-technical language,
