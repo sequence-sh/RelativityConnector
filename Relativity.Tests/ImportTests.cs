@@ -15,7 +15,7 @@ namespace Reductech.Connectors.Relativity.Tests
         public ImportTests(ITestOutputHelper testOutputHelper) => TestOutputHelper = testOutputHelper;
 
         /// <inheritdoc />
-        [Theory]
+        //[Theory]
         [ClassData(typeof(ImportTestCases))]
         public override void Test(string key)
         {
