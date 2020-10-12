@@ -18,8 +18,6 @@ namespace Reductech.Connectors.Relativity
     {
         //SEE: https://help.relativity.com/RelativityOne/Content/System_Guides/Command_line_import.htm
 
-
-
         /// <inheritdoc />
         public override Result<Unit, IRunErrors> Run(StateMonad stateMonad)
         {
@@ -40,7 +38,7 @@ namespace Reductech.Connectors.Relativity
 
             var result =
             stateMonad.ExternalProcessRunner.RunExternalProcess(settingsResult.Value.DesktopClientPath,
-                stateMonad.Logger, nameof(RelativityImportStep), IgnoreNoneErrorHandler.Instance, arguments.Value).Result;
+                stateMonad.Logger, nameof(RelativityImportStep), RDCErrorHandler.Instance, arguments.Value).Result;
 
             if(result.IsSuccess)
                 stateMonad.Logger.LogInformation("Import Successful");
@@ -50,9 +48,6 @@ namespace Reductech.Connectors.Relativity
 
         /// <inheritdoc />
         public override IStepFactory StepFactory => RelativityImportStepFactory.Instance;
-
-
-
 
 
         private static Result<Maybe<KeyValuePair<string, string>> , IRunErrors> TryMakeArgument<T>(
@@ -102,7 +97,10 @@ namespace Reductech.Connectors.Relativity
                 TryMakeArgument(WorkspaceId, true, stateMonad, "c", nameof(WorkspaceId), x=>x.ToString()),
                 TryMakeArgument(FileImportType, true, stateMonad, "m", nameof(FileImportType), GetFileImportTypeString),
                 TryMakeArgument(SettingsFilePath, true, stateMonad, "k", nameof(SettingsFilePath), x=>x),
-                TryMakeArgument(StartLineNumber, false, stateMonad, "s", nameof(StartLineNumber), x=>x.ToString())
+                TryMakeArgument(StartLineNumber, false, stateMonad, "s", nameof(StartLineNumber), x=>x.ToString()),
+                TryMakeArgument(DestinationFolder, false, stateMonad, "d", nameof(DestinationFolder), x=>x.ToString()),
+                TryMakeArgument(LoadFileEncoding, false, stateMonad, "e", nameof(LoadFileEncoding), x=>x.ToString()),
+                TryMakeArgument(FullTextFileEncoding, false, stateMonad, "x", nameof(FullTextFileEncoding), x=>x.ToString()),
             };
 
             var r=  argsResults.Combine(RunErrorList.Combine)
@@ -148,9 +146,29 @@ namespace Reductech.Connectors.Relativity
         public IStep<string> SettingsFilePath { get;set; } = null!; //flag -k
 
 
-        //TODO load file encoding -e
-        //TODO full text encoding -x
-        //TODO destination folder -d
+        /// <summary>
+        /// Set the encoding of the load file to a particular code page id.
+        /// </summary>
+        [StepProperty]
+        [Example("1252")]
+        [DefaultValueExplanation("Windows' default encoding")]
+        public IStep<int>? LoadFileEncoding { get; set; } = null!; //flag -e
+
+        /// <summary>
+        /// Sets the encoding of any full text files to a particular code page id.
+        /// </summary>
+        [StepProperty]
+        [Example("1252")]
+        [DefaultValueExplanation("Windows' default encoding")]
+        public IStep<int>? FullTextFileEncoding { get; set; } = null!; //flag -x
+
+        /// <summary>
+        /// Sets the destination folder for the upload.
+        /// </summary>
+        [StepProperty]
+        [Example("1476826")]
+        [DefaultValueExplanation("The case root folder.")]
+        public IStep<int>? DestinationFolder { get; set; } = null!; //flag -d
 
 
         /// <summary>
@@ -177,6 +195,19 @@ namespace Reductech.Connectors.Relativity
                 Relativity.FileImportType.Object => "o",
                 _ => throw new ArgumentOutOfRangeException(nameof(fileImportType), fileImportType, null)
             };
+        }
+
+        /// <summary>
+        /// Error handler for the relativity desktop client
+        /// </summary>
+        public sealed class RDCErrorHandler : IErrorHandler
+        {
+            private RDCErrorHandler() { }
+
+            public static IErrorHandler Instance { get; } = new RDCErrorHandler();
+
+            /// <inheritdoc />
+            public bool ShouldIgnoreError(string s) => !s.StartsWith("ERROR:");
         }
 
     }
