@@ -1,25 +1,17 @@
-# .NET Core 3.1 Library Template
+# EDR Connector for Relativity<sup>®</sup>
 
-[![pipeline status](https://gitlab.com/reductech/templates/dotnetlibrary/badges/master/pipeline.svg)](https://gitlab.com/reductech/templates/dotnetlibrary/-/commits/master)
-[![coverage report](https://gitlab.com/reductech/templates/dotnetlibrary/badges/master/coverage.svg)](https://gitlab.com/reductech/templates/dotnetlibrary/-/commits/master)
-[![Gitter](https://badges.gitter.im/reductech/dotnetlibrary.svg)](https://gitter.im/reductech/dotnetlibrary?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
-An example of a .NET Core library that uses:
-
-- [xUnit](https://xunit.github.io/) for testing
-- [Stryker](https://stryker-mutator.io/) for mutation testing
-- [Coverlet](https://github.com/tonerdo/coverlet) for code coverage
-- and [GitLab CI](https://docs.gitlab.com/ee/ci/README.html) for... CI.
+[![pipeline status](https://gitlab.com/reductech/edr/connectors/relativity/badges/master/pipeline.svg)](https://gitlab.com/reductech/edr/connectors/relativity/-/commits/master)
+[![coverage report](https://gitlab.com/reductech/edr/connectors/relativity/badges/master/coverage.svg)](https://gitlab.com/reductech/edr/connectors/relativity/-/commits/master)
+[![Gitter](https://badges.gitter.im/reductech/edr.svg)](https://gitter.im/reductech/edr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Releases
 
-Can be downloaded from the [Releases page](https://gitlab.com/reductech/templates/dotnetlibrary/-/releases).
+Can be downloaded from the [Releases page](https://gitlab.com/reductech/edr/connectors/relativity/-/releases).
 
-# NuGet Packages
+# Licensing
 
-Are available for download from the [Releases page](https://gitlab.com/reductech/templates/dotnetlibrary/-/releases)
-or from the `package nuget` jobs of the CI pipelines. They're also available in:
+This product is licensed under the Apache License, Version 2.0.
+For further details please see http://www.apache.org/licenses/LICENSE-2.0.
 
-- [Reductech Nuget feed](https://gitlab.com/reductech/nuget/-/packages) for releases
-- [Reductech Nuget-dev feed](https://gitlab.com/reductech/nuget-dev/-/packages) for releases, master branch and dev builds
-
+This product may only be used by parties with valid licenses for Relativity<sup>®</sup>, a product of Relativity ODA LLC.
+Relativity ODA LLC does not test, evaluate, endorse or certify this product.
