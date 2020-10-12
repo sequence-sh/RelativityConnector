@@ -10,13 +10,13 @@ using Xunit.Abstractions;
 namespace Reductech.Connectors.Relativity.Tests
 {
 
-    public class ImportTests : ImportTestCases
+    public class ImportIntegrationIntegrationTests : ImportIntegrationTestCases
     {
-        public ImportTests(ITestOutputHelper testOutputHelper) => TestOutputHelper = testOutputHelper;
+        public ImportIntegrationIntegrationTests(ITestOutputHelper testOutputHelper) => TestOutputHelper = testOutputHelper;
 
         /// <inheritdoc />
         //[Theory]
-        [ClassData(typeof(ImportTestCases))]
+        [ClassData(typeof(ImportIntegrationTestCases))]
         public override void Test(string key)
         {
             base.Test(key);
@@ -24,7 +24,7 @@ namespace Reductech.Connectors.Relativity.Tests
     }
 
 
-    public class ImportTestCases : TestBase
+    public class ImportIntegrationTestCases : TestBase
     {
         /// <inheritdoc />
         protected override IEnumerable<ITestBaseCase> TestCases {
