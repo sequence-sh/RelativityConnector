@@ -84,15 +84,17 @@ namespace Reductech.Connectors.Relativity.Tests
                 var workspaceId = 1017936;
 
 
-                var fieldIds = new List<int>
+                var fieldNames = new List<string>
                 {
-                    1003667,// Control number,
-                    1035374, // File name
-                    1035395, //Title
-                    1003669, //md5 hash
-                    1003672, //has images
-                    1003673, //has native
-                    1035352, //Date created
+                    //1003667,// Control number,
+                    //1035374, // File name
+                    //1035395, //Title
+                    //1003669, //md5 hash
+                    //1003672, //has images
+                    //1003673, //has native
+                    //1035352, //Date created
+                    "Title",
+                    "Extracted Text"
 
                 };
 
@@ -103,7 +105,7 @@ namespace Reductech.Connectors.Relativity.Tests
                 {
                     BatchSize = new Constant<int>(10),
                     Condition = new Constant<string>(condition),
-                    FieldIds = new Constant<List<int>>(fieldIds),
+                    FieldNames = new Constant<List<string>>(fieldNames),
                     WorkspaceId = new Constant<int>(workspaceId)
                 };
 

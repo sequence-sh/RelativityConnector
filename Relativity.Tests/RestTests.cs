@@ -85,18 +85,21 @@ namespace Reductech.Connectors.Relativity.Tests
             }
         }
 
-        [Fact(Skip = "integration")]
+        [Fact]
+        //[Fact(Skip = "integration")]
         public async Task TestExport()
         {
-            var fieldids = new List<int>
+            var fieldNames = new List<string>
             {
-                1003667,// Control number,
-                1035374, // File name
-                1035395, //Title
-                1003669, //md5 hash
-                1003672, //has images
-                1003673, //has native
-                1035352, //Date created
+                //1003667,// Control number,
+                //1035374, // File name
+                //1035395, //Title
+                //1003669, //md5 hash
+                //1003672, //has images
+                //1003673, //has native
+                //1035352, //Date created
+                "Title",
+                "Extracted Text"
 
             };
 
@@ -107,7 +110,7 @@ namespace Reductech.Connectors.Relativity.Tests
             {
                 BatchSize = new Constant<int>(10),
                 Condition = new Constant<string>(condition),
-                FieldIds = new Constant<List<int>>(fieldids),
+                FieldNames = new Constant<List<string>>(fieldNames),
                 WorkspaceId = new Constant<int>(WorkspaceId)
             };
 
