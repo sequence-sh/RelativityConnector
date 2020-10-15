@@ -19,7 +19,7 @@ namespace Reductech.Connectors.Relativity
             IRelativitySettings relativitySettings,
             int workspaceId,
             ArtifactType artifactType,
-            IReadOnlyList<int> fieldIds,
+            IReadOnlyList<string> fieldNames,
             string condition,
             int start,
             int batchSize,
@@ -27,7 +27,7 @@ namespace Reductech.Connectors.Relativity
         )
         {
             var setupExportResult = await SetupExportAsync(relativitySettings, workspaceId, artifactType,
-                fieldIds, condition, start, cancellationToken);
+                fieldNames, condition, start, cancellationToken);
 
             if (setupExportResult.IsFailure)
                 return setupExportResult.ConvertFailure<IReadOnlyCollection<ExportedEntity>>();
@@ -38,7 +38,7 @@ namespace Reductech.Connectors.Relativity
             try
             {
                 var allResults = GetResultElements(relativitySettings, setupExportResult.Value, workspaceId,
-                    batchSize, fieldIds, cancellationToken);
+                    batchSize, fieldNames, cancellationToken);
 
                 await foreach (var r in allResults.WithCancellation(cancellationToken))
                 {
@@ -61,11 +61,11 @@ namespace Reductech.Connectors.Relativity
             ExportResult exportResult,
             int workspaceId,
             int batchSize,
-            IReadOnlyList<int> fieldIds,
+            IReadOnlyList<string> fieldNames,
             [EnumeratorCancellation]
             CancellationToken cancellationToken)
         {
-            var fields = fieldIds.Select(x => new Field() {ArtifactID = x}).ToList();
+            var fields = fieldNames.Select(x => new Field() {Name = x}).ToList();
 
 
             var urlSuffix = $"/Relativity.REST/api/Relativity.Objects/workspace/{workspaceId}/object/retrieveNextResultsBlockFromExport";
@@ -105,8 +105,8 @@ namespace Reductech.Connectors.Relativity
 
                         if (val == longStringToken)
                         {
-                            var v = await GetLongText(relativitySettings, workspaceId, resultElement.ArtifactID,
-                                field.ArtifactID, cancellationToken);
+                            var v = await GetLongText(relativitySettings, workspaceId,field.Name,  resultElement.ArtifactID,
+                                cancellationToken);
 
                             if (v.IsFailure)
                                 throw v.Error;
@@ -117,7 +117,13 @@ namespace Reductech.Connectors.Relativity
                         dict.Add(field, val);
                     }
 
-                    var entity = new ExportedEntity(dict);
+                    var downloadResult = await DocumentFileManager.DownloadFile(relativitySettings, workspaceId, resultElement.ArtifactID, cancellationToken);
+
+                    if (downloadResult.IsFailure)
+                        throw downloadResult.Error;
+
+
+                    var entity = new ExportedEntity(downloadResult.Value,  dict);
 
                     yield return entity;
                 }
@@ -132,7 +138,7 @@ namespace Reductech.Connectors.Relativity
             IRelativitySettings relativitySettings,
             int workspaceId,
             ArtifactType artifactType,
-            IReadOnlyList<int> fieldIds,
+            IReadOnlyList<string> fieldNames,
             string condition,
             int start,
             CancellationToken cancellationToken)
@@ -148,7 +154,7 @@ namespace Reductech.Connectors.Relativity
                 QueryRequest = new QueryRequest
                 {
                     Condition = condition,
-                    Fields = fieldIds.Select(i => new Field() { ArtifactID = i }).ToList(),
+                    Fields = fieldNames.Select(i => new Field() { Name = i }).ToList(),
                     ObjectType = new ObjectType { ArtifactType = artifactType }
                 }
             };
@@ -179,14 +185,14 @@ namespace Reductech.Connectors.Relativity
         public static async Task<Result<string, FlurlHttpException>> GetLongText(
             IRelativitySettings relativitySettings,
             int workspaceId,
-            int artifactId,
-            int fieldArtifactId, CancellationToken cancellationToken)
+            string fieldName,
+            int artifactId, CancellationToken cancellationToken)
         {
             var request = new LongTextRequest
             {
                 LongTextField = new LongTextField
                 {
-                    ArtifactID = fieldArtifactId
+                    Name = fieldName
                 },
                 ExportObject = new ExportObject
                 {
@@ -225,8 +231,13 @@ namespace Reductech.Connectors.Relativity
         /// </summary>
         public class ExportedEntity
         {
-            public ExportedEntity(IReadOnlyDictionary<Field, string> fieldValues) => FieldValues = fieldValues;
+            public ExportedEntity(string nativeText, IReadOnlyDictionary<Field, string> fieldValues)
+            {
+                FieldValues = fieldValues;
+                NativeText = nativeText;
+            }
 
+            public string NativeText { get; }
 
             public IReadOnlyDictionary<Field, string> FieldValues { get; }
 
@@ -235,11 +246,8 @@ namespace Reductech.Connectors.Relativity
                 get
                 {
                     var sb = new StringBuilder();
-
-                    foreach (var (key, value) in FieldValues.OrderBy(x=>x.Key.ArtifactID))
-                    {
+                    foreach (var (key, value) in FieldValues.OrderBy(x=>x.Key.Name))
                         sb.AppendLine($"{key}:{value}");
-                    }
 
                     return sb.ToString();
                 }
@@ -316,17 +324,19 @@ namespace Reductech.Connectors.Relativity
         public class Field : IEquatable<Field>
         {
             /// <inheritdoc />
-            public override string ToString() => ArtifactID.ToString();
+            public override string ToString() => Name;
 
-            [JsonProperty("ArtifactID")]
-            public int ArtifactID { get; set; }
+            [JsonProperty("Name")]
+            public string Name { get; set; }
 
+            ///// <inheritdoc />
+            //public override int GetHashCode() => ArtifactID;
             /// <inheritdoc />
             public bool Equals(Field? other)
             {
                 if (other is null) return false;
                 if (ReferenceEquals(this, other)) return true;
-                return ArtifactID == other.ArtifactID;
+                return Name == other.Name;
             }
 
             /// <inheritdoc />
@@ -339,7 +349,7 @@ namespace Reductech.Connectors.Relativity
             }
 
             /// <inheritdoc />
-            public override int GetHashCode() => ArtifactID;
+            public override int GetHashCode() => Name.GetHashCode();
         }
 
 
@@ -353,14 +363,21 @@ namespace Reductech.Connectors.Relativity
         }
         public class ExportObject
         {
+            /// <summary>
+            /// Artifact Id of the object
+            /// </summary>
             [JsonProperty("ArtifactID")]
             public int ArtifactID { get; set; }
+
         }
 
         public class LongTextField
         {
-            [JsonProperty("ArtifactID")]
-            public int ArtifactID { get; set; }
+            [JsonProperty("Name")]
+            public string Name { get; set; }
+
+            //[JsonProperty("ArtifactID")]
+            //public int ArtifactID { get; set; }
         }
 
 

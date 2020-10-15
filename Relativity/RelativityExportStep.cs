@@ -23,9 +23,9 @@ namespace Reductech.Connectors.Relativity
             if (workspaceId.IsFailure)
                 return workspaceId.ConvertFailure<List<string>>();
 
-            var fieldIds = FieldIds.Run(stateMonad);
-            if (fieldIds.IsFailure)
-                return fieldIds.ConvertFailure<List<string>>();
+            var fieldNames = FieldNames.Run(stateMonad);
+            if (fieldNames.IsFailure)
+                return fieldNames.ConvertFailure<List<string>>();
 
             var condition = Condition.Run(stateMonad);
             if (condition.IsFailure)
@@ -38,7 +38,7 @@ namespace Reductech.Connectors.Relativity
 
             var entitiesResult =
 
-                RelativityExport.ExportAsync(settingsResult.Value, workspaceId.Value, ArtifactType.Document, fieldIds.Value, condition.Value, 0,
+                RelativityExport.ExportAsync(settingsResult.Value, workspaceId.Value, ArtifactType.Document, fieldNames.Value, condition.Value, 0,
                 batchSize.Value, CancellationToken.None).Result;
 
 
@@ -72,11 +72,11 @@ namespace Reductech.Connectors.Relativity
         public IStep<string> Condition { get; set; } = new Constant<string>("");
 
         /// <summary>
-        /// Ids of fields to export
+        /// Names of fields to export
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<List<int>> FieldIds { get; set; } = null!;
+        public IStep<List<string>> FieldNames { get; set; } = null!;
 
         /// <summary>
         /// The batch size to use when retrieving entities.

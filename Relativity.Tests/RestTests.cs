@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Xunit;
-using Moq;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
 using Reductech.Utilities.Testing;
@@ -37,6 +36,20 @@ namespace Reductech.Connectors.Relativity.Tests
         public int WorkspaceId { get; }
 
         [Fact(Skip = "integration")]
+        public async Task TestFieldMapping()
+        {
+            var fields = await FieldMapping.GetMappableFields(Settings, false, WorkspaceId);
+
+            fields.Should().NotBeEmpty();
+
+            foreach (var mappableSourceField in fields)
+            {
+                TestOutputHelper.WriteLine(mappableSourceField.ToString());
+            }
+        }
+
+
+        [Fact(Skip = "integration")]
         public async Task TestFirstDocument()
         {
 
@@ -47,7 +60,7 @@ namespace Reductech.Connectors.Relativity.Tests
 
             r.Value.Results.Should().NotBeEmpty().And.NotContainNulls().And
 
-            .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x=>x.Location != null);
+            .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x => x.Location != null);
 
             foreach (var documentResult in r.Value.Results)
             {
@@ -74,20 +87,32 @@ namespace Reductech.Connectors.Relativity.Tests
         }
 
 
+        [Fact(Skip = "integration")]
+        public async Task TestDownloadFile()
+        {
+            var result = await DocumentFileManager.DownloadFile(Settings, WorkspaceId, 1040848, CancellationToken.None);
 
+            result.ShouldBeSuccessful(x => x.Message);
+
+            result.Value.Should().NotBeNullOrWhiteSpace();
+
+            TestOutputHelper.WriteLine(result.Value);
+        }
 
         [Fact(Skip = "integration")]
-        public async Task TestExport()
+        public void TestExport()
         {
-            var fieldids = new List<int>
+            var fieldNames = new List<string>
             {
-                1003667,// Control number,
-                1035374, // File name
-                1035395, //Title
-                1003669, //md5 hash
-                1003672, //has images
-                1003673, //has native
-                1035352, //Date created
+                //1003667,// Control number,
+                //1035374, // File name
+                //1035395, //Title
+                //1003669, //md5 hash
+                //1003672, //has images
+                //1003673, //has native
+                //1035352, //Date created
+                "Title",
+                "Extracted Text"
 
             };
 
@@ -98,7 +123,7 @@ namespace Reductech.Connectors.Relativity.Tests
             {
                 BatchSize = new Constant<int>(10),
                 Condition = new Constant<string>(condition),
-                FieldIds = new Constant<List<int>>(fieldids),
+                FieldNames = new Constant<List<string>>(fieldNames),
                 WorkspaceId = new Constant<int>(WorkspaceId)
             };
 
@@ -110,7 +135,7 @@ namespace Reductech.Connectors.Relativity.Tests
 
             var result = exportStep.Run(state);
 
-            result.ShouldBeSuccessful(x=>x.AsString);
+            result.ShouldBeSuccessful(x => x.AsString);
 
             result.Value.Count.Should().BeGreaterThan(0);
 
