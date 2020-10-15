@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Xunit;
-using Moq;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
 using Reductech.Utilities.Testing;
@@ -35,6 +33,20 @@ namespace Reductech.Connectors.Relativity.Tests
         public ITestOutputHelper TestOutputHelper { get; }
 
         public int WorkspaceId { get; }
+
+        [Fact(Skip = "integration")]
+        public async Task TestFieldMapping()
+        {
+            var fields = await FieldMapping.GetMappableFields(Settings, false, WorkspaceId);
+
+            fields.Should().NotBeEmpty();
+
+            foreach (var mappableSourceField in fields)
+            {
+                TestOutputHelper.WriteLine(mappableSourceField.ToString());
+            }
+        }
+
 
         [Fact(Skip = "integration")]
         public async Task TestFirstDocument()
@@ -72,9 +84,6 @@ namespace Reductech.Connectors.Relativity.Tests
                 TestOutputHelper.WriteLine(o.ToString());
             }
         }
-
-
-
 
         [Fact(Skip = "integration")]
         public async Task TestExport()
