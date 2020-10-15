@@ -19,6 +19,8 @@ namespace Reductech.Connectors.Relativity
         /// </summary>
         string RelativityPassword { get; } //TODO replace with a different form of authentication
 
+        string Url { get; set; }
+
 
     }
 }
