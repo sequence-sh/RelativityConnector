@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -59,7 +60,7 @@ namespace Reductech.Connectors.Relativity.Tests
 
             r.Value.Results.Should().NotBeEmpty().And.NotContainNulls().And
 
-            .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x=>x.Location != null);
+            .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x => x.Location != null);
 
             foreach (var documentResult in r.Value.Results)
             {
@@ -85,9 +86,21 @@ namespace Reductech.Connectors.Relativity.Tests
             }
         }
 
-        [Fact]
-        //[Fact(Skip = "integration")]
-        public async Task TestExport()
+
+        [Fact(Skip = "integration")]
+        public async Task TestDownloadFile()
+        {
+            var result = await DocumentFileManager.DownloadFile(Settings, WorkspaceId, 1040848, CancellationToken.None);
+
+            result.ShouldBeSuccessful(x => x.Message);
+
+            result.Value.Should().NotBeNullOrWhiteSpace();
+
+            TestOutputHelper.WriteLine(result.Value);
+        }
+
+        [Fact(Skip = "integration")]
+        public void TestExport()
         {
             var fieldNames = new List<string>
             {
@@ -122,7 +135,7 @@ namespace Reductech.Connectors.Relativity.Tests
 
             var result = exportStep.Run(state);
 
-            result.ShouldBeSuccessful(x=>x.AsString);
+            result.ShouldBeSuccessful(x => x.AsString);
 
             result.Value.Count.Should().BeGreaterThan(0);
 

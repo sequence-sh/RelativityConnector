@@ -117,7 +117,13 @@ namespace Reductech.Connectors.Relativity
                         dict.Add(field, val);
                     }
 
-                    var entity = new ExportedEntity(dict);
+                    var downloadResult = await DocumentFileManager.DownloadFile(relativitySettings, workspaceId, resultElement.ArtifactID, cancellationToken);
+
+                    if (downloadResult.IsFailure)
+                        throw downloadResult.Error;
+
+
+                    var entity = new ExportedEntity(downloadResult.Value,  dict);
 
                     yield return entity;
                 }
@@ -225,8 +231,13 @@ namespace Reductech.Connectors.Relativity
         /// </summary>
         public class ExportedEntity
         {
-            public ExportedEntity(IReadOnlyDictionary<Field, string> fieldValues) => FieldValues = fieldValues;
+            public ExportedEntity(string nativeText, IReadOnlyDictionary<Field, string> fieldValues)
+            {
+                FieldValues = fieldValues;
+                NativeText = nativeText;
+            }
 
+            public string NativeText { get; }
 
             public IReadOnlyDictionary<Field, string> FieldValues { get; }
 
@@ -235,11 +246,8 @@ namespace Reductech.Connectors.Relativity
                 get
                 {
                     var sb = new StringBuilder();
-
                     foreach (var (key, value) in FieldValues.OrderBy(x=>x.Key.Name))
-                    {
                         sb.AppendLine($"{key}:{value}");
-                    }
 
                     return sb.ToString();
                 }
@@ -318,32 +326,8 @@ namespace Reductech.Connectors.Relativity
             /// <inheritdoc />
             public override string ToString() => Name;
 
-
             [JsonProperty("Name")]
             public string Name { get; set; }
-
-            ///// <inheritdoc />
-            //public override string ToString() => ArtifactID.ToString();
-
-            //[JsonProperty("ArtifactID")]
-            //public int ArtifactID { get; set; }
-
-            ///// <inheritdoc />
-            //public bool Equals(Field? other)
-            //{
-            //    if (other is null) return false;
-            //    if (ReferenceEquals(this, other)) return true;
-            //    return ArtifactID == other.ArtifactID;
-            //}
-
-            ///// <inheritdoc />
-            //public override bool Equals(object? obj)
-            //{
-            //    if (obj is null) return false;
-            //    if (ReferenceEquals(this, obj)) return true;
-            //    if (obj.GetType() != GetType()) return false;
-            //    return Equals((Field) obj);
-            //}
 
             ///// <inheritdoc />
             //public override int GetHashCode() => ArtifactID;
