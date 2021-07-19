@@ -1,19 +1,15 @@
-using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Xunit;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.Utilities.Testing;
+using Flurl.Http;
+using Reductech.EDR.Core.Internal.Errors;
+using Reductech.EDR.Core.TestHarness;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Reductech.Connectors.Relativity.Tests
+namespace Reductech.EDR.Connectors.Relativity.Tests
 {
-
     public class Tests //These are integration tests. At some point we need to set up ci for them properly
     {
         public Tests(ITestOutputHelper testOutputHelper)
@@ -29,7 +25,7 @@ namespace Reductech.Connectors.Relativity.Tests
             WorkspaceId = 1017936;
         }
 
-        public IRelativitySettings Settings { get; }
+        public RelativitySettings Settings { get; }
 
         public ITestOutputHelper TestOutputHelper { get; }
 
@@ -38,7 +34,7 @@ namespace Reductech.Connectors.Relativity.Tests
         [Fact(Skip = "integration")]
         public async Task TestFieldMapping()
         {
-            var fields = await FieldMapping.GetMappableFields(Settings, false, WorkspaceId);
+            var fields = await FieldMapping.GetMappableFields(Settings, GetFlurlClient(), false, WorkspaceId);
 
             fields.Should().NotBeEmpty();
 
@@ -52,15 +48,13 @@ namespace Reductech.Connectors.Relativity.Tests
         [Fact(Skip = "integration")]
         public async Task TestFirstDocument()
         {
-
-            var r = await DocumentQueryHelper.GetDocumentQueryResultAsync(Settings, WorkspaceId);
+            var r = await DocumentQueryHelper.GetDocumentQueryResultAsync(Settings, WorkspaceId, GetFlurlClient());
 
             r.ShouldBeSuccessful();
 
 
             r.Value.Results.Should().NotBeEmpty().And.NotContainNulls().And
-
-            .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x => x.Location != null);
+                .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x => x.Location != null);
 
             foreach (var documentResult in r.Value.Results)
             {
@@ -71,7 +65,7 @@ namespace Reductech.Connectors.Relativity.Tests
         [Fact(Skip = "integration")]
         public async Task TestRetrieve()
         {
-            var r = await RestRetrieve.GetResultAsync(Settings, WorkspaceId);
+            var r = await RestRetrieve.GetResultAsync(Settings, GetFlurlClient(), WorkspaceId);
 
             r.ShouldBeSuccessful();
 
@@ -90,62 +84,66 @@ namespace Reductech.Connectors.Relativity.Tests
         [Fact(Skip = "integration")]
         public async Task TestDownloadFile()
         {
-            var result = await DocumentFileManager.DownloadFile(Settings, WorkspaceId, 1040848, CancellationToken.None);
+            var result = await DocumentFileManager.DownloadFile(Settings,
+                GetFlurlClient(),
+                ErrorLocation.EmptyLocation,
+                WorkspaceId,
+                1040848,
+                CancellationToken.None);
 
-            result.ShouldBeSuccessful(x => x.Message);
+            result.ShouldBeSuccessful();
 
             result.Value.Should().NotBeNullOrWhiteSpace();
 
             TestOutputHelper.WriteLine(result.Value);
         }
 
-        [Fact(Skip = "integration")]
-        public void TestExport()
-        {
-            var fieldNames = new List<string>
-            {
-                //1003667,// Control number,
-                //1035374, // File name
-                //1035395, //Title
-                //1003669, //md5 hash
-                //1003672, //has images
-                //1003673, //has native
-                //1035352, //Date created
-                "Title",
-                "Extracted Text"
 
-            };
+        public static IFlurlClient GetFlurlClient() => new FlurlClient(new HttpClient());
 
-            var condition = "'Extracted Text' ISSET ";
+        //[Fact(Skip = "integration")]
+        //public void TestExport()
+        //{
+        //    var fieldNames = new List<string>
+        //    {
+        //        //1003667,// Control number,
+        //        //1035374, // File name
+        //        //1035395, //Title
+        //        //1003669, //md5 hash
+        //        //1003672, //has images
+        //        //1003673, //has native
+        //        //1035352, //Date created
+        //        "Title",
+        //        "Extracted Text"
+        //    };
 
-
-            var exportStep = new RelativityExportStep()
-            {
-                BatchSize = new Constant<int>(10),
-                Condition = new Constant<string>(condition),
-                FieldNames = new Constant<List<string>>(fieldNames),
-                WorkspaceId = new Constant<int>(WorkspaceId)
-            };
-
-            var loggerFactory = new LoggerFactory(new[] { new XunitLoggerProvider(TestOutputHelper) });
-            var logger = loggerFactory.CreateLogger("Export");
-
-            var state = new StateMonad(logger, Settings, null);
+        //    var condition = "'Extracted Text' ISSET ";
 
 
-            var result = exportStep.Run(state);
+        //    var exportStep = new RelativityExportStep()
+        //    {
+        //        BatchSize = StaticHelpers.Constant(10),
+        //        Condition = StaticHelpers.Constant(condition),
+        //        FieldNames = StaticHelpers.Array(fieldNames.ToArray()),
+        //        WorkspaceId = Constant(WorkspaceId)
+        //    };
 
-            result.ShouldBeSuccessful(x => x.AsString);
+        //    var loggerFactory = new LoggerFactory(new[] { new XunitLoggerProvider(TestOutputHelper) });
+        //    var logger = loggerFactory.CreateLogger("Export");
 
-            result.Value.Count.Should().BeGreaterThan(0);
+        //    var state = new StateMonad(logger,  Settings, null);
 
-            foreach (var r in result.Value.Take(5))
-            {
-                TestOutputHelper.WriteLine(r);
-            }
 
-        }
+        //    var result = exportStep.Run(state);
 
+        //    result.ShouldBeSuccessful(x => x.AsString);
+
+        //    result.Value.Count.Should().BeGreaterThan(0);
+
+        //    foreach (var r in result.Value.Take(5))
+        //    {
+        //        TestOutputHelper.WriteLine(r);
+        //    }
+        //}
     }
-
 }

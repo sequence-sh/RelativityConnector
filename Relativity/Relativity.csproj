@@ -1,15 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <RootNamespace>Reductech.Connectors.Relativity</RootNamespace>
-    <AssemblyName>Reductech.Connectors.Relativity</AssemblyName>
+    <RootNamespace>Reductech.EDR.Connectors.Relativity</RootNamespace>
+    <AssemblyName>Reductech.EDR.Connectors.Relativity</AssemblyName>
     <Version>0.1.0$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Reductech.Connectors.Relativity</PackageId>
+    <PackageId>Reductech.EDR.Connectors.Relativity</PackageId>
     <Title>Relativity</Title>
     <Description>Connector for relativity</Description>
     <Product>EDR</Product>
@@ -27,11 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CSharpFunctionalExtensions" Version="2.11.9" />
-    <PackageReference Include="Flurl" Version="2.8.2" />
-    <PackageReference Include="Flurl.Http" Version="2.4.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.8" />
-    <PackageReference Include="Reductech.EDR.Core" Version="0.2.1-a.master.1601982733" />
+    <PackageReference Include="Flurl.Http" Version="3.2.0" />
+    <PackageReference Include="Reductech.EDR.Core" Version="0.11.0-a.master.2107151808" />
   </ItemGroup>
 
 </Project>
