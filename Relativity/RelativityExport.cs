@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Flurl.Http;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -45,7 +44,7 @@ namespace Reductech.EDR.Connectors.Relativity
             if (batchSize.IsFailure)
                 return batchSize.ConvertFailure<Array<StringStream>>();
 
-            var flurlClientResult = stateMonad.ExternalContext.TryGetContext<IFlurlClient>(ConnectorInjection.FlurlClientKey);
+            var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x=>x.FlurlClient);  
 
             if (flurlClientResult.IsFailure) 
                 return flurlClientResult.MapError(x=>x.WithLocation(this)).ConvertFailure<Array<StringStream>>();

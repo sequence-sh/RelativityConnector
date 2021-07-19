@@ -18,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Flurl.Http" Version="3.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="MicrosoftExtensions.Logging.Xunit" Version="1.0.0" />
     <PackageReference Include="Reductech.EDR.Core.TestHarness" Version="0.11.0-a.master.2107151808" />

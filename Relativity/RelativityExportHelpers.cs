@@ -29,13 +29,13 @@ namespace Reductech.EDR.Connectors.Relativity
             CancellationToken cancellationToken
         )
         {
-
             var setupExportResult = await SetupExportAsync(relativitySettings, workspaceId, artifactType,
                 fieldNames, condition, start, flurlClient, cancellationToken);
 
             if (setupExportResult.IsFailure)
-                return setupExportResult.MapError(x=>x.WithLocation(errorLocation)) .ConvertFailure<Array<ExportedEntity>>();
-            
+                return setupExportResult.MapError(x => x.WithLocation(errorLocation))
+                    .ConvertFailure<Array<ExportedEntity>>();
+
 
             var allResults = GetResultElements(relativitySettings, setupExportResult.Value, workspaceId,
                 batchSize, fieldNames, flurlClient, errorLocation, cancellationToken);
@@ -44,6 +44,11 @@ namespace Reductech.EDR.Connectors.Relativity
 
             return array;
         }
+
+        /// <summary>
+        /// A token indicating a long string that should be downloaded separately
+        /// </summary>
+        public const string LongStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
 
 
         public static async IAsyncEnumerable<ExportedEntity> GetResultElements(
@@ -82,50 +87,52 @@ namespace Reductech.EDR.Connectors.Relativity
                         .PostJsonAsync(request, cancellationToken)
                         .ReceiveJson<IList<ExportResultElement>>();
 
-
-                foreach (var resultElement in resultElements)
+                if (resultElements is not null)
                 {
-                    var dict = new Dictionary<Field, string>();
-
-                    var pairs = fields.Zip(resultElement.Values);
-
-                    foreach (var (field, fieldValue) in pairs)
+                    foreach (var resultElement in resultElements)
                     {
-                        var val = fieldValue?.ToString() ?? "";
+                        var dict = new Dictionary<Field, string>();
 
-                        const string longStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
+                        var pairs = fields.Zip(resultElement.Values);
 
-                        if (val == longStringToken)
+                        foreach (var (field, fieldValue) in pairs)
                         {
-                            var v = await GetLongText(relativitySettings, workspaceId, field.Name,
-                                resultElement.ArtifactID,
-                                flurlClient,
-                                cancellationToken);
+                            var val = fieldValue?.ToString() ?? "";
+                            
 
-                            if (v.IsFailure)
-                                throw v.Error;
+                            if (val == LongStringToken)
+                            {
+                                var v = await GetLongText(relativitySettings, workspaceId, field.Name,
+                                    resultElement.ArtifactID,
+                                    flurlClient,
+                                    cancellationToken);
 
-                            val = v.Value;
+                                if (v.IsFailure)
+                                    throw v.Error;
+
+                                val = v.Value;
+                            }
+
+                            dict.Add(field, val);
                         }
 
-                        dict.Add(field, val);
+                        var downloadResult = await DocumentFileManager.DownloadFile(relativitySettings,
+                            flurlClient,
+                            errorLocation,
+                            workspaceId,
+                            resultElement.ArtifactID, cancellationToken);
+
+                        if (downloadResult.IsFailure)
+                        {
+                            throw new ErrorException(downloadResult.Error);
+                        }
+
+                        var entity = new ExportedEntity(downloadResult.Value, dict);
+
+                        yield return entity;
                     }
-
-                    var downloadResult = await DocumentFileManager.DownloadFile(relativitySettings,
-                        flurlClient,
-                        errorLocation,
-                        workspaceId,
-                        resultElement.ArtifactID, cancellationToken);
-
-                    if (downloadResult.IsFailure)
-                    {
-                        throw new ErrorException(downloadResult.Error);
-                    }
-
-                    var entity = new ExportedEntity(downloadResult.Value, dict);
-
-                    yield return entity;
                 }
+
 
                 current += batchSize;
             }

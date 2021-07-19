@@ -41,16 +41,6 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
         private static Assembly RelativityAssembly { get; } = typeof(RelativityImport).Assembly;
 
 
-        public static IFlurlClient GetFlurlClient(this HttpTest httpTest)
-        {
-            var type = httpTest.GetType();
-            
-
-            var property = type.GetProperty(nameof(HttpClient), BindingFlags.Instance | BindingFlags.NonPublic);
-            var httpClient = (HttpClient) property.GetValue(httpTest);
-
-            return new FlurlClient(httpClient);
-
-        }
+        
     }
 }
