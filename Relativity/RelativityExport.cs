@@ -6,22 +6,27 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
-    public sealed class RelativityExport : CompoundStep<Array<StringStream>>
+    [SCLExample("RelativityExport WorkspaceId: 12345 Condition: \"'Extracted Text' ISSET \" FieldNames: [\"Field1\", \"Field2\"] BatchSize: 10",
+        
+        ExpectedOutput = "[(Field1: \"Hello\" Field2: \"World\" NativeFile: \"Native File Text\")]", ExecuteInTests = false
+        )]
+    public sealed class RelativityExport : CompoundStep<Array<Entity>>
     {
         /// <inheritdoc />
-        protected override async Task<Result<Array<StringStream>, IError>> Run(IStateMonad stateMonad,
+        protected override async Task<Result<Array<Entity>, IError>> Run(IStateMonad stateMonad,
             CancellationToken cancellationToken)
         {
             var settingsResult = SettingsHelpers.TryGetRelativitySettings(stateMonad.Settings);
             if (settingsResult.IsFailure)
-                return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<Array<StringStream>>();
+                return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<Array<Entity>>();
 
             var workspaceId = await WorkspaceId.Run(stateMonad, cancellationToken);
             if (workspaceId.IsFailure)
-                return workspaceId.ConvertFailure<Array<StringStream>>();
+                return workspaceId.ConvertFailure<Array<Entity>>();
 
             var fieldNames = await FieldNames.Run(stateMonad, cancellationToken)
                 .Bind(async x =>
@@ -34,20 +39,20 @@ namespace Reductech.EDR.Connectors.Relativity
 
 
             if (fieldNames.IsFailure)
-                return fieldNames.ConvertFailure<Array<StringStream>>();
+                return fieldNames.ConvertFailure<Array<Entity>>();
 
             var condition = await Condition.Run(stateMonad, cancellationToken).Map(x => x.GetStringAsync());
             if (condition.IsFailure)
-                return condition.ConvertFailure<Array<StringStream>>();
+                return condition.ConvertFailure<Array<Entity>>();
 
             var batchSize = await BatchSize.Run(stateMonad, cancellationToken);
             if (batchSize.IsFailure)
-                return batchSize.ConvertFailure<Array<StringStream>>();
+                return batchSize.ConvertFailure<Array<Entity>>();
 
             var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x=>x.FlurlClient);  
 
             if (flurlClientResult.IsFailure) 
-                return flurlClientResult.MapError(x=>x.WithLocation(this)).ConvertFailure<Array<StringStream>>();
+                return flurlClientResult.MapError(x=>x.WithLocation(this)).ConvertFailure<Array<Entity>>();
 
             var entitiesResult = await
                 RelativityExportHelpers.ExportAsync(settingsResult.Value, workspaceId.Value, ArtifactType.Document,
@@ -57,11 +62,10 @@ namespace Reductech.EDR.Connectors.Relativity
                     new ErrorLocation(this), CancellationToken.None);
 
             if (entitiesResult.IsFailure)
-                return entitiesResult.ConvertFailure<Array<StringStream>>();
+                return entitiesResult.ConvertFailure<Array<Entity>>();
+            
 
-            var result = entitiesResult.Value.Select(x => new StringStream(x.Serialize));
-
-            return result;
+            return entitiesResult.Value;
         }
 
         /// <summary>
@@ -96,6 +100,6 @@ namespace Reductech.EDR.Connectors.Relativity
 
 
         /// <inheritdoc />
-        public override IStepFactory StepFactory => new SimpleStepFactory<RelativityExport, Array<StringStream>>();
+        public override IStepFactory StepFactory => new SimpleStepFactory<RelativityExport, Array<Entity>>();
     }
 }

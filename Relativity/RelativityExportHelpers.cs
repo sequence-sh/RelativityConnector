@@ -10,13 +10,15 @@ using Flurl;
 using Flurl.Http;
 using Newtonsoft.Json;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal.Errors;
+using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
     public static class RelativityExportHelpers
     {
-        public static async Task<Result<Array<ExportedEntity>, IError>> ExportAsync(
+        public static async Task<Result<Array<Entity>, IError>> ExportAsync(
             RelativitySettings relativitySettings,
             int workspaceId,
             ArtifactType artifactType,
@@ -34,13 +36,13 @@ namespace Reductech.EDR.Connectors.Relativity
 
             if (setupExportResult.IsFailure)
                 return setupExportResult.MapError(x => x.WithLocation(errorLocation))
-                    .ConvertFailure<Array<ExportedEntity>>();
+                    .ConvertFailure<Array<Entity>>();
 
 
             var allResults = GetResultElements(relativitySettings, setupExportResult.Value, workspaceId,
                 batchSize, fieldNames, flurlClient, errorLocation, cancellationToken);
 
-            var array = new LazyArray<ExportedEntity>(allResults);
+            var array = new LazyArray<Entity>(allResults);
 
             return array;
         }
@@ -50,8 +52,11 @@ namespace Reductech.EDR.Connectors.Relativity
         /// </summary>
         public const string LongStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
 
+        public const string NativeFileKey = "NativeFile";
 
-        public static async IAsyncEnumerable<ExportedEntity> GetResultElements(
+
+
+        public static async IAsyncEnumerable<Entity> GetResultElements(
             RelativitySettings relativitySettings,
             ExportResult exportResult,
             int workspaceId,
@@ -91,16 +96,16 @@ namespace Reductech.EDR.Connectors.Relativity
                 {
                     foreach (var resultElement in resultElements)
                     {
-                        var dict = new Dictionary<Field, string>();
+                        var properties = new List<EntityProperty>();
 
                         var pairs = fields.Zip(resultElement.Values);
 
+                        var order = 0;
                         foreach (var (field, fieldValue) in pairs)
                         {
-                            var val = fieldValue?.ToString() ?? "";
                             
 
-                            if (val == LongStringToken)
+                            if (fieldValue?.ToString() == LongStringToken)
                             {
                                 var v = await GetLongText(relativitySettings, workspaceId, field.Name,
                                     resultElement.ArtifactID,
@@ -110,10 +115,22 @@ namespace Reductech.EDR.Connectors.Relativity
                                 if (v.IsFailure)
                                     throw v.Error;
 
-                                val = v.Value;
+                                properties.Add(new EntityProperty(field.Name,
+                                    new EntityValue.String(v.Value), null, order
+                                    
+                                    ));
+                            }
+                            else
+                            {
+                                properties.Add(new EntityProperty(
+                                    field.Name,
+                                    EntityValue.CreateFromObject(fieldValue), 
+                                    null, order
+                                    ));
                             }
 
-                            dict.Add(field, val);
+
+                            order++;
                         }
 
                         var downloadResult = await DocumentFileManager.DownloadFile(relativitySettings,
@@ -127,7 +144,12 @@ namespace Reductech.EDR.Connectors.Relativity
                             throw new ErrorException(downloadResult.Error);
                         }
 
-                        var entity = new ExportedEntity(downloadResult.Value, dict);
+                        properties.Add(new EntityProperty(NativeFileKey,
+                            new EntityValue.String(downloadResult.Value),
+                            null,order
+                            ));
+
+                        var entity = new Entity(properties);
 
                         yield return entity;
                     }
@@ -227,35 +249,6 @@ namespace Reductech.EDR.Connectors.Relativity
             }
 
             return longText;
-        }
-
-
-        /// <summary>
-        /// An entity that was exported
-        /// </summary>
-        public class ExportedEntity
-        {
-            public ExportedEntity(string nativeText, IReadOnlyDictionary<Field, string> fieldValues)
-            {
-                FieldValues = fieldValues;
-                NativeText = nativeText;
-            }
-
-            public string NativeText { get; }
-
-            public IReadOnlyDictionary<Field, string> FieldValues { get; }
-
-            public string Serialize
-            {
-                get
-                {
-                    var sb = new StringBuilder();
-                    foreach (var (key, value) in FieldValues.OrderBy(x => x.Key.Name))
-                        sb.AppendLine($"{key}:{value}");
-
-                    return sb.ToString();
-                }
-            }
         }
 
 
