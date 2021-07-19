@@ -8,7 +8,7 @@ using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests
 {
-    public partial class RelativityExportTests : StepTestBase<RelativityExport, Array<StringStream>>
+    public partial class RelativityExportTests : StepTestBase<RelativityExport, Array<Entity>>
     {
         /// <inheritdoc />
         protected override IEnumerable<StepCase> StepCases
@@ -63,7 +63,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
 
                 yield return new StepCase(
                             "Export with condition",
-                            new ForEach<StringStream>()
+                            new ForEach<Entity>()
                             {
                                 Array = new RelativityExport()
                                 {
@@ -72,15 +72,15 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
                                     FieldNames = Array("ShortField", "LongField"),
                                     BatchSize = Constant(10)
                                 },
-                                Action = new LambdaFunction<StringStream, Unit>(null,
+                                Action = new LambdaFunction<Entity, Unit>(null,
                                     new Log<StringStream>()
                                     {
                                         Value = new GetAutomaticVariable<StringStream>()
                                     })
                             }
-                            , Unit.Default, "LongField:Streamed Long Text ShortField:Hello "
+                            , Unit.Default, "(ShortField: \"Hello\" LongField: \"Streamed Long Text\" NativeFile: \"My Native Text\")"
                         )
-                        .WithRelativitySettings<RelativityExport, Array<StringStream>, StepCase>(
+                        .WithRelativitySettings<RelativityExport, Array<Entity>, StepCase>(
                             new RelativitySettings()
                             {
                                 RelativityUsername = "UN",
@@ -105,7 +105,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
                 foreach (var errorCase in base.ErrorCases)
                 {
                     yield return
-                        errorCase.WithRelativitySettings<RelativityExport, Array<StringStream>, ErrorCase>(
+                        errorCase.WithRelativitySettings<RelativityExport, Array<Entity>, ErrorCase>(
                             new RelativitySettings()
                             {
                                 RelativityUsername = "Username",
