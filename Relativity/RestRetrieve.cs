@@ -5,12 +5,15 @@ using Flurl;
 using Flurl.Http;
 using Newtonsoft.Json;
 
-namespace Reductech.Connectors.Relativity
+namespace Reductech.EDR.Connectors.Relativity
 {
     public static class RestRetrieve
     {
 
-        public static async Task<Result<ResultClasses.RequestResult>> GetResultAsync(IRelativitySettings settings, int workspaceId)
+        public static async Task<Result<ResultClasses.RequestResult>> GetResultAsync(
+            RelativitySettings settings, 
+            IFlurlClient flurlClient,
+            int workspaceId)
         {
             var urlSuffix = $"/Relativity.REST/api/Relativity.Objects/workspace/{workspaceId}/object/read";
 
@@ -39,7 +42,9 @@ namespace Reductech.Connectors.Relativity
 
             try
             {
-                requestResult = await url.WithBasicAuth(settings.RelativityUsername, settings.RelativityPassword)
+                requestResult = await url
+                    .WithClient(flurlClient)
+                    .WithBasicAuth(settings.RelativityUsername, settings.RelativityPassword)
                     .WithHeader("X-CSRF-Header", "-")
                     .PostJsonAsync(requestQuery)
                 .ReceiveJson<ResultClasses.RequestResult>();

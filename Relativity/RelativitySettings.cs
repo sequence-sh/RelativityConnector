@@ -1,28 +1,62 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Text;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Util;
+using Reductech.EDR.Core.Internal.Errors;
+using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.Connectors.Relativity
+namespace Reductech.EDR.Connectors.Relativity
 {
-    public sealed class RelativitySettings : IRelativitySettings
+    /// <summary>
+    /// Contains helper methods for Tesseract settings
+    /// </summary>
+    public static class SettingsHelpers
     {
-        public string RelativityUsername { get;set; }
+        private static readonly string RelativityConnectorKey = typeof(RelativityImport).Assembly.GetName().Name!;
 
-        public string RelativityPassword { get;set; }
+        /// <summary>
+        /// Try to get a TesseractSettings from a list of Connector Informations
+        /// </summary>
+        public static Result<RelativitySettings, IErrorBuilder> TryGetRelativitySettings(Entity settings)
+        {
+            var connectorEntityValue = settings.TryGetValue(
+                new EntityPropertyKey(
+                    StateMonad.ConnectorsKey,
+                    RelativityConnectorKey,
+                    nameof(ConnectorSettings.Settings)
+                )
+            );
 
-        public string Url { get; set; }
+            if (connectorEntityValue.HasNoValue ||
+                connectorEntityValue.Value is not EntityValue.NestedEntity nestedEntity)
+                return ErrorCode.MissingStepSettings.ToErrorBuilder(
+                    RelativityConnectorKey
+                );
 
-        /// <inheritdoc />
-        public string DesktopClientPath { get; set; }
+
+            var connectorSettings = EntityConversionHelpers.TryCreateFromEntity<RelativitySettings>(nestedEntity.Value);
+
+            return connectorSettings;
+        }
+    }
+
+
+    [DataContract]
+    public sealed class RelativitySettings : IEntityConvertible
+    {
+        [DataMember] public string RelativityUsername { get; set; } = null!;
+
+        [DataMember] public string RelativityPassword { get; set; } = null!;
+
+        [DataMember] public string Url { get; set; } = null!;
+
+        [DataMember] public string DesktopClientPath { get; set; } = null!;
 
         public string AuthParameters => GenerateBasicAuthorizationParameter(RelativityUsername, RelativityPassword);
-
-
-
-
 
         static string GenerateBasicAuthorizationParameter(string username, string password)
         {
@@ -32,9 +66,5 @@ namespace Reductech.Connectors.Relativity
 
             return $"Basic {base64UsernameAndPassword}";
         }
-
-        /// <inheritdoc />
-        public Result<Unit, IRunErrors> CheckRequirement(string processName, Requirement requirement) //TODO add relativity version
-            => Unit.Default;
     }
 }

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
 using Newtonsoft.Json;
 
-namespace Reductech.Connectors.Relativity
+namespace Reductech.EDR.Connectors.Relativity
 {
     public static class FieldMapping
     {
-        public static async Task<MappableSourceField[]> GetMappableFields(IRelativitySettings relativitySettings, bool catalogFieldsOnly, int workspaceArtifactID)
+        public static async Task<MappableSourceField[]> GetMappableFields(RelativitySettings relativitySettings,
+            IFlurlClient flurlClient,
+            bool catalogFieldsOnly, int workspaceArtifactID)
         {
             var relativitySuffix =
                 "Relativity.Rest/api/Relativity.Services.FieldMapping.IFieldMappingModule/FieldMappingService/GetInvariantFieldsAsync";
@@ -25,14 +24,12 @@ namespace Reductech.Connectors.Relativity
             };
 
             var result = await
-
                 url
                     .WithHeader("X-CSRF-Header", "-")
                     .WithBasicAuth(relativitySettings.RelativityUsername, relativitySettings.RelativityPassword)
+                    .WithClient(flurlClient)
                     .PostJsonAsync(request)
                     .ReceiveJson<MappableSourceField[]>();
-
-
 
 
             return result;
@@ -40,11 +37,9 @@ namespace Reductech.Connectors.Relativity
 
         public class MappableSourceFieldRequest
         {
-            [JsonProperty("workspaceArtifactID")]
-            public int WorkspaceArtifactID { get; set; }
+            [JsonProperty("workspaceArtifactID")] public int WorkspaceArtifactID { get; set; }
 
-            [JsonProperty("catalogFieldsOnly")]
-            public bool CatalogFieldsOnly { get; set; }
+            [JsonProperty("catalogFieldsOnly")] public bool CatalogFieldsOnly { get; set; }
         }
 
 
@@ -53,24 +48,17 @@ namespace Reductech.Connectors.Relativity
             /// <inheritdoc />
             public override string ToString() => (FriendlyName, Category, SourceName, DataType).ToString();
 
-            [JsonProperty("Category")]
-            public string Category { get; set; }
+            [JsonProperty("Category")] public string Category { get; set; }
 
-            [JsonProperty("SourceName")]
-            public string SourceName { get; set; }
+            [JsonProperty("SourceName")] public string SourceName { get; set; }
 
-            [JsonProperty("FriendlyName")]
-            public string FriendlyName { get; set; }
+            [JsonProperty("FriendlyName")] public string FriendlyName { get; set; }
 
-            [JsonProperty("Description")]
-            public string Description { get; set; }
+            [JsonProperty("Description")] public string Description { get; set; }
 
-            [JsonProperty("DataType")]
-            public string DataType { get; set; }
+            [JsonProperty("DataType")] public string DataType { get; set; }
 
-            [JsonProperty("MappedFields")]
-            public List<string> MappedFields { get; set; }
+            [JsonProperty("MappedFields")] public List<string> MappedFields { get; set; }
         }
-
     }
 }
