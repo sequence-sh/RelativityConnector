@@ -13,7 +13,6 @@ using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Relativity.Environment.V1.Workspace.Models;
-using Relativity.Shared.V1.Exceptions;
 using Relativity.Shared.V1.Models;
 using Entity = Reductech.EDR.Core.Entity;
 
@@ -61,11 +60,6 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
                         .PostJsonAsync(workSpaceRequest.Value, cancellationToken)
                         .ReceiveJson<WorkspaceResponse>();
             }
-            catch (InvalidInputException ex)
-            {
-                var error = ErrorCode.Unknown.ToErrorBuilder(ex).WithLocation(this);
-                return Result.Failure<Entity, IError>(error);
-            }
             catch (Exception ex)
             {
                 var error = ErrorCode.Unknown.ToErrorBuilder(ex).WithLocation(this);
@@ -75,7 +69,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
             var responseJson = JsonConvert.SerializeObject(response);
 
             var responseEntity = JsonConvert.DeserializeObject<Entity>(responseJson,
-                EntityJsonConverter.Instance, new VersionConverter() );
+                EntityJsonConverter.Instance, new VersionConverter());
 
 
             return responseEntity;
@@ -84,7 +78,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         private async Task<Result<WorkspaceRequest, IError>> CreateWorkspaceRequest(IStateMonad stateMonad,
             CancellationToken cancellation)
         {
-            var name = await Name.Run(stateMonad, cancellation).Map(x => x.GetStringAsync());
+            var name = await WorkspaceName.Run(stateMonad, cancellation).Map(x => x.GetStringAsync());
             if (name.IsFailure) return name.ConvertFailure<WorkspaceRequest>();
 
             var matterId = await MatterId.Run(stateMonad, cancellation);
@@ -130,8 +124,9 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// The user-friendly name of the workspace
         /// </summary>
         [StepProperty(1)]
+        [Alias("Name")]
         [Required]
-        public IStep<StringStream> Name { get; set; }
+        public IStep<StringStream> WorkspaceName { get; set; } = null!;
 
         /// <summary>
         /// The matter Artifact Id.
@@ -139,7 +134,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<int> MatterId { get; set; }
+        public IStep<int> MatterId { get; set; } = null!;
 
         /// <summary>
         /// The Template Artifact Id.
@@ -147,7 +142,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<int> TemplateId { get; set; }
+        public IStep<int> TemplateId { get; set; } = null!;
 
         /// <summary>
         /// The status Artifact Id.
@@ -155,7 +150,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<int> StatusId { get; set; }
+        public IStep<int> StatusId { get; set; } = null!;
 
         /// <summary>
         /// The Resource Pool Artifact Id
@@ -163,7 +158,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<int> ResourcePoolId { get; set; }
+        public IStep<int> ResourcePoolId { get; set; } = null!;
 
         /// <summary>
         /// The Sql Server Artifact Id
@@ -171,7 +166,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<int> SqlServerId { get; set; }
+        public IStep<int> SqlServerId { get; set; } = null!;
 
         /// <summary>
         /// The Default File Repository Artifact Id.
@@ -179,7 +174,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<int> DefaultFileRepositoryId { get; set; }
+        public IStep<int> DefaultFileRepositoryId { get; set; } = null!;
 
         /// <summary>
         /// The Default Cache Location Artifact Id
@@ -187,7 +182,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// </summary>
         [StepProperty]
         [Required]
-        public IStep<int> DefaultCacheLocationId { get; set; }
+        public IStep<int> DefaultCacheLocationId { get; set; } = null!;
 
 
         /// <inheritdoc />
