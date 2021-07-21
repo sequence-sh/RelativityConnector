@@ -2,13 +2,14 @@
 using System.Text;
 using System.Threading;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.ExternalProcesses;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
     public partial class RelativityImportTests : StepTestBase<RelativityImport, Unit>
     {

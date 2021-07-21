@@ -4,6 +4,7 @@ using System.Reflection;
 using Flurl.Http;
 using Flurl.Http.Testing;
 using Reductech.EDR.ConnectorManagement.Base;
+using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 

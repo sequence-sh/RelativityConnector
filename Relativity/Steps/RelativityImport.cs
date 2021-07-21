@@ -15,7 +15,7 @@ using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
 
-namespace Reductech.EDR.Connectors.Relativity
+namespace Reductech.EDR.Connectors.Relativity.Steps
 {
     /// <summary>
     /// Imports a load file into Relativity using the desktop client
@@ -27,7 +27,7 @@ namespace Reductech.EDR.Connectors.Relativity
         /// <inheritdoc />
         protected override async Task<Result<Unit, IError>> Run(IStateMonad stateMonad, CancellationToken cancellation)
         {
-            var settingsResult = SettingsHelpers.TryGetRelativitySettings(stateMonad.Settings);
+            var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
 
             if (settingsResult.IsFailure)
                 return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<Unit>();
@@ -212,9 +212,9 @@ namespace Reductech.EDR.Connectors.Relativity
         {
             return fileImportType switch
             {
-                Relativity.FileImportType.Native => "n",
-                Relativity.FileImportType.Image => "i",
-                Relativity.FileImportType.Object => "o",
+                Steps.FileImportType.Native => "n",
+                Steps.FileImportType.Image => "i",
+                Steps.FileImportType.Object => "o",
                 _ => throw new ArgumentOutOfRangeException(nameof(fileImportType), fileImportType, null)
             };
         }
