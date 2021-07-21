@@ -3,10 +3,12 @@ using System.Runtime.Serialization;
 using System.Text;
 using CSharpFunctionalExtensions;
 using Reductech.EDR.ConnectorManagement.Base;
+using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Relativity.Services.ServiceProxy;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
@@ -21,7 +23,7 @@ namespace Reductech.EDR.Connectors.Relativity
         /// <summary>
         /// Try to get a TesseractSettings from a list of Connector Informations
         /// </summary>
-        public static Result<RelativitySettings, IErrorBuilder> TryGetRelativitySettings(Entity settings)
+        public static Result<RelativitySettings, IErrorBuilder> TryGetRelativitySettings(this Entity settings)
         {
             var connectorEntityValue = settings.TryGetValue(
                 new EntityPropertyKey(
@@ -56,6 +58,11 @@ namespace Reductech.EDR.Connectors.Relativity
 
         [DataMember] public string DesktopClientPath { get; set; } = null!;
 
+        /// <summary>
+        /// The version of the API
+        /// </summary>
+        [DataMember] public int APIVersionNumber { get; set; } = 1;
+
         public string AuthParameters => GenerateBasicAuthorizationParameter(RelativityUsername, RelativityPassword);
 
         static string GenerateBasicAuthorizationParameter(string username, string password)
@@ -65,6 +72,17 @@ namespace Reductech.EDR.Connectors.Relativity
             var base64UsernameAndPassword = Convert.ToBase64String(unencodedBytes);
 
             return $"Basic {base64UsernameAndPassword}";
+        }
+
+        public ServiceFactory CreateServiceFactory()
+        {
+            var endPoint = new Uri($"{Url}/Relativity.REST/api");
+            var serviceFactory = new ServiceFactory(
+                new ServiceFactorySettings(endPoint,
+                    new UsernamePasswordCredentials(RelativityUsername, RelativityPassword))
+            );
+
+            return serviceFactory;
         }
     }
 }

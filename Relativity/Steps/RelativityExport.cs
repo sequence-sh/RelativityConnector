@@ -8,19 +8,20 @@ using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity
+namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-    [SCLExample("RelativityExport WorkspaceId: 12345 Condition: \"'Extracted Text' ISSET \" FieldNames: [\"Field1\", \"Field2\"] BatchSize: 10",
-        
-        ExpectedOutput = "[(Field1: \"Hello\" Field2: \"World\" NativeFile: \"Native File Text\")]", ExecuteInTests = false
-        )]
+    [SCLExample(
+        "RelativityExport WorkspaceId: 12345 Condition: \"'Extracted Text' ISSET \" FieldNames: [\"Field1\", \"Field2\"] BatchSize: 10",
+        ExpectedOutput = "[(Field1: \"Hello\" Field2: \"World\" NativeFile: \"Native File Text\")]",
+        ExecuteInTests = false
+    )]
     public sealed class RelativityExport : CompoundStep<Array<Entity>>
     {
         /// <inheritdoc />
         protected override async Task<Result<Array<Entity>, IError>> Run(IStateMonad stateMonad,
             CancellationToken cancellationToken)
         {
-            var settingsResult = SettingsHelpers.TryGetRelativitySettings(stateMonad.Settings);
+            var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
             if (settingsResult.IsFailure)
                 return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<Array<Entity>>();
 
@@ -49,21 +50,21 @@ namespace Reductech.EDR.Connectors.Relativity
             if (batchSize.IsFailure)
                 return batchSize.ConvertFailure<Array<Entity>>();
 
-            var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x=>x.FlurlClient);  
+            var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x => x.FlurlClient);
 
-            if (flurlClientResult.IsFailure) 
-                return flurlClientResult.MapError(x=>x.WithLocation(this)).ConvertFailure<Array<Entity>>();
+            if (flurlClientResult.IsFailure)
+                return flurlClientResult.MapError(x => x.WithLocation(this)).ConvertFailure<Array<Entity>>();
 
             var entitiesResult = await
                 RelativityExportHelpers.ExportAsync(settingsResult.Value, workspaceId.Value, ArtifactType.Document,
                     fieldNames.Value, condition.Value, 0,
-                    batchSize.Value, 
+                    batchSize.Value,
                     flurlClientResult.Value,
                     new ErrorLocation(this), CancellationToken.None);
 
             if (entitiesResult.IsFailure)
                 return entitiesResult.ConvertFailure<Array<Entity>>();
-            
+
 
             return entitiesResult.Value;
         }

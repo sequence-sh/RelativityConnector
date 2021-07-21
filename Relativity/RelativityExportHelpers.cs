@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
@@ -171,9 +170,15 @@ namespace Reductech.EDR.Connectors.Relativity
             IFlurlClient flurlClient,
             CancellationToken cancellationToken)
         {
-            var urlSuffix = $"/Relativity.REST/api/Relativity.Objects/workspace/{workspaceId}/object/initializeexport";
 
-            var url = Url.Combine(relativitySettings.Url, urlSuffix);
+            var url = Url.Combine(relativitySettings.Url,
+                "Relativity.REST",
+                "api",
+                "Relativity.Objects",
+                "workspace",
+                workspaceId.ToString(),
+                "object",
+                "initializeexport");
 
 
             var request = new ExportRequestRoot

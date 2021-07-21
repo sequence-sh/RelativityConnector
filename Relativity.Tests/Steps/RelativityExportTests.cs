@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
@@ -6,7 +7,7 @@ using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
     public partial class RelativityExportTests : StepTestBase<RelativityExport, Array<Entity>>
     {
@@ -44,8 +45,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
                                 }
                             }
                         }
-                        
-                        );
+                    );
 
                 flurlClientFactory.HttpTest
                     .ForCallsTo(
@@ -78,7 +78,8 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
                                         Value = new GetAutomaticVariable<StringStream>()
                                     })
                             }
-                            , Unit.Default, "(ShortField: \"Hello\" LongField: \"Streamed Long Text\" NativeFile: \"My Native Text\")"
+                            , Unit.Default,
+                            "(ShortField: \"Hello\" LongField: \"Streamed Long Text\" NativeFile: \"My Native Text\")"
                         )
                         .WithRelativitySettings<RelativityExport, Array<Entity>, StepCase>(
                             new RelativitySettings()
@@ -91,8 +92,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
                         .WithContext(
                             ConnectorInjection.FlurlClientFactoryKey,
                             flurlClientFactory
-                        )
-                    ;
+                        );
             }
         }
 
