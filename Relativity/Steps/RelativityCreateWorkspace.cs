@@ -1,9 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Flurl;
 using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -18,64 +16,40 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-    /// <summary>
-    /// Creates a new relativity workspace
-    /// </summary>
-    public sealed class RelativityCreateWorkspace : CompoundStep<Entity>
+    public sealed class RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, Entity>
     {
+
         /// <inheritdoc />
-        protected override async Task<Result<Entity, IError>> Run(IStateMonad stateMonad,
-            CancellationToken cancellationToken)
+        public override Task<IFlurlResponse> SendRequest(IFlurlRequest flurlRequest,
+            WorkspaceRequest requestObject, CancellationToken cancellationToken)
         {
-            var workSpaceRequest = await CreateWorkspaceRequest(stateMonad, cancellationToken);
+            return flurlRequest.PostJsonAsync(requestObject, cancellationToken);
+        }
 
-            if (workSpaceRequest.IsFailure) return workSpaceRequest.ConvertFailure<Entity>();
-
-            var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
-            if (settingsResult.IsFailure)
-                return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<Entity>();
-
-            var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x => x.FlurlClient);
-            if (flurlClientResult.IsFailure)
-                return flurlClientResult.MapError(x => x.WithLocation(this)).ConvertFailure<Entity>();
-
-            var url = Url.Combine(settingsResult.Value.Url,
+        /// <inheritdoc />
+        public override string[] CreateURL(RelativitySettings relativitySettings, WorkspaceRequest request)
+        {
+            return new[]
+            {
                 "Relativity.Rest",
                 "API",
                 "relativity-environment",
-                $"v{settingsResult.Value.APIVersionNumber}",
+                $"v{relativitySettings.APIVersionNumber}",
                 "workspace"
-            );
+            };
+        }
 
-
-            WorkspaceResponse response;
-
-            try
-            {
-                response =
-                    await url
-                        .WithBasicAuth(settingsResult.Value.RelativityUsername, settingsResult.Value.RelativityPassword)
-                        .WithHeader("X-CSRF-Header", "-")
-                        .WithClient(flurlClientResult.Value)
-                        .PostJsonAsync(workSpaceRequest.Value, cancellationToken)
-                        .ReceiveJson<WorkspaceResponse>();
-            }
-            catch (Exception ex)
-            {
-                var error = ErrorCode.Unknown.ToErrorBuilder(ex).WithLocation(this);
-                return Result.Failure<Entity, IError>(error);
-            }
-
-            var responseJson = JsonConvert.SerializeObject(response);
-
-            var responseEntity = JsonConvert.DeserializeObject<Entity>(responseJson,
+        /// <inheritdoc />
+        public override Entity? TryCreateOutput(string stringResult)
+        {
+            var responseEntity = JsonConvert.DeserializeObject<Entity>(stringResult,
                 EntityJsonConverter.Instance, new VersionConverter());
-
 
             return responseEntity;
         }
 
-        private async Task<Result<WorkspaceRequest, IError>> CreateWorkspaceRequest(IStateMonad stateMonad,
+        /// <inheritdoc />
+        public override async Task<Result<WorkspaceRequest, IError>> TryCreateRequest(IStateMonad stateMonad,
             CancellationToken cancellation)
         {
             var name = await WorkspaceName.Run(stateMonad, cancellation).Map(x => x.GetStringAsync());
@@ -187,5 +161,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
         /// <inheritdoc />
         public override IStepFactory StepFactory => new SimpleStepFactory<RelativityCreateWorkspace, Entity>();
+
+        
     }
 }

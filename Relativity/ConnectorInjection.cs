@@ -5,21 +5,11 @@ using System.Reflection;
 using CSharpFunctionalExtensions;
 using Flurl.Http;
 using Flurl.Http.Testing;
-using Reductech.EDR.Core;
 using Reductech.EDR.Core.Connectors;
 using Reductech.EDR.Core.Internal.Errors;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
-
-    public static class FlurlHelpers
-    {
-        public static Result<IFlurlClientFactory, IErrorBuilder> GetFlurlClientFactory(this IStateMonad stateMonad)
-        {
-            return stateMonad.ExternalContext.TryGetContext<IFlurlClientFactory>(ConnectorInjection.FlurlClientFactoryKey);
-        }
-    }
-
     public sealed class ConnectorInjection : IConnectorInjection
     {
         public const string FlurlClientFactoryKey = "FlurlClientFactory";
