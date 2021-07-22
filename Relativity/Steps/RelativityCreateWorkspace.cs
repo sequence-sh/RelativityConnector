@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Reductech.EDR.Core;
@@ -10,42 +9,38 @@ using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-    public sealed class RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, Entity>
+    public sealed class RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, IWorkspaceManager, WorkspaceResponse, Entity>
     {
-
         /// <inheritdoc />
-        public override Task<IFlurlResponse> SendRequest(IFlurlRequest flurlRequest,
-            WorkspaceRequest requestObject, CancellationToken cancellationToken)
+        public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceResponse serviceOutput)
         {
-            return flurlRequest.PostJsonAsync(requestObject, cancellationToken);
-        }
+            var responseJson = JsonConvert.SerializeObject(serviceOutput);
 
-        /// <inheritdoc />
-        public override string[] CreateURL(RelativitySettings relativitySettings, WorkspaceRequest request)
-        {
-            return new[]
-            {
-                "Relativity.Rest",
-                "API",
-                "relativity-environment",
-                $"v{relativitySettings.APIVersionNumber}",
-                "workspace"
-            };
-        }
-
-        /// <inheritdoc />
-        public override Entity? TryCreateOutput(string stringResult)
-        {
-            var responseEntity = JsonConvert.DeserializeObject<Entity>(stringResult,
+            var responseEntity = JsonConvert.DeserializeObject<Entity>(responseJson,
                 EntityJsonConverter.Instance, new VersionConverter());
 
+            if (responseEntity is null)
+                return ErrorCode.CouldNotParse.ToErrorBuilder(responseJson, nameof(Entity));
+
             return responseEntity;
+
+        }
+
+        /// <inheritdoc />
+        public override async Task<WorkspaceResponse> SendRequest(IWorkspaceManager service, WorkspaceRequest requestObject, CancellationToken cancellationToken)
+        {
+            string downloadHandlerUrl = await service.GetDefaultDownloadHandlerURLAsync();
+            requestObject.DownloadHandlerUrl = downloadHandlerUrl;
+
+            var response = await service.CreateAsync(requestObject, cancellationToken);
+            return response;
         }
 
         /// <inheritdoc />

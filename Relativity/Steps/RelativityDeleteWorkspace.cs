@@ -2,12 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Flurl.Http;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
+using Relativity.Environment.V1.Workspace;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
@@ -16,7 +16,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     /// Deletes a relativity workspace
     /// </summary>
     [SCLExample("RelativityDeleteWorkspace 42", ExecuteInTests = false, Description = "Deletes workspace 42")]
-    public sealed class RelativityDeleteWorkspace : RelativityApiRequest<int, Unit>
+    public sealed class RelativityDeleteWorkspace : RelativityApiRequest<int, IWorkspaceManager, Unit, Unit>
     {
         /// <summary>
         /// The id of the workspace to delete
@@ -27,30 +27,18 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
         public override IStepFactory StepFactory { get; } = new SimpleStepFactory<RelativityDeleteWorkspace, Unit>();
 
+
         /// <inheritdoc />
-        public override Task<IFlurlResponse> SendRequest(IFlurlRequest flurlRequest, int requestObject, CancellationToken cancellationToken)
+        public override Result<Unit, IErrorBuilder> ConvertOutput(Unit serviceOutput)
         {
-            return flurlRequest.DeleteAsync(cancellationToken);
+            return serviceOutput;
         }
 
         /// <inheritdoc />
-        public override string[] CreateURL(RelativitySettings settings, int request)
+        public override async Task<Unit> SendRequest(IWorkspaceManager service, int requestObject, CancellationToken cancellationToken)
         {
-            return new[]
-            {
-                "Relativity.Rest",
-                "API",
-                "relativity-environment",
-                $"v{settings.APIVersionNumber}",
-                "workspace",
-                request.ToString()
-            };
+            await service.DeleteAsync(requestObject, cancellationToken);
 
-        }
-
-        /// <inheritdoc />
-        public override Unit TryCreateOutput(string stringResult)
-        {
             return Unit.Default;
         }
 

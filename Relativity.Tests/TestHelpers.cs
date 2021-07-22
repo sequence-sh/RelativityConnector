@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
-using Flurl.Http;
-using Flurl.Http.Testing;
+using Moq;
 using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.Internal;
@@ -12,9 +11,39 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
 {
     public static class TestHelpers
     {
-        public static T WithRelativitySettings<TStep, TOutput, T>(this T stepCase, RelativitySettings relativitySettings)
-        where T : StepTestBase<TStep,TOutput>.CaseThatExecutes
-        where TStep : class, ICompoundStep<TOutput>, new()
+        public static T WithTestRelativitySettings<T>(this T stepCase)
+            where T : ICaseThatExecutes
+        {
+            var settings = new RelativitySettings()
+            {
+                RelativityUsername = "UN",
+                RelativityPassword = "PW",
+                Url = "http://TestRelativityServer",
+                DesktopClientPath = "C:/DesktopClientPath"
+            };
+
+            return stepCase.WithRelativitySettings(settings);
+        }
+
+        public static T WithService<T, TService>(this T stepCase, Action<Mock<TService>> setup)
+        where TService : class, IDisposable
+        where T : ICaseWithSetup
+        {
+            var repo = new MockRepository(MockBehavior.Strict);
+
+            var mock = repo.Create<TService>();
+            setup(mock);
+
+            stepCase.WithContext(
+                ConnectorInjection.ServiceFactoryFactoryKey,
+                new TestServiceFactoryFactory(mock.Object)
+            );
+
+            return stepCase;
+        }
+
+        public static T WithRelativitySettings<T>(this T stepCase, RelativitySettings relativitySettings)
+            where T : ICaseThatExecutes
         {
             var r = stepCase.WithStepFactoryStore(
                 StepFactoryStore.Create(

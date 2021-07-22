@@ -13,7 +13,6 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
     public partial class RelativityImportTests : StepTestBase<RelativityImport, Unit>
     {
-
         /// <inheritdoc />
         protected override IEnumerable<StepCase> StepCases
         {
@@ -35,20 +34,15 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                             Unit.Default,
                             "Starting Import",
                             "Import Successful"
-                        ).WithRelativitySettings<RelativityImport, Unit, StepCase>(new RelativitySettings()
-                            {
-                                RelativityUsername = "UN",
-                                RelativityPassword = "PW",
-                                DesktopClientPath = "C:/DesktopClientPath"
-                            }
-                        )
+                        ).WithTestRelativitySettings()
                         .WithExternalProcessAction(
                             mock => mock.Setup(
                                 x => x.RunExternalProcess(
                                     "C:/DesktopClientPath", It.IsAny<IErrorHandler>(),
                                     new List<string>()
                                     {
-                                        "-f:C:/Data", "-c:1234", "-m:o", "-k:C:/Settings", "-s:5", "-d:789", "-e:456", "-x:567", "-u:UN", "-p:PW"
+                                        "-f:C:/Data", "-c:1234", "-m:o", "-k:C:/Settings", "-s:5", "-d:789", "-e:456",
+                                        "-x:567", "-u:UN", "-p:PW"
                                     }, It.IsAny<IReadOnlyDictionary<string, string>>(),
                                     Encoding.Default, It.IsAny<StateMonad>(),
                                     It.IsAny<RelativityImport>(),
@@ -69,12 +63,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                 foreach (var errorCase in base.ErrorCases)
                 {
                     yield return
-                        errorCase.WithRelativitySettings<RelativityImport, Unit, ErrorCase>(new RelativitySettings()
-                            {
-                                RelativityUsername = "Username",
-                                RelativityPassword = "Passport",
-                            }
-                        )
+                        errorCase.WithTestRelativitySettings()
                         ;
                 }
             }

@@ -62,37 +62,30 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                 //flurlClientFactory.HttpTest
 
                 yield return new StepCase(
-                            "Export with condition",
-                            new ForEach<Entity>()
+                        "Export with condition",
+                        new ForEach<Entity>()
+                        {
+                            Array = new RelativityExport()
                             {
-                                Array = new RelativityExport()
+                                WorkspaceId = Constant(12345),
+                                Condition = Constant("'Extracted Text' ISSET "),
+                                FieldNames = Array("ShortField", "LongField"),
+                                BatchSize = Constant(10)
+                            },
+                            Action = new LambdaFunction<Entity, Unit>(null,
+                                new Log<StringStream>()
                                 {
-                                    WorkspaceId = Constant(12345),
-                                    Condition = Constant("'Extracted Text' ISSET "),
-                                    FieldNames = Array("ShortField", "LongField"),
-                                    BatchSize = Constant(10)
-                                },
-                                Action = new LambdaFunction<Entity, Unit>(null,
-                                    new Log<StringStream>()
-                                    {
-                                        Value = new GetAutomaticVariable<StringStream>()
-                                    })
-                            }
-                            , Unit.Default,
-                            "(ShortField: \"Hello\" LongField: \"Streamed Long Text\" NativeFile: \"My Native Text\")"
-                        )
-                        .WithRelativitySettings<RelativityExport, Array<Entity>, StepCase>(
-                            new RelativitySettings()
-                            {
-                                RelativityUsername = "UN",
-                                RelativityPassword = "PW",
-                                Url = "http://TestRelativityServer"
-                            }
-                        )
-                        .WithContext(
-                            ConnectorInjection.FlurlClientFactoryKey,
-                            flurlClientFactory
-                        );
+                                    Value = new GetAutomaticVariable<StringStream>()
+                                })
+                        }
+                        , Unit.Default,
+                        "(ShortField: \"Hello\" LongField: \"Streamed Long Text\" NativeFile: \"My Native Text\")"
+                    )
+                    .WithTestRelativitySettings()
+                    .WithContext(
+                        ConnectorInjection.FlurlClientFactoryKey,
+                        flurlClientFactory
+                    );
             }
         }
 
@@ -104,15 +97,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
             {
                 foreach (var errorCase in base.ErrorCases)
                 {
-                    yield return
-                        errorCase.WithRelativitySettings<RelativityExport, Array<Entity>, ErrorCase>(
-                            new RelativitySettings()
-                            {
-                                RelativityUsername = "Username",
-                                RelativityPassword = "Passport",
-                            }
-                        )
-                        ;
+                    yield return errorCase.WithTestRelativitySettings();
                 }
             }
         }
