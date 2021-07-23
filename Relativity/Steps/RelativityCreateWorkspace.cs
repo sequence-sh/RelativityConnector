@@ -2,11 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Relativity.Environment.V1.Workspace;
@@ -16,25 +13,22 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-    public sealed class RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, IWorkspaceManager, WorkspaceResponse, Entity>
+    /// <summary>
+    /// Creates a new Relativity Workspace
+    /// </summary>
+    public sealed class
+        RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, IWorkspaceManager, WorkspaceResponse, Entity>
     {
         /// <inheritdoc />
         public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceResponse serviceOutput)
         {
-            var responseJson = JsonConvert.SerializeObject(serviceOutput);
-
-            var responseEntity = JsonConvert.DeserializeObject<Entity>(responseJson,
-                EntityJsonConverter.Instance, new VersionConverter());
-
-            if (responseEntity is null)
-                return ErrorCode.CouldNotParse.ToErrorBuilder(responseJson, nameof(Entity));
-
-            return responseEntity;
-
+            var r = TryConvertToEntity(serviceOutput);
+            return r;
         }
 
         /// <inheritdoc />
-        public override async Task<WorkspaceResponse> SendRequest(IWorkspaceManager service, WorkspaceRequest requestObject, CancellationToken cancellationToken)
+        public override async Task<WorkspaceResponse> SendRequest(IWorkspaceManager service,
+            WorkspaceRequest requestObject, CancellationToken cancellationToken)
         {
             string downloadHandlerUrl = await service.GetDefaultDownloadHandlerURLAsync();
             requestObject.DownloadHandlerUrl = downloadHandlerUrl;
@@ -156,7 +150,5 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
         /// <inheritdoc />
         public override IStepFactory StepFactory => new SimpleStepFactory<RelativityCreateWorkspace, Entity>();
-
-        
     }
 }
