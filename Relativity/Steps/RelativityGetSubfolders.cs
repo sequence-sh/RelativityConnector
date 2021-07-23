@@ -13,44 +13,12 @@ using Entity = Reductech.EDR.Core.Entity;
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
     /// <summary>
-    ///  Move a folder and its children, including subfolders and documents. 
-    /// </summary>
-    public sealed class RelativityMoveFolders : RelativityApiRequest<(int workspaceId, int folderId, int
-        destinationFolderId), IFolderManager,
-        FolderMoveResultSet, Entity>
-    {
-        /// <inheritdoc />
-        public override IStepFactory StepFactory => new SimpleStepFactory<RelativityMoveFolders, Entity>();
-
-        /// <inheritdoc />
-        public override Result<Entity, IErrorBuilder> ConvertOutput(FolderMoveResultSet serviceOutput)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override async Task<FolderMoveResultSet> SendRequest(IFolderManager service,
-            (int workspaceId, int folderId, int destinationFolderId) requestObject,
-            CancellationToken cancellationToken)
-        {
-            var (workspaceId, folderId, destinationFolderId) = requestObject;
-            var r = await service.MoveFolderAsync(workspaceId, folderId, destinationFolderId, cancellationToken);
-
-            return r;
-        }
-
-        /// <inheritdoc />
-        public override async Task<Result<(int workspaceId, int folderId, int destinationFolderId), IError>>
-            TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-
-    /// <summary>
     /// Gets all children of a folder
     /// </summary>
+    [SCLExample("RelativityGetSubfolders WorkspaceArtifactId: 11 FolderArtifactId: 22",
+        "[(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 101 Name: \"SubFolder 1\"),(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 102 Name: \"SubFolder 2\") ]",
+        ExecuteInTests = false
+    )]
     public sealed class
         RelativityGetSubfolders : RelativityApiRequest<(int workspaceId, int folderId), IFolderManager, List<Folder>,
             Array<Entity>>

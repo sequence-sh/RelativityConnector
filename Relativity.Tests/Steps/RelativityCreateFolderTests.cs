@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 using Relativity.Services.Folder;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;

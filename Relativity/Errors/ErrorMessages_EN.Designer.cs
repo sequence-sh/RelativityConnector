@@ -68,5 +68,14 @@ namespace Reductech.EDR.Connectors.Relativity.Errors {
                 return ResourceManager.GetString("RequestFailed", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed with message {0}.
+        /// </summary>
+        internal static string Unsuccessful {
+            get {
+                return ResourceManager.GetString("Unsuccessful", resourceCulture);
+            }
+        }
     }
 }

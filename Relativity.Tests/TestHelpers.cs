@@ -34,6 +34,8 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
             var mock = repo.Create<TService>();
             setup(mock);
 
+            mock.Setup(x => x.Dispose());
+
             stepCase.WithContext(
                 ConnectorInjection.ServiceFactoryFactoryKey,
                 new TestServiceFactoryFactory(mock.Object)

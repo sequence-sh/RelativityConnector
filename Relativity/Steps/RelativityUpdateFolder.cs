@@ -14,6 +14,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     /// <summary>
     /// Update a Relativity folder
     /// </summary>
+    [SCLExample("RelativityUpdateFolder WorkspaceArtifactId: 11 FolderId: 22 FolderName: \"NewName\"",
+        ExecuteInTests = false)]
     public sealed class
         RelativityUpdateFolder : RelativityApiRequest<(Folder folder, int workspaceId), IFolderManager, Unit, Unit>
     {
@@ -39,7 +41,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         public override async Task<Result<(Folder folder, int workspaceId), IError>> TryCreateRequest(
             IStateMonad stateMonad, CancellationToken cancellation)
         {
-            var r= await stateMonad.RunStepsAsync(WorkspaceArtifactId, FolderId, FolderName.WrapStringStream(), cancellation);
+            var r = await stateMonad.RunStepsAsync(WorkspaceArtifactId, FolderId, FolderName.WrapStringStream(),
+                cancellation);
             if (r.IsFailure) return r.ConvertFailure<(Folder folder, int workspaceId)>();
 
             var (workspaceId, folderId, folderName) = r.Value;
@@ -74,7 +77,5 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         [Alias("Name")]
         [Required]
         public IStep<StringStream> FolderName { get; set; } = null!;
-
-        
     }
 }

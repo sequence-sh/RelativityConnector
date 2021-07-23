@@ -11,7 +11,6 @@ using Relativity.Environment.V1.Workspace;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-
     /// <summary>
     /// Deletes a relativity workspace
     /// </summary>
@@ -35,7 +34,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<Unit> SendRequest(IWorkspaceManager service, int requestObject, CancellationToken cancellationToken)
+        public override async Task<Unit> SendRequest(IWorkspaceManager service, int requestObject,
+            CancellationToken cancellationToken)
         {
             await service.DeleteAsync(requestObject, cancellationToken);
 
@@ -43,7 +43,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<Result<int, IError>> TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
+        public override async Task<Result<int, IError>> TryCreateRequest(IStateMonad stateMonad,
+            CancellationToken cancellation)
         {
             var workspaceId = await WorkspaceId.Run(stateMonad, cancellation);
             return workspaceId;
