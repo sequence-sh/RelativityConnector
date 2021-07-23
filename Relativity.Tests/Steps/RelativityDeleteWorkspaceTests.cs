@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Moq;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
+using Relativity.Environment.V1.Workspace;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
@@ -13,39 +17,23 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
         {
             get
             {
-                var flurlClientFactory = new TestFlurlClientFactory();
+                void SetupWorkspaceManager(Mock<IWorkspaceManager> workspaceManager)
+                {
+                    workspaceManager.Setup(x => x.DeleteAsync(42, CancellationToken.None))
+                        .Returns(Task.CompletedTask);
 
-                flurlClientFactory.HttpTest
+                    workspaceManager.Setup(x => x.Dispose());
+                }
 
-                    .ForCallsTo(
-                        "http://TestRelativityServer/Relativity.Rest/API/relativity-environment/v1/workspace/42")
-                    .WithVerb(HttpMethod.Delete)
-                    .RespondWith();
-
-                flurlClientFactory.HttpTest.RespondWith(status: 417);
 
                 yield return new StepCase("Delete a Workspace",
                         new RelativityDeleteWorkspace()
                         {
                             WorkspaceId = StaticHelpers.Constant(42)
                         }, Unit.Default
-
-
-
-                    ).WithRelativitySettings<RelativityDeleteWorkspace, Unit, StepCase>(
-                        new RelativitySettings()
-                        {
-                            RelativityUsername = "UN",
-                            RelativityPassword = "PW",
-                            Url = "http://TestRelativityServer"
-                        }
-                    )
-                    .WithContext(
-                        ConnectorInjection.FlurlClientFactoryKey,
-                        flurlClientFactory
-                    );;
+                    ).WithTestRelativitySettings()
+                    .WithService((Action<Mock<IWorkspaceManager>>)SetupWorkspaceManager);
             }
         }
-
     }
 }

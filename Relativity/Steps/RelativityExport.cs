@@ -6,6 +6,7 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Reductech.EDR.Core.Util;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
@@ -25,30 +26,14 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
             if (settingsResult.IsFailure)
                 return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<Array<Entity>>();
 
-            var workspaceId = await WorkspaceId.Run(stateMonad, cancellationToken);
-            if (workspaceId.IsFailure)
-                return workspaceId.ConvertFailure<Array<Entity>>();
+            var stepsResult = await stateMonad.RunStepsAsync(
+                WorkspaceId,
+                FieldNames.WrapStringStreamArray(),
+                Condition.WrapStringStream(), BatchSize, cancellationToken);
 
-            var fieldNames = await FieldNames.Run(stateMonad, cancellationToken)
-                .Bind(async x =>
-                {
-                    var objects = await x
-                        .SelectAwait(async s => await s.GetStringAsync())
-                        .GetElementsAsync(cancellationToken);
-                    return objects;
-                });
+            if (stepsResult.IsFailure) return stepsResult.ConvertFailure<Array<Entity>>();
 
-
-            if (fieldNames.IsFailure)
-                return fieldNames.ConvertFailure<Array<Entity>>();
-
-            var condition = await Condition.Run(stateMonad, cancellationToken).Map(x => x.GetStringAsync());
-            if (condition.IsFailure)
-                return condition.ConvertFailure<Array<Entity>>();
-
-            var batchSize = await BatchSize.Run(stateMonad, cancellationToken);
-            if (batchSize.IsFailure)
-                return batchSize.ConvertFailure<Array<Entity>>();
+            var (workspaceId, fieldNames, condition, batchSize) = stepsResult.Value;
 
             var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x => x.FlurlClient);
 
@@ -56,9 +41,9 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
                 return flurlClientResult.MapError(x => x.WithLocation(this)).ConvertFailure<Array<Entity>>();
 
             var entitiesResult = await
-                RelativityExportHelpers.ExportAsync(settingsResult.Value, workspaceId.Value, ArtifactType.Document,
-                    fieldNames.Value, condition.Value, 0,
-                    batchSize.Value,
+                RelativityExportHelpers.ExportAsync(settingsResult.Value, workspaceId, ArtifactType.Document,
+                    fieldNames, condition, 0,
+                    batchSize,
                     flurlClientResult.Value,
                     new ErrorLocation(this), CancellationToken.None);
 

@@ -120,4 +120,7 @@
   <data name="RequestFailed" xml:space="preserve">
     <value>Request Failed withstatus code {0} . {1}</value>
   </data>
+  <data name="Unsuccessful" xml:space="preserve">
+    <value>Failed with message {0}</value>
+  </data>
 </root>

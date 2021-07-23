@@ -18,6 +18,11 @@ public sealed record ErrorCode_Relativity : ErrorCodeBase
     /// </summary>
     public static readonly ErrorCode_Relativity RequestFailed = new(nameof(RequestFailed));
 
+    /// <summary>
+    /// Failed with message {0}
+    /// </summary>
+    public static readonly ErrorCode_Relativity Unsuccessful = new(nameof(Unsuccessful));
+
     /// <inheritdoc />
     public override string GetFormatString()
     {

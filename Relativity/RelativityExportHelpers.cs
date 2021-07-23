@@ -54,7 +54,6 @@ namespace Reductech.EDR.Connectors.Relativity
         public const string NativeFileKey = "NativeFile";
 
 
-
         public static async IAsyncEnumerable<Entity> GetResultElements(
             RelativitySettings relativitySettings,
             ExportResult exportResult,
@@ -67,12 +66,6 @@ namespace Reductech.EDR.Connectors.Relativity
         {
             var fields = fieldNames.Select(x => new Field() { Name = x }).ToList();
 
-
-            var urlSuffix =
-                $"/Relativity.REST/api/Relativity.Objects/workspace/{workspaceId}/object/retrieveNextResultsBlockFromExport";
-
-            var url = Url.Combine(relativitySettings.Url, urlSuffix);
-
             var request = new ExportBatchRequest()
             {
                 RunID = exportResult.RunID,
@@ -84,10 +77,13 @@ namespace Reductech.EDR.Connectors.Relativity
             while (current < exportResult.RecordCount)
             {
                 var resultElements =
-                    await url.WithBasicAuth(relativitySettings.RelativityUsername,
-                            relativitySettings.RelativityPassword)
-                        .WithHeader("X-CSRF-Header", "-")
-                        .WithClient(flurlClient)
+                    await flurlClient.SetupRelativityRequest(
+                        relativitySettings,
+                        "Relativity.REST", "api", "Relativity.Objects", "workspace",
+                        workspaceId.ToString(), "object", 
+                        "retrieveNextResultsBlockFromExport"
+                        
+                        )
                         .PostJsonAsync(request, cancellationToken)
                         .ReceiveJson<IList<ExportResultElement>>();
 
@@ -102,8 +98,6 @@ namespace Reductech.EDR.Connectors.Relativity
                         var order = 0;
                         foreach (var (field, fieldValue) in pairs)
                         {
-                            
-
                             if (fieldValue?.ToString() == LongStringToken)
                             {
                                 var v = await GetLongText(relativitySettings, workspaceId, field.Name,
@@ -116,16 +110,15 @@ namespace Reductech.EDR.Connectors.Relativity
 
                                 properties.Add(new EntityProperty(field.Name,
                                     new EntityValue.String(v.Value), null, order
-                                    
-                                    ));
+                                ));
                             }
                             else
                             {
                                 properties.Add(new EntityProperty(
                                     field.Name,
-                                    EntityValue.CreateFromObject(fieldValue), 
+                                    EntityValue.CreateFromObject(fieldValue),
                                     null, order
-                                    ));
+                                ));
                             }
 
 
@@ -145,8 +138,8 @@ namespace Reductech.EDR.Connectors.Relativity
 
                         properties.Add(new EntityProperty(NativeFileKey,
                             new EntityValue.String(downloadResult.Value),
-                            null,order
-                            ));
+                            null, order
+                        ));
 
                         var entity = new Entity(properties);
 
@@ -170,17 +163,6 @@ namespace Reductech.EDR.Connectors.Relativity
             IFlurlClient flurlClient,
             CancellationToken cancellationToken)
         {
-
-            var url = Url.Combine(relativitySettings.Url,
-                "Relativity.REST",
-                "api",
-                "Relativity.Objects",
-                "workspace",
-                workspaceId.ToString(),
-                "object",
-                "initializeexport");
-
-
             var request = new ExportRequestRoot
             {
                 Start = start,
@@ -192,17 +174,22 @@ namespace Reductech.EDR.Connectors.Relativity
                 }
             };
 
-
             ExportResult exportResult;
 
             try
             {
-                exportResult = await url
-                    .WithBasicAuth(relativitySettings.RelativityUsername, relativitySettings.RelativityPassword)
-                    .WithHeader("X-CSRF-Header", "-")
-                    .WithClient(flurlClient)
-                    .PostJsonAsync(request, cancellationToken)
-                    .ReceiveJson<ExportResult>();
+                exportResult = await
+                    flurlClient.SetupRelativityRequest(relativitySettings,
+                            "Relativity.REST",
+                            "api",
+                            "Relativity.Objects",
+                            "workspace",
+                            workspaceId.ToString(),
+                            "object",
+                            "initializeexport"
+                        )
+                        .PostJsonAsync(request, cancellationToken)
+                        .ReceiveJson<ExportResult>();
             }
             catch (FlurlHttpException e)
             {
@@ -234,18 +221,17 @@ namespace Reductech.EDR.Connectors.Relativity
                 }
             };
 
-            var url = Url.Combine(
-                relativitySettings.Url,
-                $"/Relativity.REST/api/Relativity.Objects/workspace/{workspaceId}/object/streamlongtext");
-
 
             string longText;
 
             try
             {
-                longText = await url.WithClient(flurlClient)
-                    .WithBasicAuth(relativitySettings.RelativityUsername, relativitySettings.RelativityPassword)
-                    .WithHeader("X-CSRF-Header", "-")
+                longText = await flurlClient.SetupRelativityRequest(relativitySettings,
+                    "Relativity.REST","api",
+                    "Relativity.Objects","workspace",
+                    workspaceId.ToString(),"object","streamlongtext"
+                    
+                    )
                     .PostJsonAsync(request, cancellationToken).ReceiveString();
             }
             catch (FlurlHttpException e)

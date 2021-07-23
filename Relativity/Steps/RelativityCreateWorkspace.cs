@@ -1,17 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Flurl;
-using Flurl.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Reductech.EDR.Core.Util;
+using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
 using Entity = Reductech.EDR.Core.Entity;
@@ -19,102 +15,55 @@ using Entity = Reductech.EDR.Core.Entity;
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
     /// <summary>
-    /// Creates a new relativity workspace
+    /// Creates a new Relativity Workspace
     /// </summary>
-    public sealed class RelativityCreateWorkspace : CompoundStep<Entity>
+    public sealed class
+        RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, IWorkspaceManager, WorkspaceResponse, Entity>
     {
         /// <inheritdoc />
-        protected override async Task<Result<Entity, IError>> Run(IStateMonad stateMonad,
-            CancellationToken cancellationToken)
+        public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceResponse serviceOutput)
         {
-            var workSpaceRequest = await CreateWorkspaceRequest(stateMonad, cancellationToken);
-
-            if (workSpaceRequest.IsFailure) return workSpaceRequest.ConvertFailure<Entity>();
-
-            var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
-            if (settingsResult.IsFailure)
-                return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<Entity>();
-
-            var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x => x.FlurlClient);
-            if (flurlClientResult.IsFailure)
-                return flurlClientResult.MapError(x => x.WithLocation(this)).ConvertFailure<Entity>();
-
-            var url = Url.Combine(settingsResult.Value.Url,
-                "Relativity.Rest",
-                "API",
-                "relativity-environment",
-                $"v{settingsResult.Value.APIVersionNumber}",
-                "workspace"
-            );
-
-
-            WorkspaceResponse response;
-
-            try
-            {
-                response =
-                    await url
-                        .WithBasicAuth(settingsResult.Value.RelativityUsername, settingsResult.Value.RelativityPassword)
-                        .WithHeader("X-CSRF-Header", "-")
-                        .WithClient(flurlClientResult.Value)
-                        .PostJsonAsync(workSpaceRequest.Value, cancellationToken)
-                        .ReceiveJson<WorkspaceResponse>();
-            }
-            catch (Exception ex)
-            {
-                var error = ErrorCode.Unknown.ToErrorBuilder(ex).WithLocation(this);
-                return Result.Failure<Entity, IError>(error);
-            }
-
-            var responseJson = JsonConvert.SerializeObject(response);
-
-            var responseEntity = JsonConvert.DeserializeObject<Entity>(responseJson,
-                EntityJsonConverter.Instance, new VersionConverter());
-
-
-            return responseEntity;
+            var r = TryConvertToEntity(serviceOutput);
+            return r;
         }
 
-        private async Task<Result<WorkspaceRequest, IError>> CreateWorkspaceRequest(IStateMonad stateMonad,
+        /// <inheritdoc />
+        public override async Task<WorkspaceResponse> SendRequest(IWorkspaceManager service,
+            WorkspaceRequest requestObject, CancellationToken cancellationToken)
+        {
+            string downloadHandlerUrl = await service.GetDefaultDownloadHandlerURLAsync();
+            requestObject.DownloadHandlerUrl = downloadHandlerUrl;
+
+            var response = await service.CreateAsync(requestObject, cancellationToken);
+            return response;
+        }
+
+        /// <inheritdoc />
+        public override async Task<Result<WorkspaceRequest, IError>> TryCreateRequest(IStateMonad stateMonad,
             CancellationToken cancellation)
         {
-            var name = await WorkspaceName.Run(stateMonad, cancellation).Map(x => x.GetStringAsync());
-            if (name.IsFailure) return name.ConvertFailure<WorkspaceRequest>();
+            var stepResult = await stateMonad.RunStepsAsync(WorkspaceName.WrapStringStream(), MatterId, TemplateId,
+                StatusId, ResourcePoolId, SqlServerId,
+                DefaultFileRepositoryId, DefaultCacheLocationId, cancellation);
+            if (stepResult.IsFailure) return stepResult.ConvertFailure<WorkspaceRequest>();
 
-            var matterId = await MatterId.Run(stateMonad, cancellation);
-            if (matterId.IsFailure) return matterId.ConvertFailure<WorkspaceRequest>();
+            var (name, matterId, templateId, statusId, resourcePoolId, sqlServerId, defaultFileRepositoryId,
+                defaultCacheLocationId) = stepResult.Value;
 
-            var templateId = await TemplateId.Run(stateMonad, cancellation);
-            if (templateId.IsFailure) return templateId.ConvertFailure<WorkspaceRequest>();
-
-            var statusId = await StatusId.Run(stateMonad, cancellation);
-            if (statusId.IsFailure) return statusId.ConvertFailure<WorkspaceRequest>();
-
-            var resourcePoolId = await ResourcePoolId.Run(stateMonad, cancellation);
-            if (resourcePoolId.IsFailure) return resourcePoolId.ConvertFailure<WorkspaceRequest>();
-
-            var sqlServerId = await SqlServerId.Run(stateMonad, cancellation);
-            if (sqlServerId.IsFailure) return sqlServerId.ConvertFailure<WorkspaceRequest>();
-
-            var defaultFileRepositoryId = await DefaultFileRepositoryId.Run(stateMonad, cancellation);
-            if (defaultFileRepositoryId.IsFailure) return defaultFileRepositoryId.ConvertFailure<WorkspaceRequest>();
-
-            var defaultCacheLocationId = await DefaultCacheLocationId.Run(stateMonad, cancellation);
-            if (defaultCacheLocationId.IsFailure) return defaultCacheLocationId.ConvertFailure<WorkspaceRequest>();
 
             WorkspaceRequest request = new()
             {
-                Name = name.Value,
-                Matter = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = matterId.Value }),
-                Template = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = templateId.Value }),
-                Status = new ObjectIdentifier() { ArtifactID = statusId.Value },
+                Name = name,
+                Matter = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = matterId }),
+                Template = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = templateId }),
+                Status = new ObjectIdentifier() { ArtifactID = statusId },
                 ResourcePool =
-                    new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = resourcePoolId.Value }),
-                SqlServer = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = sqlServerId.Value }),
+                    new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = resourcePoolId }),
+                SqlServer = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = sqlServerId }),
                 DefaultFileRepository = new Securable<ObjectIdentifier>(new ObjectIdentifier()
-                    { ArtifactID = defaultFileRepositoryId.Value }),
+                    { ArtifactID = defaultFileRepositoryId }),
                 DefaultCacheLocation = new Securable<ObjectIdentifier>(new ObjectIdentifier()
-                    { ArtifactID = defaultCacheLocationId.Value }),
+                    { ArtifactID = defaultCacheLocationId }),
             };
 
             return request;
