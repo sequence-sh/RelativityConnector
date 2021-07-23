@@ -6,6 +6,7 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Reductech.EDR.Core.Util;
 using Relativity.Services.Folder;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
@@ -40,24 +41,18 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         public override async Task<Result<(Folder folder, int workspaceId), IError>> TryCreateRequest(
             IStateMonad stateMonad, CancellationToken cancellation)
         {
-            var workspaceId = await WorkspaceArtifactId.Run(stateMonad, cancellation);
-            if (workspaceId.IsFailure) return workspaceId.ConvertFailure<(Folder folder, int workspaceId)>();
+            var results = await stateMonad.RunStepsAsync(
+                WorkspaceArtifactId, FolderName.WrapStringStream(), ParentFolderId.WrapNullable(),
+                cancellation);
 
-            var folderName = await FolderName.Run(stateMonad, cancellation).Map(x => x.GetStringAsync());
-            if (folderName.IsFailure) return folderName.ConvertFailure<(Folder folder, int workspaceId)>();
+            if (results.IsFailure) return results.ConvertFailure<(Folder folder, int workspaceId)>();
 
-            int? parentFolderId = null;
-            if (ParentFolderId is not null)
-            {
-                var parentFolderResult = await ParentFolderId.Run(stateMonad, cancellation);
-                if (parentFolderResult.IsFailure)
-                    return parentFolderResult.ConvertFailure<(Folder folder, int workspaceId)>();
-                parentFolderId = parentFolderResult.Value;
-            }
+            var (workspaceId, folderName, parentFolderId) = results.Value;
+
 
             var folder = new Folder
             {
-                Name = folderName.Value
+                Name = folderName
             };
 
             if (parentFolderId.HasValue)
@@ -65,7 +60,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
                 folder.ParentFolder = new FolderRef(parentFolderId.Value);
             }
 
-            return (folder, workspaceId.Value);
+            return (folder, workspaceId);
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Reductech.EDR.Core.Util;
 using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
@@ -13,6 +14,96 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
+    public sealed class
+        RelativityRetrieveWorkspaceStatistics : RelativityApiRequest<int, IWorkspaceManager, WorkspaceSummary, Entity>
+    {
+        /// <summary>
+        /// The id of the workspace to retrieve
+        /// </summary>
+        [StepProperty(1)]
+        [Required]
+        public IStep<int> WorkspaceId { get; set; } = null!;
+
+
+        /// <inheritdoc />
+        public override IStepFactory StepFactory =>
+            new SimpleStepFactory<RelativityRetrieveWorkspaceStatistics, Entity>();
+
+        /// <inheritdoc />
+        public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceSummary serviceOutput)
+        {
+            return TryConvertToEntity(serviceOutput);
+        }
+
+        /// <inheritdoc />
+        public override async Task<WorkspaceSummary> SendRequest(IWorkspaceManager service, int requestObject,
+            CancellationToken cancellationToken)
+        {
+            return await service.GetWorkspaceSummaryAsync(requestObject);
+        }
+
+        /// <inheritdoc />
+        public override Task<Result<int, IError>> TryCreateRequest(IStateMonad stateMonad,
+            CancellationToken cancellation)
+        {
+            return WorkspaceId.Run(stateMonad, cancellation);
+        }
+    }
+
+
+    public sealed class
+        RelativityRetrieveWorkspace : RelativityApiRequest<(int workspaceId, bool includeMetadata, bool includeActions),
+            IWorkspaceManager, WorkspaceResponse, Entity>
+    {
+        /// <summary>
+        /// The id of the workspace to retrieve
+        /// </summary>
+        [StepProperty(1)]
+        [Required]
+        public IStep<int> WorkspaceId { get; set; } = null!;
+
+        /// <summary>
+        /// Whether to include metadata in the result
+        /// </summary>
+        [StepProperty(2)]
+        [DefaultValueExplanation("false")]
+        public IStep<bool> IncludeMetadata { get; set; } = new BoolConstant(false);
+
+        /// <summary>
+        /// Whether to include actions in the result
+        /// </summary>
+        [StepProperty(3)]
+        [DefaultValueExplanation("false")]
+        public IStep<bool> IncludeActions { get; set; } = new BoolConstant(false);
+
+        /// <inheritdoc />
+        public override IStepFactory StepFactory => new SimpleStepFactory<RelativityRetrieveWorkspace, Entity>();
+
+        /// <inheritdoc />
+        public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceResponse serviceOutput)
+        {
+            var r = TryConvertToEntity(serviceOutput);
+            return r;
+        }
+
+        /// <inheritdoc />
+        public override async Task<WorkspaceResponse> SendRequest(IWorkspaceManager service,
+            (int workspaceId, bool includeMetadata, bool includeActions) requestObject,
+            CancellationToken cancellationToken)
+        {
+            return await service.ReadAsync(requestObject.workspaceId, requestObject.includeMetadata,
+                requestObject.includeActions);
+        }
+
+        /// <inheritdoc />
+        public override async Task<Result<(int workspaceId, bool includeMetadata, bool includeActions), IError>>
+            TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
+        {
+            return await stateMonad.RunStepsAsync(WorkspaceId, IncludeMetadata, IncludeActions, cancellation);
+        }
+    }
+
+
     /// <summary>
     /// Creates a new Relativity Workspace
     /// </summary>
@@ -41,43 +132,28 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         public override async Task<Result<WorkspaceRequest, IError>> TryCreateRequest(IStateMonad stateMonad,
             CancellationToken cancellation)
         {
-            var name = await WorkspaceName.Run(stateMonad, cancellation).Map(x => x.GetStringAsync());
-            if (name.IsFailure) return name.ConvertFailure<WorkspaceRequest>();
+            var stepResult = await stateMonad.RunStepsAsync(WorkspaceName.WrapStringStream(), MatterId, TemplateId,
+                StatusId, ResourcePoolId, SqlServerId,
+                DefaultFileRepositoryId, DefaultCacheLocationId, cancellation);
+            if (stepResult.IsFailure) return stepResult.ConvertFailure<WorkspaceRequest>();
 
-            var matterId = await MatterId.Run(stateMonad, cancellation);
-            if (matterId.IsFailure) return matterId.ConvertFailure<WorkspaceRequest>();
+            var (name, matterId, templateId, statusId, resourcePoolId, sqlServerId, defaultFileRepositoryId,
+                defaultCacheLocationId) = stepResult.Value;
 
-            var templateId = await TemplateId.Run(stateMonad, cancellation);
-            if (templateId.IsFailure) return templateId.ConvertFailure<WorkspaceRequest>();
-
-            var statusId = await StatusId.Run(stateMonad, cancellation);
-            if (statusId.IsFailure) return statusId.ConvertFailure<WorkspaceRequest>();
-
-            var resourcePoolId = await ResourcePoolId.Run(stateMonad, cancellation);
-            if (resourcePoolId.IsFailure) return resourcePoolId.ConvertFailure<WorkspaceRequest>();
-
-            var sqlServerId = await SqlServerId.Run(stateMonad, cancellation);
-            if (sqlServerId.IsFailure) return sqlServerId.ConvertFailure<WorkspaceRequest>();
-
-            var defaultFileRepositoryId = await DefaultFileRepositoryId.Run(stateMonad, cancellation);
-            if (defaultFileRepositoryId.IsFailure) return defaultFileRepositoryId.ConvertFailure<WorkspaceRequest>();
-
-            var defaultCacheLocationId = await DefaultCacheLocationId.Run(stateMonad, cancellation);
-            if (defaultCacheLocationId.IsFailure) return defaultCacheLocationId.ConvertFailure<WorkspaceRequest>();
 
             WorkspaceRequest request = new()
             {
-                Name = name.Value,
-                Matter = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = matterId.Value }),
-                Template = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = templateId.Value }),
-                Status = new ObjectIdentifier() { ArtifactID = statusId.Value },
+                Name = name,
+                Matter = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = matterId }),
+                Template = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = templateId }),
+                Status = new ObjectIdentifier() { ArtifactID = statusId },
                 ResourcePool =
-                    new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = resourcePoolId.Value }),
-                SqlServer = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = sqlServerId.Value }),
+                    new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = resourcePoolId }),
+                SqlServer = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = sqlServerId }),
                 DefaultFileRepository = new Securable<ObjectIdentifier>(new ObjectIdentifier()
-                    { ArtifactID = defaultFileRepositoryId.Value }),
+                    { ArtifactID = defaultFileRepositoryId }),
                 DefaultCacheLocation = new Securable<ObjectIdentifier>(new ObjectIdentifier()
-                    { ArtifactID = defaultCacheLocationId.Value }),
+                    { ArtifactID = defaultCacheLocationId }),
             };
 
             return request;

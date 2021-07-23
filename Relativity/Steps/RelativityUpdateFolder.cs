@@ -39,23 +39,18 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         public override async Task<Result<(Folder folder, int workspaceId), IError>> TryCreateRequest(
             IStateMonad stateMonad, CancellationToken cancellation)
         {
-            var workspaceId = await WorkspaceArtifactId.Run(stateMonad, cancellation);
-            if (workspaceId.IsFailure) return workspaceId.ConvertFailure<(Folder folder, int workspaceId)>();
+            var r= await stateMonad.RunStepsAsync(WorkspaceArtifactId, FolderId, FolderName.WrapStringStream(), cancellation);
+            if (r.IsFailure) return r.ConvertFailure<(Folder folder, int workspaceId)>();
 
-            var folderId = await FolderId.Run(stateMonad, cancellation);
-            if (folderId.IsFailure) return folderId.ConvertFailure<(Folder folder, int workspaceId)>();
-
-            var folderName = await FolderName.Run(stateMonad, cancellation).Map(x => x.GetStringAsync());
-            if (folderName.IsFailure) return folderName.ConvertFailure<(Folder folder, int workspaceId)>();
-            
+            var (workspaceId, folderId, folderName) = r.Value;
 
             var folder = new Folder
             {
-                Name = folderName.Value,
-                ArtifactID = folderId.Value
+                Name = folderName,
+                ArtifactID = folderId
             };
 
-            return (folder, workspaceId.Value);
+            return (folder, workspaceId);
         }
 
         /// <summary>

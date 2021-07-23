@@ -35,10 +35,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         /// <inheritdoc />
         public override async Task<Result<int, IError>> TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
         {
-            var i = await WorkspaceArtifactId.Run(stateMonad, cancellation);
-            if (i.IsFailure) return i.ConvertFailure<int>();
-
-            return i.Value;
+            return await WorkspaceArtifactId.Run(stateMonad, cancellation);
+            
         }
 
         /// <summary>
