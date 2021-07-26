@@ -7,6 +7,7 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Reductech.EDR.Core.Util;
 using Relativity.Services.Folder;
 using Entity = Reductech.EDR.Core.Entity;
 
@@ -59,17 +60,10 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<Result<(int workspaceId, int folderId), IError>> TryCreateRequest(
+        public override Task<Result<(int workspaceId, int folderId), IError>> TryCreateRequest(
             IStateMonad stateMonad, CancellationToken cancellation)
         {
-            var wi = await WorkspaceArtifactId.Run(stateMonad, cancellation);
-            if (wi.IsFailure) return wi.ConvertFailure<(int workspaceId, int artifactId)>();
-
-
-            var ai = await FolderArtifactId.Run(stateMonad, cancellation);
-            if (ai.IsFailure) return ai.ConvertFailure<(int workspaceId, int artifactId)>();
-
-            return (wi.Value, ai.Value);
+            return stateMonad.RunStepsAsync(WorkspaceArtifactId, FolderArtifactId, cancellation);
         }
     }
 }
