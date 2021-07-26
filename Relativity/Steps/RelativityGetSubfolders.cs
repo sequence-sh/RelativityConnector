@@ -51,7 +51,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<List<Folder>> SendRequest(IFolderManager service,
+        public override async Task<List<Folder>> SendRequest(IStateMonad stateMonad, IFolderManager service,
             (int workspaceId, int folderId) requestObject,
             CancellationToken cancellationToken)
         {

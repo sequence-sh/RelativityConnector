@@ -32,7 +32,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<FolderResultSet> SendRequest(IFolderManager service, int requestObject, CancellationToken cancellationToken)
+        public override async Task<FolderResultSet> SendRequest(IStateMonad stateMonad, IFolderManager service,
+            int requestObject, CancellationToken cancellationToken)
         {
             var result = await service.DeleteUnusedFoldersAsync(requestObject);
 

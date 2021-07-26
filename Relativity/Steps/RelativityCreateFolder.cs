@@ -28,7 +28,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<int> SendRequest(IFolderManager service,
+        public override async Task<int> SendRequest(IStateMonad stateMonad, IFolderManager service,
             (Folder folder, int workspaceId) requestObject, CancellationToken cancellationToken)
         {
             var newFolderArtifactId = await service.CreateSingleAsync(requestObject.workspaceId, requestObject.folder);

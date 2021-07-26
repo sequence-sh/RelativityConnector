@@ -29,7 +29,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override Task<DeleteResult> SendRequest(IObjectManager service,
+        public override Task<DeleteResult> SendRequest(IStateMonad stateMonad, IObjectManager service,
             (int workspaceId, DeleteRequest deleteRequest) requestObject,
             CancellationToken cancellationToken)
         {
