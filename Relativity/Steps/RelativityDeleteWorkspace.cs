@@ -34,7 +34,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<Unit> SendRequest(IWorkspaceManager service, int requestObject,
+        public override async Task<Unit> SendRequest(IStateMonad stateMonad, IWorkspaceManager service,
+            int requestObject,
             CancellationToken cancellationToken)
         {
             await service.DeleteAsync(requestObject, cancellationToken);

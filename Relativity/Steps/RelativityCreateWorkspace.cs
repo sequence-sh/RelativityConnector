@@ -28,7 +28,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<WorkspaceResponse> SendRequest(IWorkspaceManager service,
+        public override async Task<WorkspaceResponse> SendRequest(IStateMonad stateMonad, IWorkspaceManager service,
             WorkspaceRequest requestObject, CancellationToken cancellationToken)
         {
             string downloadHandlerUrl = await service.GetDefaultDownloadHandlerURLAsync();

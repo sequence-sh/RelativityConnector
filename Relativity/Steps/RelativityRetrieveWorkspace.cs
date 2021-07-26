@@ -54,7 +54,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<WorkspaceResponse> SendRequest(IWorkspaceManager service,
+        public override async Task<WorkspaceResponse> SendRequest(IStateMonad stateMonad, IWorkspaceManager service,
             (int workspaceId, bool includeMetadata, bool includeActions) requestObject,
             CancellationToken cancellationToken)
         {

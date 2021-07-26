@@ -34,7 +34,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         }
 
         /// <inheritdoc />
-        public override async Task<Folder> SendRequest(IFolderManager service, int requestObject,
+        public override async Task<Folder> SendRequest(IStateMonad stateMonad, IFolderManager service,
+            int requestObject,
             CancellationToken cancellationToken)
         {
             return await service.GetWorkspaceRootAsync(requestObject);
