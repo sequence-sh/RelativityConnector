@@ -31,13 +31,13 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                             Unit.Default,
                             "(DocumentCount: 1234 FileSize: 5678)"
                         ).WithTestRelativitySettings()
-                        .WithService(new Action<Mock<IWorkspaceManager>>(
-                            m => m.Setup(x => x.GetWorkspaceSummaryAsync(42))
-                                .ReturnsAsync(new WorkspaceSummary()
-                                {
-                                    DocumentCount = 1234,
-                                    FileSize = 5678
-                                })
+                        .WithService(new MockSetup<IWorkspaceManager, WorkspaceSummary>(
+                            x => x.GetWorkspaceSummaryAsync(42),
+                            new WorkspaceSummary()
+                            {
+                                DocumentCount = 1234,
+                                FileSize = 5678
+                            }
                         ))
                     ;
             }

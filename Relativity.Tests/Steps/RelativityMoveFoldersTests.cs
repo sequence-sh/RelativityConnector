@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.Steps;
@@ -31,15 +30,16 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                         }, Unit.Default,
                         "(TotalOperations: 1 ProcessState: \"Complete\" OperationsCompleted: 1)"
                     ).WithTestRelativitySettings()
-                    .WithService(new Action<Mock<IFolderManager>>(
-                        m => m.Setup(x => x.MoveFolderAsync(11, 33, 22, It.IsAny<CancellationToken>()))
-                            .ReturnsAsync(new FolderMoveResultSet()
+                    .WithService(
+                        new MockSetup<IFolderManager, FolderMoveResultSet>(
+                            x => x.MoveFolderAsync(11, 33, 22, It.IsAny<CancellationToken>()),
+                            new FolderMoveResultSet()
                             {
                                 OperationsCompleted = 1,
                                 TotalOperations = 1,
                                 ProcessState = "Complete"
-                            })
-                    ));
+                            }
+                        ));
             }
         }
     }

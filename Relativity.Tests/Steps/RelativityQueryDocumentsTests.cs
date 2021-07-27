@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using Moq;
+using Moq.Language.Flow;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
@@ -12,6 +15,7 @@ using Reductech.EDR.Core.Util;
 using Relativity.Services.DataContracts.DTOs;
 using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
+using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
@@ -43,22 +47,16 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                         Unit.Default,
                         "Progress Message 1",
                         "(ParentObject: \"\" Name: \"Result 1\" FieldValues: [(Value: \"Test Value 1a\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field a\")), (Value: \"Test Value 1b\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 101 Guids: \"\" Name: \"Field b\"))] ArtifactID: 11111 Guids: \"\")",
-"(ParentObject: \"\" Name: \"Result 2\" FieldValues: [(Value: \"Test Value 2a\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field a\")), (Value: \"Test Value 2b\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field b\"))] ArtifactID: 22222 Guids: \"\")"
+                        "(ParentObject: \"\" Name: \"Result 2\" FieldValues: [(Value: \"Test Value 2a\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field a\")), (Value: \"Test Value 2b\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field b\"))] ArtifactID: 22222 Guids: \"\")"
                     ).WithTestRelativitySettings()
-                    .WithService(new Action<Mock<IObjectManager>>(m =>
-                        m.Setup(x =>
+                    .WithService(
+                        new MockSetup<IObjectManager, QueryResult>(x =>
                                 x.QueryAsync(11,
                                     It.Is<QueryRequest>(qr => true),
                                     10, 50, It.IsAny<CancellationToken>(),
                                     It.IsAny<IProgress<ProgressReport>>()
-                                ))
-                            .Callback(
-                                new Action<int, QueryRequest, int, int, CancellationToken, IProgress<ProgressReport>>(
-                                    (i, request, start, length, cancel, progress) =>
-                                    {
-                                        progress.Report(new ProgressReport("Progress Message 1", null, null));
-                                    }))
-                            .ReturnsAsync(new QueryResult()
+                                ),
+                            new QueryResult()
                             {
                                 CurrentStartIndex = 10,
                                 ResultCount = 50,
@@ -72,17 +70,16 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                                         Name = "Result 1",
                                         FieldValues = new List<FieldValuePair>()
                                         {
-                                            new ()
+                                            new()
                                             {
                                                 Value = "Test Value 1a",
-                                                Field = new Field(){ArtifactID = 100, Name = "Field a"}
+                                                Field = new Field() { ArtifactID = 100, Name = "Field a" }
                                             },
-                                            new ()
+                                            new()
                                             {
                                                 Value = "Test Value 1b",
-                                                Field = new Field(){ArtifactID = 101, Name = "Field b"}
+                                                Field = new Field() { ArtifactID = 101, Name = "Field b" }
                                             },
-
                                         }
                                     },
                                     new()
@@ -91,22 +88,33 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                                         Name = "Result 2",
                                         FieldValues = new List<FieldValuePair>()
                                         {
-                                            new ()
+                                            new()
                                             {
                                                 Value = "Test Value 2a",
-                                                Field = new Field(){ArtifactID = 100, Name = "Field a"}
+                                                Field = new Field() { ArtifactID = 100, Name = "Field a" }
                                             },
-                                            new ()
+                                            new()
                                             {
                                                 Value = "Test Value 2b",
-                                                Field = new Field(){ArtifactID = 100, Name = "Field b"}
+                                                Field = new Field() { ArtifactID = 100, Name = "Field b" }
                                             },
-
                                         }
                                     },
                                 }
-                            })
-                    ));
+                            }
+                        )
+                        {
+                            AdditionalAction = Maybe<Action<ISetup<IObjectManager, Task<QueryResult>>>>.From(
+                                x => x.Callback(
+                                    new Action<int, QueryRequest, int, int, CancellationToken,
+                                        IProgress<ProgressReport>>(
+                                        (_, _, _, _, _, progress) =>
+                                        {
+                                            progress.Report(new ProgressReport("Progress Message 1", null, null));
+                                        })
+                                ))
+                        }
+                    );
             }
         }
     }

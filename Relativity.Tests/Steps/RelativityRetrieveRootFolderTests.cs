@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Moq;
+﻿using System.Collections.Generic;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Steps;
@@ -26,18 +24,19 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                                 WorkspaceArtifactId = Constant(42)
                             }
                         },
-                        Unit.Default, 
+                        Unit.Default,
                         "(ParentFolder: (ArtifactID: 0 Name: \"\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 12345 Name: \"MyFolder\")"
-
                     ).WithTestRelativitySettings()
-                    .WithService(new Action<Mock<IFolderManager>>(
-                        m => m.Setup(x => x.GetWorkspaceRootAsync(42))
-                            .ReturnsAsync(new Folder()
+                    .WithService(
+                        new MockSetup<IFolderManager, Folder>(
+                            x => x.GetWorkspaceRootAsync(42),
+                            new Folder()
                             {
                                 Name = "MyFolder",
                                 ArtifactID = 12345
-                            })
-                    ));
+                            }
+                        )
+                    );
             }
         }
     }

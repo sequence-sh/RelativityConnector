@@ -24,18 +24,6 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                     "(Client: \"\" ClientNumber: \"\" DownloadHandlerUrl: \"TestURL\" EnableDataGrid: False Matter: \"\" MatterNumber: \"\" ProductionRestrictions: \"\" ResourcePool: \"\" DefaultFileRepository: \"\" DataGridFileRepository: \"\" DefaultCacheLocation: \"\" SqlServer: \"\" AzureCredentials: \"\" AzureFileSystemCredentials: \"\" SqlFullTextLanguage: \"\" Status: \"\" WorkspaceAdminGroup: \"\" Keywords: \"\" Notes: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Meta: \"\" Actions: \"\" Name: \"MyNewWorkspace\" ArtifactID: 0 Guids: \"\")";
 
 
-                void SetupWorkspaceManager(Mock<IWorkspaceManager> workspaceManager)
-                {
-                    workspaceManager.Setup(x => x.CreateAsync(It.IsAny<WorkspaceRequest>(), It.IsAny<CancellationToken>()))
-                        .ReturnsAsync(new WorkspaceResponse() { Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL" });
-
-                    workspaceManager.Setup(x => x.GetDefaultDownloadHandlerURLAsync())
-                        .ReturnsAsync("TestURL");
-
-                    workspaceManager.Setup(x => x.Dispose());
-                }
-
-
                 yield return new StepCase(
                             "Export with condition",
                             new Log<Entity>()
@@ -55,8 +43,12 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                             expectedEntityString
                         )
                         .WithTestRelativitySettings()
-                        .WithService(
-                            (Action<Mock<IWorkspaceManager>>)SetupWorkspaceManager
+                        .WithService(new MockSetup<IWorkspaceManager, WorkspaceResponse>(
+                                x => x.CreateAsync(It.IsAny<WorkspaceRequest>(), It.IsAny<CancellationToken>()),
+                                new WorkspaceResponse() { Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL" }
+                            ),
+                            new MockSetup<IWorkspaceManager, string>(x => x.GetDefaultDownloadHandlerURLAsync(),
+                                "TestURL")
                         )
                     ;
             }

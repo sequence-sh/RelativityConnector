@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
-using Moq;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
@@ -17,22 +14,15 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
         {
             get
             {
-                void SetupWorkspaceManager(Mock<IWorkspaceManager> workspaceManager)
-                {
-                    workspaceManager.Setup(x => x.DeleteAsync(42, CancellationToken.None))
-                        .Returns(Task.CompletedTask);
-
-                    workspaceManager.Setup(x => x.Dispose());
-                }
-
-
                 yield return new StepCase("Delete a Workspace",
-                        new RelativityDeleteWorkspace()
-                        {
-                            WorkspaceId = StaticHelpers.Constant(42)
-                        }, Unit.Default
-                    ).WithTestRelativitySettings()
-                    .WithService((Action<Mock<IWorkspaceManager>>)SetupWorkspaceManager);
+                            new RelativityDeleteWorkspace()
+                            {
+                                WorkspaceId = StaticHelpers.Constant(42)
+                            }, Unit.Default
+                        ).WithTestRelativitySettings()
+                        .WithService(
+                            new MockSetupUnit<IWorkspaceManager>(x => x.DeleteAsync(42, CancellationToken.None)))
+                    ;
             }
         }
     }
