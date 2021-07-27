@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Moq;
+﻿using System.Collections.Generic;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Reductech.EDR.Core.Util;
@@ -25,11 +22,12 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                         },
                         Unit.Default
                     ).WithTestRelativitySettings()
-                    .WithService(new Action<Mock<IFolderManager>>(
-                        m =>
-                            m.Setup(x => x.DeleteUnusedFoldersAsync(42))
-                                .ReturnsAsync(new FolderResultSet() { Success = true })
-                    ));
+                    .WithService(
+                        new MockSetup<IFolderManager, FolderResultSet>(
+                            x => x.DeleteUnusedFoldersAsync(42),
+                            new FolderResultSet() { Success = true }
+                        )
+                    );
             }
         }
 
@@ -46,10 +44,11 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                         },
                         ErrorCode_Relativity.Unsuccessful.ToErrorBuilder("Test Error Message")
                     ).WithTestRelativitySettings()
-                    .WithService(new Action<Mock<IFolderManager>>(m =>
-                        m.Setup(x => x.DeleteUnusedFoldersAsync(42))
-                            .ReturnsAsync(new FolderResultSet() { Success = false, Message = "Test Error Message" })
-                    ));
+                    .WithService(
+                        new MockSetup<IFolderManager, FolderResultSet>(
+                            x => x.DeleteUnusedFoldersAsync(42),
+                            new FolderResultSet() { Success = false, Message = "Test Error Message" }
+                        ));
 
 
                 foreach (var errorCase in base.ErrorCases)

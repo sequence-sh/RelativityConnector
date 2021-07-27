@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
@@ -26,11 +24,12 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                         },
                         Unit.Default
                     ).WithTestRelativitySettings()
-                    .WithService(new Action<Mock<IFolderManager>>(
-                        m => m.Setup(manager =>
-                            manager.UpdateSingleAsync(11,
-                                It.Is<Folder>(x => x.ArtifactID == 22 && x.Name == "NewName"))).Returns(Task.CompletedTask)
-                    ));
+                    .WithService(new MockSetupUnit<IFolderManager>(
+                            manager =>
+                                manager.UpdateSingleAsync(11,
+                                    It.Is<Folder>(x => x.ArtifactID == 22 && x.Name == "NewName"))
+                        )
+                    );
             }
         }
     }

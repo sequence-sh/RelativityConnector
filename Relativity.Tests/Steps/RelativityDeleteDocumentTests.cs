@@ -32,12 +32,13 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                         Unit.Default,
                         "(Report: (DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")]))"
                     ).WithTestRelativitySettings()
-                    .WithService(new Action<Mock<IObjectManager>>(m =>
-                        m.Setup(x =>
+                    .WithService(
+                        new MockSetup<IObjectManager, DeleteResult>(
+                            x =>
                                 x.DeleteAsync(11,
                                     It.Is<DeleteRequest>(dr => dr.Object.ArtifactID == 22),
-                                    It.IsAny<CancellationToken>()))
-                            .ReturnsAsync(new DeleteResult()
+                                    It.IsAny<CancellationToken>()),
+                            new DeleteResult()
                             {
                                 Report = new DeleteReport()
                                 {
@@ -51,8 +52,9 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                                         }
                                     }
                                 }
-                            })
-                    ));
+                            }
+                        )
+                    );
             }
         }
     }

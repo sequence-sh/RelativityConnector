@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Moq;
+﻿using System.Collections.Generic;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Steps;
@@ -21,40 +19,38 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
         {
             get
             {
-
                 yield return new StepCase("Retrieve Workspace",
-                    new Log<Entity>()
-                    {
-                        Value = new RelativityRetrieveWorkspace()
+                        new Log<Entity>()
                         {
-                            WorkspaceId = Constant(11),
-                            IncludeActions = Constant(true),
-                            IncludeMetadata = Constant(true),
-                        }
-                    },
-                    Unit.Default,
-                    "(Client: \"\" ClientNumber: \"\" DownloadHandlerUrl: \"\" EnableDataGrid: False Matter: \"\" MatterNumber: \"\" ProductionRestrictions: \"\" ResourcePool: \"\" DefaultFileRepository: \"\" DataGridFileRepository: \"\" DefaultCacheLocation: \"\" SqlServer: \"\" AzureCredentials: \"\" AzureFileSystemCredentials: \"\" SqlFullTextLanguage: \"\" Status: \"\" WorkspaceAdminGroup: \"\" Keywords: \"\" Notes: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Meta: (Unsupported: \"\" ReadOnly: [\"Meta\", \"Data\"]) Actions: [(Name: \"MyAction\" Href: \"\" Verb: \"Post\" IsAvailable: True Reason: \"\")] Name: \"\" ArtifactID: 11 Guids: \"\")"
-
-
-                ).WithTestRelativitySettings().WithService(new Action<Mock<IWorkspaceManager>>(
-                    m=>m.Setup(a=>a.ReadAsync(11,true,true))
-                        .ReturnsAsync(new WorkspaceResponse()
-                        {
-                            ArtifactID = 11,Actions = new List<Action>()
+                            Value = new RelativityRetrieveWorkspace()
                             {
-                                new (){Name = "MyAction", IsAvailable = true, Verb = "Post"}
-                            },
-                            Meta = new Meta()
+                                WorkspaceId = Constant(11),
+                                IncludeActions = Constant(true),
+                                IncludeMetadata = Constant(true),
+                            }
+                        },
+                        Unit.Default,
+                        "(Client: \"\" ClientNumber: \"\" DownloadHandlerUrl: \"\" EnableDataGrid: False Matter: \"\" MatterNumber: \"\" ProductionRestrictions: \"\" ResourcePool: \"\" DefaultFileRepository: \"\" DataGridFileRepository: \"\" DefaultCacheLocation: \"\" SqlServer: \"\" AzureCredentials: \"\" AzureFileSystemCredentials: \"\" SqlFullTextLanguage: \"\" Status: \"\" WorkspaceAdminGroup: \"\" Keywords: \"\" Notes: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Meta: (Unsupported: \"\" ReadOnly: [\"Meta\", \"Data\"]) Actions: [(Name: \"MyAction\" Href: \"\" Verb: \"Post\" IsAvailable: True Reason: \"\")] Name: \"\" ArtifactID: 11 Guids: \"\")"
+                    ).WithTestRelativitySettings()
+                    .WithService(
+                        new MockSetup<IWorkspaceManager, WorkspaceResponse>(
+                            a => a.ReadAsync(11, true, true),
+                            new WorkspaceResponse()
                             {
-                                ReadOnly = new List<string>()
+                                ArtifactID = 11, Actions = new List<Action>()
                                 {
-                                    "Meta", "Data"
+                                    new() { Name = "MyAction", IsAvailable = true, Verb = "Post" }
+                                },
+                                Meta = new Meta()
+                                {
+                                    ReadOnly = new List<string>()
+                                    {
+                                        "Meta", "Data"
+                                    }
                                 }
                             }
-                        })
-                    
-                    
-                    ));
+                        )
+                    );
             }
         }
     }
