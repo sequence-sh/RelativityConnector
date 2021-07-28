@@ -12,50 +12,55 @@ using Relativity.Services.Objects.DataContracts;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
-    public partial class RelativityDeleteDocumentTests : StepTestBase<RelativityDeleteDocument, Entity>
+
+public partial class RelativityDeleteDocumentTests : StepTestBase<RelativityDeleteDocument, Entity>
+{
+    /// <inheritdoc />
+    protected override IEnumerable<StepCase> StepCases
     {
-        /// <inheritdoc />
-        protected override IEnumerable<StepCase> StepCases
+        get
         {
-            get
-            {
-                yield return new StepCase(
-                        "Delete Document",
-                        new Log<Entity>()
+            yield return new StepCase(
+                    "Delete Document",
+                    new Log<Entity>()
+                    {
+                        Value = new RelativityDeleteDocument()
                         {
-                            Value = new RelativityDeleteDocument()
+                            WorkspaceArtifactId = StaticHelpers.Constant(11),
+                            ObjectArtifactId    = StaticHelpers.Constant(22)
+                        }
+                    },
+                    Unit.Default,
+                    "(Report: (DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")]))"
+                ).WithTestRelativitySettings()
+                .WithService(
+                    new MockSetup<IObjectManager, DeleteResult>(
+                        x =>
+                            x.DeleteAsync(
+                                11,
+                                It.Is<DeleteRequest>(dr => dr.Object.ArtifactID == 22),
+                                It.IsAny<CancellationToken>()
+                            ),
+                        new DeleteResult()
+                        {
+                            Report = new DeleteReport()
                             {
-                                WorkspaceArtifactId = StaticHelpers.Constant(11),
-                                ObjectArtifactId = StaticHelpers.Constant(22)
-                            }
-                        },
-                        Unit.Default,
-                        "(Report: (DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")]))"
-                    ).WithTestRelativitySettings()
-                    .WithService(
-                        new MockSetup<IObjectManager, DeleteResult>(
-                            x =>
-                                x.DeleteAsync(11,
-                                    It.Is<DeleteRequest>(dr => dr.Object.ArtifactID == 22),
-                                    It.IsAny<CancellationToken>()),
-                            new DeleteResult()
-                            {
-                                Report = new DeleteReport()
+                                DeletedItems = new List<DeleteItem>()
                                 {
-                                    DeletedItems = new List<DeleteItem>()
+                                    new()
                                     {
-                                        new()
-                                        {
-                                            Action = "delete",
-                                            Connection = "object",
-                                            Count = 1, ObjectTypeName = "document"
-                                        }
+                                        Action         = "delete",
+                                        Connection     = "object",
+                                        Count          = 1,
+                                        ObjectTypeName = "document"
                                     }
                                 }
                             }
-                        )
-                    );
-            }
+                        }
+                    )
+                );
         }
     }
+}
+
 }

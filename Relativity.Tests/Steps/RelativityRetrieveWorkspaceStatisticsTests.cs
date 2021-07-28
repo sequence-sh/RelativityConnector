@@ -12,35 +12,37 @@ using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
-    public partial class
-        RelativityRetrieveWorkspaceStatisticsTests : StepTestBase<RelativityRetrieveWorkspaceStatistics, Entity>
+
+public partial class
+    RelativityRetrieveWorkspaceStatisticsTests : StepTestBase<RelativityRetrieveWorkspaceStatistics,
+        Entity>
+{
+    /// <inheritdoc />
+    protected override IEnumerable<StepCase> StepCases
     {
-        /// <inheritdoc />
-        protected override IEnumerable<StepCase> StepCases
+        get
         {
-            get
-            {
-                yield return new StepCase("Retrieve Workspace Statistics",
-                            new Log<Entity>()
+            yield return new StepCase(
+                        "Retrieve Workspace Statistics",
+                        new Log<Entity>()
+                        {
+                            Value = new RelativityRetrieveWorkspaceStatistics()
                             {
-                                Value = new RelativityRetrieveWorkspaceStatistics()
-                                {
-                                    WorkspaceId = Constant(42)
-                                }
-                            },
-                            Unit.Default,
-                            "(DocumentCount: 1234 FileSize: 5678)"
-                        ).WithTestRelativitySettings()
-                        .WithService(new MockSetup<IWorkspaceManager, WorkspaceSummary>(
-                            x => x.GetWorkspaceSummaryAsync(42),
-                            new WorkspaceSummary()
-                            {
-                                DocumentCount = 1234,
-                                FileSize = 5678
+                                WorkspaceId = Constant(42)
                             }
-                        ))
-                    ;
-            }
+                        },
+                        Unit.Default,
+                        "(DocumentCount: 1234 FileSize: 5678)"
+                    ).WithTestRelativitySettings()
+                    .WithService(
+                        new MockSetup<IWorkspaceManager, WorkspaceSummary>(
+                            x => x.GetWorkspaceSummaryAsync(42),
+                            new WorkspaceSummary() { DocumentCount = 1234, FileSize = 5678 }
+                        )
+                    )
+                ;
         }
     }
+}
+
 }

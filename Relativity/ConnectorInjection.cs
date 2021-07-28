@@ -7,24 +7,27 @@ using Reductech.EDR.Core.Internal.Errors;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
-    public sealed class ConnectorInjection : IConnectorInjection
+
+public sealed class ConnectorInjection : IConnectorInjection
+{
+    public const string FlurlClientFactoryKey = "FlurlClientFactory";
+
+    public const string ServiceFactoryFactoryKey = "RelativityServiceFactoryFactory";
+
+    /// <inheritdoc />
+    public Result<IReadOnlyCollection<(string Name, object Context)>, IErrorBuilder>
+        TryGetInjectedContexts()
     {
-        public const string FlurlClientFactoryKey = "FlurlClientFactory";
+        IFlurlClient flurlClient = new FlurlClient(new HttpClient());
 
-        public const string ServiceFactoryFactoryKey = "RelativityServiceFactoryFactory";
-
-        /// <inheritdoc />
-        public Result<IReadOnlyCollection<(string Name, object Context)>, IErrorBuilder> TryGetInjectedContexts()
+        var list = new List<(string Name, object Context)>()
         {
-            IFlurlClient flurlClient = new FlurlClient(new HttpClient());
+            (FlurlClientFactoryKey, flurlClient),
+            (ServiceFactoryFactoryKey, DefaultServiceFactoryFactory.Instance)
+        };
 
-            var list = new List<(string Name, object Context)>()
-            {
-                (FlurlClientFactoryKey, flurlClient),
-                (ServiceFactoryFactoryKey, DefaultServiceFactoryFactory.Instance)
-            };
-
-            return list;
-        }
+        return list;
     }
+}
+
 }

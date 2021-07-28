@@ -22,7 +22,6 @@
 //        }
 //    }
 
-
 //    public class ImportIntegrationTestCases : TestBase
 //    {
 //        /// <inheritdoc />
@@ -32,7 +31,6 @@
 //                yield return  new TestCase();
 //            }
 //        }
-
 
 //        public class TestCase : ITestBaseCase
 //        {
@@ -46,7 +44,6 @@
 //                    RelativityUsername = "relativity.admin@relativity.com"
 //                };
 
-
 //                var step = new RelativityImportStep()
 //                {
 //                    FilePath = new Constant<string>(@"C:\Users\wainw\source\repos\Examples\Concordance\Carla2\loadfile.dat"),
@@ -57,12 +54,10 @@
 //                    WorkspaceId = new Constant<int>(1017936)
 //                };
 
-
 //                var loggerFactory = new LoggerFactory(new[] { new XunitLoggerProvider(testOutputHelper) });
 
 //                var logger = loggerFactory.CreateLogger(Name);
 //                var stateMonad = new StateMonad(logger, settings, ExternalProcessRunner.Instance);
-
 
 //                var r = step.Run(stateMonad);
 
@@ -75,3 +70,5 @@
 //    }
 
 //}
+
+

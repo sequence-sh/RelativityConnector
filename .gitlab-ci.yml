@@ -5,8 +5,4 @@ include:
 variables:
   PACKAGE_NAME_NUGET: Reductech.EDR.Connectors.Relativity
   PACKAGE_NAME_DLL: Reductech.EDR.Connectors.Relativity
-
-mutation testing:
-  image: registry.gitlab.com/reductech/containers/dotnet/sdk
-  tags: 
-    - rt-windows
+  PUBLISH_CONNECTOR: 1
