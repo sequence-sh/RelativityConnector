@@ -45,29 +45,43 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
         }
 
+        protected Result<T, IErrorBuilder> TryGetService<T>(IStateMonad stateMonad)
+        where T: IDisposable
+        {
+            var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
+            if (settingsResult.IsFailure)
+                return settingsResult.ConvertFailure<T>();
+
+            var serviceFactoryFactory = stateMonad.ExternalContext.TryGetContext<IServiceFactoryFactory>(ConnectorInjection.ServiceFactoryFactoryKey);
+
+            if (serviceFactoryFactory.IsFailure) 
+                return serviceFactoryFactory.ConvertFailure<T>();
+
+            var serviceFactory = serviceFactoryFactory.Value.CreateServiceFactory(settingsResult.Value);
+
+            var service = serviceFactory.CreateProxy<T>();
+
+            return service;
+        }
+
         /// <inheritdoc />
         protected override async Task<Result<TOutput, IError>> Run(IStateMonad stateMonad, CancellationToken cancellationToken)
         {
             var requestObjectResult = await TryCreateRequest(stateMonad, cancellationToken);
             if (requestObjectResult.IsFailure) return requestObjectResult.ConvertFailure<TOutput>();
 
-            var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
-            if (settingsResult.IsFailure)
-                return settingsResult.MapError(x => x.WithLocation(this)).ConvertFailure<TOutput>();
 
-            var serviceFactoryFactory = stateMonad.ExternalContext.TryGetContext<IServiceFactoryFactory>(ConnectorInjection.ServiceFactoryFactoryKey);
+            var serviceResult = TryGetService<TService>(stateMonad);
+            if (serviceResult.IsFailure) return serviceResult.MapError(x=>x.WithLocation(this)) .ConvertFailure<TOutput>();
 
-            if (serviceFactoryFactory.IsFailure) 
-                return serviceFactoryFactory.MapError(x=>x.WithLocation(this)).ConvertFailure<TOutput>();
-
-            var serviceFactory = serviceFactoryFactory.Value.CreateServiceFactory(settingsResult.Value);
+            using var service = serviceResult.Value;
 
             TServiceOutput serviceOutput;
-            using var service = serviceFactory.CreateProxy<TService>();
+
             try
             {
-                serviceOutput = await SendRequest(stateMonad, service, requestObjectResult.Value, cancellationToken);
-                
+                serviceOutput = await SendRequest(stateMonad, serviceResult.Value, requestObjectResult.Value, cancellationToken);
+
             }
             catch (Exception ex)
             {
