@@ -1,9 +1,5 @@
 # EDR Connector for Relativity®
 
-[![pipeline status](https://gitlab.com/reductech/edr/connectors/relativity/badges/master/pipeline.svg)](https://gitlab.com/reductech/edr/connectors/relativity/-/commits/master)
-[![coverage report](https://gitlab.com/reductech/edr/connectors/relativity/badges/master/coverage.svg)](https://gitlab.com/reductech/edr/connectors/relativity/-/commits/master)
-[![Gitter](https://badges.gitter.im/reductech/edr.svg)](https://gitter.im/reductech/edr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
 # Releases
 
 Can be downloaded from the [Releases page](https://gitlab.com/reductech/edr/connectors/relativity/-/releases).
