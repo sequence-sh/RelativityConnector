@@ -23,6 +23,11 @@ public sealed record ErrorCode_Relativity : ErrorCodeBase
     /// </summary>
     public static readonly ErrorCode_Relativity Unsuccessful = new(nameof(Unsuccessful));
 
+    /// <summary>
+    /// Missing Field: {0}
+    /// </summary>
+    public static readonly ErrorCode_Relativity MissingField = new(nameof(MissingField));
+
     /// <inheritdoc />
     public override string GetFormatString()
     {

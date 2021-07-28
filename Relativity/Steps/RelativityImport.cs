@@ -89,7 +89,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
             return r;
         }
 
-        private Result<IReadOnlyCollection<KeyValuePair<string, string>>, IError> TryGetArguments(
+        private static Result<IReadOnlyCollection<KeyValuePair<string, string>>, IError> TryGetArguments(
             RelativitySettings relativitySettings)
         {
             var pairs = new List<KeyValuePair<string, string>>

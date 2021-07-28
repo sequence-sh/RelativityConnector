@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -17,7 +18,13 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests
 {
-    public interface IMockSetup<TService>where TService : class, IDisposable
+    public interface IMockSetup
+    {
+        Type ServiceType { get; }
+    }
+
+    public interface IMockSetup<TService> : IMockSetup
+        where TService : class, IDisposable
     {
         void Setup(Mock<TService> mock);
     }
@@ -30,12 +37,15 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
             Function = function;
         }
 
-        public Expression<Func<TService, Task>> Function { get;  }
+        public Expression<Func<TService, Task>> Function { get; }
 
         public void Setup(Mock<TService> mock)
         {
             mock.Setup(Function).Returns(Task.CompletedTask);
         }
+
+        /// <inheritdoc />
+        public Type ServiceType => typeof(TService);
     }
 
     public class MockSetup<TService, TResult> : IMockSetup<TService>
@@ -47,7 +57,8 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
             Result = result;
         }
 
-        public Maybe<Action<ISetup<TService, Task<TResult>>>> AdditionalAction { get; set; } = Maybe<Action<ISetup<TService, Task<TResult>>>>.None;
+        public Maybe<Action<ISetup<TService, Task<TResult>>>> AdditionalAction { get; set; } =
+            Maybe<Action<ISetup<TService, Task<TResult>>>>.None;
 
         public Expression<Func<TService, Task<TResult>>> Function { get; }
 
@@ -61,11 +72,13 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
 
             s.ReturnsAsync(Result);
         }
+
+        /// <inheritdoc />
+        public Type ServiceType => typeof(TService);
     }
 
     public static class TestHelpers
     {
-
         public static IStep<Unit> LogEntity(IStep<Entity> entityStep)
         {
             return new Log<Entity>() { Value = entityStep };
@@ -95,27 +108,42 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
             return stepCase.WithRelativitySettings(settings);
         }
 
-        public static T WithService<T, TService>(this T stepCase, params IMockSetup<TService>[] mockSetups)
-        where TService : class, IDisposable
-        where T : ICaseWithSetup
+        public static T WithService<T>(this T stepCase, params IMockSetup[] mockSetups)
+            where T : ICaseWithSetup
         {
             var repo = new MockRepository(MockBehavior.Strict);
 
+            var services = new List<IDisposable>();
+
+            foreach (var grouping in mockSetups.GroupBy(x => x.ServiceType))
+            {
+                Mock mock = CreateMock(repo, grouping.First() as dynamic, grouping.ToList());
+
+                services.Add(mock.Object as IDisposable);
+            }
+
+
+            stepCase.WithContext(
+                ConnectorInjection.ServiceFactoryFactoryKey,
+                new TestServiceFactoryFactory(services.ToArray())
+            );
+
+            return stepCase;
+        }
+
+        private static Mock CreateMock<TService>(MockRepository repo, IMockSetup<TService> mockSetup1, IEnumerable<IMockSetup> mockSetups)
+            where TService : class, IDisposable
+        {
             var mock = repo.Create<TService>();
 
-            foreach (var mockSetup in mockSetups)
+            foreach (var mockSetup in mockSetups.Cast<IMockSetup<TService>>())
             {
                 mockSetup.Setup(mock);
             }
 
             mock.Setup(x => x.Dispose());
 
-            stepCase.WithContext(
-                ConnectorInjection.ServiceFactoryFactoryKey,
-                new TestServiceFactoryFactory(mock.Object)
-            );
-
-            return stepCase;
+            return mock;
         }
 
         public static T WithRelativitySettings<T>(this T stepCase, RelativitySettings relativitySettings)
@@ -130,8 +158,12 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
                             Id = RelativityAssembly.GetName().Name!,
                             Settings = new Dictionary<string, object>()
                             {
-                                { nameof(RelativitySettings.RelativityUsername), relativitySettings.RelativityUsername },
-                                { nameof(RelativitySettings.RelativityPassword), relativitySettings.RelativityPassword },
+                                {
+                                    nameof(RelativitySettings.RelativityUsername), relativitySettings.RelativityUsername
+                                },
+                                {
+                                    nameof(RelativitySettings.RelativityPassword), relativitySettings.RelativityPassword
+                                },
                                 { nameof(RelativitySettings.AuthParameters), relativitySettings.AuthParameters },
                                 { nameof(RelativitySettings.DesktopClientPath), relativitySettings.DesktopClientPath },
                                 { nameof(RelativitySettings.Url), relativitySettings.Url },
@@ -145,8 +177,5 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
 
 
         private static Assembly RelativityAssembly { get; } = typeof(RelativityImport).Assembly;
-
-
-        
     }
 }

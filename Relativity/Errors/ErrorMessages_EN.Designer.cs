@@ -61,6 +61,15 @@ namespace Reductech.EDR.Connectors.Relativity.Errors {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing Field: {0}.
+        /// </summary>
+        internal static string MissingField {
+            get {
+                return ResourceManager.GetString("MissingField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Request Failed withstatus code {0} . {1}.
         /// </summary>
         internal static string RequestFailed {
