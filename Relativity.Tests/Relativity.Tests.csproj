@@ -5,16 +5,16 @@
     <IsPackable>false</IsPackable>
     <IsPublishable>false</IsPublishable>
     <IsTestProject>true</IsTestProject>
+    <RootNamespace>Reductech.EDR.Connectors.Relativity.Tests</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
     <RepositoryUrl>https://gitlab.com/reductech/edr/connectors/relativity</RepositoryUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Authors>reductech</Authors>
+    <Authors>Reductech</Authors>
     <Company>Reductech</Company>
-    <Copyright>Copyright (c) 2020 Reductech Ltd</Copyright>
-    <RootNamespace>Reductech.EDR.Connectors.Relativity.Tests</RootNamespace>
-    <AssemblyName>Reductech.EDR.Connectors.Relativity.Tests</AssemblyName>
+    <Copyright>Copyright (c) 2021 Reductech Ltd</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
