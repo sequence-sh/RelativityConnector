@@ -21,8 +21,6 @@
 //        public override void Test(string key) => base.Test(key);
 //    }
 
-
-
 //    public class ExportUnitTestCases : TestBase
 //    {
 //        /// <inheritdoc />
@@ -33,8 +31,6 @@
 //            }
 //        }
 
-
-
 //        private class ExportTestCase : ITestBaseCase
 //        {
 //            public ExportTestCase(string name)
@@ -44,7 +40,6 @@
 
 //            /// <inheritdoc />
 //            public string Name { get; }
-
 
 //            /// <inheritdoc />
 //            public void Execute(ITestOutputHelper testOutputHelper)
@@ -81,7 +76,6 @@
 
 //                var workspaceId = 1017936;
 
-
 //                var fieldNames = new List<string>
 //                {
 //                    //1003667,// Control number,
@@ -98,7 +92,6 @@
 
 //                var condition = "'Extracted Text' ISSET ";
 
-
 //                var exportStep = new RelativityExportStep()
 //                {
 //                    BatchSize = new Constant<int>(10),
@@ -112,7 +105,6 @@
 
 //                var state = new StateMonad(logger, settings, null);
 
-
 //                var result = exportStep.Run(state);
 
 //                result.ShouldBeSuccessful(x => x.AsString);
@@ -125,7 +117,8 @@
 //                }
 //            }
 
-
 //        }
 //    }
 //}
+
+

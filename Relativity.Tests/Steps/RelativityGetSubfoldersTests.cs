@@ -13,46 +13,62 @@ using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
-    public partial class RelativityGetSubfoldersTests : StepTestBase<RelativityGetSubfolders, Array<Entity>>
+
+public partial class
+    RelativityGetSubfoldersTests : StepTestBase<RelativityGetSubfolders, Array<Entity>>
+{
+    /// <inheritdoc />
+    protected override IEnumerable<StepCase> StepCases
     {
-        /// <inheritdoc />
-        protected override IEnumerable<StepCase> StepCases
+        get
         {
-            get
-            {
-                yield return new StepCase("Get Subfolders",
-                            new ForEach<Entity>()
+            yield return new StepCase(
+                        "Get Subfolders",
+                        new ForEach<Entity>()
+                        {
+                            Array = new RelativityGetSubfolders()
                             {
-                                Array = new RelativityGetSubfolders()
-                                {
-                                    WorkspaceArtifactId = Constant(11),
-                                    FolderArtifactId = Constant(22)
-                                },
-                                Action = new LambdaFunction<Entity, Unit>(null,
-                                    new Log<Entity>() { Value = new GetAutomaticVariable<Entity>() })
+                                WorkspaceArtifactId = Constant(11),
+                                FolderArtifactId    = Constant(22)
                             },
-                            Unit.Default,
-                            "(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 101 Name: \"SubFolder 1\")",
-                            "(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 102 Name: \"SubFolder 2\")"
-                        ).WithTestRelativitySettings()
-                        .WithService(new MockSetup<IFolderManager, List<Folder>>(
+                            Action = new LambdaFunction<Entity, Unit>(
+                                null,
+                                new Log<Entity>() { Value = new GetAutomaticVariable<Entity>() }
+                            )
+                        },
+                        Unit.Default,
+                        "(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 101 Name: \"SubFolder 1\")",
+                        "(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 102 Name: \"SubFolder 2\")"
+                    ).WithTestRelativitySettings()
+                    .WithService(
+                        new MockSetup<IFolderManager, List<Folder>>(
                             x => x.GetChildrenAsync(11, 22),
                             new EditableList<Folder>()
                             {
                                 new()
                                 {
-                                    ArtifactID = 101, Name = "SubFolder 1",
-                                    ParentFolder = new FolderRef() { Name = "MyFolder", ArtifactID = 22 }
+                                    ArtifactID = 101,
+                                    Name       = "SubFolder 1",
+                                    ParentFolder = new FolderRef()
+                                    {
+                                        Name = "MyFolder", ArtifactID = 22
+                                    }
                                 },
                                 new()
                                 {
-                                    ArtifactID = 102, Name = "SubFolder 2",
-                                    ParentFolder = new FolderRef() { Name = "MyFolder", ArtifactID = 22 }
+                                    ArtifactID = 102,
+                                    Name       = "SubFolder 2",
+                                    ParentFolder = new FolderRef()
+                                    {
+                                        Name = "MyFolder", ArtifactID = 22
+                                    }
                                 },
                             }
-                        ))
-                    ;
-            }
+                        )
+                    )
+                ;
         }
     }
+}
+
 }

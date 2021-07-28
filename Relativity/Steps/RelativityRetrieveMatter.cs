@@ -12,33 +12,44 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-    public class RelativityRetrieveMatter : RelativityApiRequest<int, IMatterManager, MatterResponse, Entity>
+
+public class
+    RelativityRetrieveMatter : RelativityApiRequest<int, IMatterManager, MatterResponse, Entity>
+{
+    /// <inheritdoc />
+    public override IStepFactory StepFactory =>
+        new SimpleStepFactory<RelativityRetrieveMatter, Entity>();
+
+    /// <inheritdoc />
+    public override Result<Entity, IErrorBuilder> ConvertOutput(MatterResponse serviceOutput)
     {
-        /// <inheritdoc />
-        public override IStepFactory StepFactory => new SimpleStepFactory<RelativityRetrieveMatter, Entity>();
-
-        /// <inheritdoc />
-        public override Result<Entity, IErrorBuilder> ConvertOutput(MatterResponse serviceOutput)
-        {
-            return TryConvertToEntity(serviceOutput);
-        }
-
-        /// <inheritdoc />
-        public override Task<MatterResponse> SendRequest(IStateMonad stateMonad, IMatterManager service, int requestObject,
-            CancellationToken cancellationToken)
-        {
-            return service.ReadAsync(requestObject);
-        }
-
-        /// <inheritdoc />
-        public override  Task<Result<int, IError>> TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
-        {
-            return MatterArtifactId.Run(stateMonad, cancellation);
-        }
-
-        /// <summary>
-        /// The artifact id of the matter to retrieve
-        /// </summary>
-        [StepProperty(1)] [Required] public IStep<int> MatterArtifactId { get; set; } = null!;
+        return TryConvertToEntity(serviceOutput);
     }
+
+    /// <inheritdoc />
+    public override Task<MatterResponse> SendRequest(
+        IStateMonad stateMonad,
+        IMatterManager service,
+        int requestObject,
+        CancellationToken cancellationToken)
+    {
+        return service.ReadAsync(requestObject);
+    }
+
+    /// <inheritdoc />
+    public override Task<Result<int, IError>> TryCreateRequest(
+        IStateMonad stateMonad,
+        CancellationToken cancellation)
+    {
+        return MatterArtifactId.Run(stateMonad, cancellation);
+    }
+
+    /// <summary>
+    /// The artifact id of the matter to retrieve
+    /// </summary>
+    [StepProperty(1)]
+    [Required]
+    public IStep<int> MatterArtifactId { get; set; } = null!;
+}
+
 }

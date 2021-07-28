@@ -12,33 +12,39 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-    public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterManager,
-        List<DisplayableObjectIdentifier>, Array<Entity>>
+
+public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterManager,
+    List<DisplayableObjectIdentifier>, Array<Entity>>
+{
+    /// <inheritdoc />
+    public override IStepFactory StepFactory =>
+        new SimpleStepFactory<RelativityGetMatterStatuses, Array<Entity>>();
+
+    /// <inheritdoc />
+    public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(
+        List<DisplayableObjectIdentifier> serviceOutput)
     {
-        /// <inheritdoc />
-        public override IStepFactory StepFactory => new SimpleStepFactory<RelativityGetMatterStatuses, Array<Entity>>();
-
-        /// <inheritdoc />
-        public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(
-            List<DisplayableObjectIdentifier> serviceOutput)
-        {
-            return TryConvertToEntityArray(serviceOutput);
-        }
-
-        /// <inheritdoc />
-        public override Task<List<DisplayableObjectIdentifier>> SendRequest(IStateMonad stateMonad,
-            IMatterManager service, Unit requestObject,
-            CancellationToken cancellationToken)
-        {
-            return service.GetEligibleStatusesAsync();
-        }
-
-        /// <inheritdoc />
-        public override async Task<Result<Unit, IError>> TryCreateRequest(IStateMonad stateMonad,
-            CancellationToken cancellation)
-        {
-            await Task.CompletedTask;
-            return Unit.Default;
-        }
+        return TryConvertToEntityArray(serviceOutput);
     }
+
+    /// <inheritdoc />
+    public override Task<List<DisplayableObjectIdentifier>> SendRequest(
+        IStateMonad stateMonad,
+        IMatterManager service,
+        Unit requestObject,
+        CancellationToken cancellationToken)
+    {
+        return service.GetEligibleStatusesAsync();
+    }
+
+    /// <inheritdoc />
+    public override async Task<Result<Unit, IError>> TryCreateRequest(
+        IStateMonad stateMonad,
+        CancellationToken cancellation)
+    {
+        await Task.CompletedTask;
+        return Unit.Default;
+    }
+}
+
 }

@@ -13,49 +13,59 @@ using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
-    public partial class RelativityCreateWorkspaceTests : StepTestBase<RelativityCreateWorkspace, Entity>
+
+public partial class
+    RelativityCreateWorkspaceTests : StepTestBase<RelativityCreateWorkspace, Entity>
+{
+    /// <inheritdoc />
+    protected override IEnumerable<StepCase> StepCases
     {
-        /// <inheritdoc />
-        protected override IEnumerable<StepCase> StepCases
+        get
         {
-            get
-            {
-                var expectedEntityString =
-                    "(Client: \"\" ClientNumber: \"\" DownloadHandlerUrl: \"TestURL\" EnableDataGrid: False Matter: \"\" MatterNumber: \"\" ProductionRestrictions: \"\" ResourcePool: \"\" DefaultFileRepository: \"\" DataGridFileRepository: \"\" DefaultCacheLocation: \"\" SqlServer: \"\" AzureCredentials: \"\" AzureFileSystemCredentials: \"\" SqlFullTextLanguage: \"\" Status: \"\" WorkspaceAdminGroup: \"\" Keywords: \"\" Notes: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Meta: \"\" Actions: \"\" Name: \"MyNewWorkspace\" ArtifactID: 0 Guids: \"\")";
+            var expectedEntityString =
+                "(Client: \"\" ClientNumber: \"\" DownloadHandlerUrl: \"TestURL\" EnableDataGrid: False Matter: \"\" MatterNumber: \"\" ProductionRestrictions: \"\" ResourcePool: \"\" DefaultFileRepository: \"\" DataGridFileRepository: \"\" DefaultCacheLocation: \"\" SqlServer: \"\" AzureCredentials: \"\" AzureFileSystemCredentials: \"\" SqlFullTextLanguage: \"\" Status: \"\" WorkspaceAdminGroup: \"\" Keywords: \"\" Notes: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Meta: \"\" Actions: \"\" Name: \"MyNewWorkspace\" ArtifactID: 0 Guids: \"\")";
 
-
-                yield return new StepCase(
-                            "Export with condition",
-                            new Log<Entity>()
+            yield return new StepCase(
+                        "Export with condition",
+                        new Log<Entity>()
+                        {
+                            Value = new RelativityCreateWorkspace()
                             {
-                                Value = new RelativityCreateWorkspace()
-                                {
-                                    WorkspaceName = Constant("MyNewWorkspace"),
-                                    DefaultCacheLocationId = Constant(1),
-                                    DefaultFileRepositoryId = Constant(2),
-                                    MatterId = Constant(3),
-                                    ResourcePoolId = Constant(4),
-                                    SqlServerId = Constant(5),
-                                    StatusId = Constant(6),
-                                    TemplateId = Constant(7)
-                                }
-                            }, Unit.Default,
-                            expectedEntityString
-                        )
-                        .WithTestRelativitySettings()
-                        .WithService(new MockSetup<IWorkspaceManager, WorkspaceResponse>(
-                                x => x.CreateAsync(It.IsAny<WorkspaceRequest>(), It.IsAny<CancellationToken>()),
-                                new WorkspaceResponse() { Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL" }
+                                WorkspaceName           = Constant("MyNewWorkspace"),
+                                DefaultCacheLocationId  = Constant(1),
+                                DefaultFileRepositoryId = Constant(2),
+                                MatterId                = Constant(3),
+                                ResourcePoolId          = Constant(4),
+                                SqlServerId             = Constant(5),
+                                StatusId                = Constant(6),
+                                TemplateId              = Constant(7)
+                            }
+                        },
+                        Unit.Default,
+                        expectedEntityString
+                    )
+                    .WithTestRelativitySettings()
+                    .WithService(
+                        new MockSetup<IWorkspaceManager, WorkspaceResponse>(
+                            x => x.CreateAsync(
+                                It.IsAny<WorkspaceRequest>(),
+                                It.IsAny<CancellationToken>()
                             ),
-                            new MockSetup<IWorkspaceManager, string>(x => x.GetDefaultDownloadHandlerURLAsync(),
-                                "TestURL")
+                            new WorkspaceResponse()
+                            {
+                                Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL"
+                            }
+                        ),
+                        new MockSetup<IWorkspaceManager, string>(
+                            x => x.GetDefaultDownloadHandlerURLAsync(),
+                            "TestURL"
                         )
-                    ;
-            }
+                    )
+                ;
         }
+    }
 
-
-        public const string ResponseJson = @"{
+    public const string ResponseJson = @"{
   ""Client"": {
     ""Secured"": false,
     ""Value"": {
@@ -149,5 +159,6 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
   ""ArtifactID"": 1017266,
   ""Guids"": []
 }";
-    }
+}
+
 }
