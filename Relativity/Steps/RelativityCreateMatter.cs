@@ -36,20 +36,30 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         public override Task<Result<MatterRequest, IError>> TryCreateRequest(IStateMonad stateMonad,
             CancellationToken cancellation)
         {
-            var result = stateMonad.RunStepsAsync(ClientId, StatusId, MatterName.WrapStringStream(),
-                    Number.WrapStringStream(), Keywords.WrapStringStream(), Notes.WrapStringStream(), cancellation)
+            var result = stateMonad.RunStepsAsync(
+                    ClientId, 
+                    StatusId, 
+                    MatterName.WrapStringStream(),
+                    Number.WrapStringStream(), 
+                    Keywords.WrapNullable(x=>x.WrapStringStream()), 
+                    Notes.WrapNullable(x=>x.WrapStringStream()), cancellation)
                 .Map(x =>
                 {
                     var (clientId, statusId, matterName, number, keywords, notes) = x;
-                    return new MatterRequest()
+                    var request = new MatterRequest()
                     {
                         Name = matterName,
                         Client = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = clientId }),
                         Status = new Securable<ObjectIdentifier>(new ObjectIdentifier() { ArtifactID = statusId }),
-                        Keywords = keywords,
-                        Notes = notes,
                         Number = number
                     };
+
+                    if (keywords.HasValue)
+                        request.Keywords = keywords.Value;
+                    if (notes.HasValue)
+                        request.Notes = notes.Value;
+
+                    return request;
                 });
 
             return result;
@@ -63,8 +73,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
         [StepProperty(4)] [Required] public IStep<StringStream> Number { get; set; } = null!;
 
-        [StepProperty(5)] [Required] public IStep<StringStream> Keywords { get; set; } = null!;
+        [StepProperty(5)] [Required] public IStep<StringStream>? Keywords { get; set; } = null!;
 
-        [StepProperty(6)] [Required] public IStep<StringStream> Notes { get; set; } = null!;
+        [StepProperty(6)] [Required] public IStep<StringStream>? Notes { get; set; } = null!;
     }
 }

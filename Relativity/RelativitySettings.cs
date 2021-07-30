@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using Reductech.EDR.Core;
@@ -19,7 +20,8 @@ namespace Reductech.EDR.Connectors.Relativity
         /// <summary>
         /// The version of the API
         /// </summary>
-        [DataMember] public int APIVersionNumber { get; set; } = 1;
+        [DataMember]
+        public int APIVersionNumber { get; set; } = 1;
 
         public string AuthParameters => GenerateBasicAuthorizationParameter(RelativityUsername, RelativityPassword);
 
@@ -30,6 +32,18 @@ namespace Reductech.EDR.Connectors.Relativity
             var base64UsernameAndPassword = Convert.ToBase64String(unencodedBytes);
 
             return $"Basic {base64UsernameAndPassword}";
+        }
+
+        public Dictionary<string, object> ToDictionary()
+        {
+            return new Dictionary<string, object>()
+            {
+                { nameof(RelativityUsername), RelativityUsername },
+                { nameof(RelativityPassword), RelativityPassword },
+                { nameof(Url), Url },
+                { nameof(DesktopClientPath), DesktopClientPath },
+                { nameof(APIVersionNumber), APIVersionNumber },
+            };
         }
     }
 }

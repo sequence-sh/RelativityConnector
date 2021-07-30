@@ -78,8 +78,7 @@ namespace Reductech.EDR.Connectors.Relativity
             {
                 var resultElements =
                     await flurlClient.SetupRelativityRequest(
-                        relativitySettings,
-                        "Relativity.REST", "api", "Relativity.Objects", "workspace",
+                        relativitySettings, "Relativity.Objects", "workspace",
                         workspaceId.ToString(), "object", 
                         "retrieveNextResultsBlockFromExport"
                         
@@ -180,8 +179,6 @@ namespace Reductech.EDR.Connectors.Relativity
             {
                 exportResult = await
                     flurlClient.SetupRelativityRequest(relativitySettings,
-                            "Relativity.REST",
-                            "api",
                             "Relativity.Objects",
                             "workspace",
                             workspaceId.ToString(),
@@ -227,7 +224,6 @@ namespace Reductech.EDR.Connectors.Relativity
             try
             {
                 longText = await flurlClient.SetupRelativityRequest(relativitySettings,
-                    "Relativity.REST","api",
                     "Relativity.Objects","workspace",
                     workspaceId.ToString(),"object","streamlongtext"
                     

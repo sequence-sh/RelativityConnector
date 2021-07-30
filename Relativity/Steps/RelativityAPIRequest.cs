@@ -45,21 +45,35 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
         }
 
-        protected Result<T, IErrorBuilder> TryGetService<T>(IStateMonad stateMonad)
-        where T: IDisposable
+        /// <summary>
+        /// Get a service from the Relativity proxy
+        /// </summary>
+        protected Result<TService2, IErrorBuilder> TryGetService<TService2>(IStateMonad stateMonad)
+        where TService2: IDisposable
         {
             var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
             if (settingsResult.IsFailure)
-                return settingsResult.ConvertFailure<T>();
+                return settingsResult.ConvertFailure<TService2>();
 
             var serviceFactoryFactory = stateMonad.ExternalContext.TryGetContext<IServiceFactoryFactory>(ConnectorInjection.ServiceFactoryFactoryKey);
 
             if (serviceFactoryFactory.IsFailure) 
-                return serviceFactoryFactory.ConvertFailure<T>();
+                return serviceFactoryFactory.ConvertFailure<TService2>();
 
             var serviceFactory = serviceFactoryFactory.Value.CreateServiceFactory(settingsResult.Value);
 
-            var service = serviceFactory.CreateProxy<T>();
+            TService2 service;
+
+            try
+            {
+                service = serviceFactory.CreateProxy<TService2>();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
 
             return service;
         }

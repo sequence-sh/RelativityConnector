@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
@@ -15,6 +16,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     /// <summary>
     /// Retrieve a list of the available clients that you can associate with a matter.
     /// </summary>
+    [SCLExample("RelativityGetClients", ExecuteInTests = false, ExpectedOutput = "[(Name: \"Client 1\" ArtifactID: 1 Guids: \"\"), (Name: \"Client 2\" ArtifactID: 2 Guids: \"\")]")]
     public class RelativityGetClients : RelativityApiRequest<Unit, IMatterManager, List<DisplayableObjectIdentifier>,
         Array<Entity>>
     {
