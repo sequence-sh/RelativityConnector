@@ -14,20 +14,42 @@ public sealed class ConnectorInjection : IConnectorInjection
 
     public const string ServiceFactoryFactoryKey = "RelativityServiceFactoryFactory";
 
-    /// <inheritdoc />
-    public Result<IReadOnlyCollection<(string Name, object Context)>, IErrorBuilder>
-        TryGetInjectedContexts()
-    {
-        IFlurlClient flurlClient = new FlurlClient(new HttpClient());
+        private const bool UseFiddlerProxy = false;
 
-        var list = new List<(string Name, object Context)>()
+        /// <inheritdoc />
+        public Result<IReadOnlyCollection<(string Name, object Context)>, IErrorBuilder> TryGetInjectedContexts()
         {
-            (FlurlClientFactoryKey, flurlClient),
-            (ServiceFactoryFactoryKey, DefaultServiceFactoryFactory.Instance)
-        };
+            IFlurlClient flurlClient;
 
-        return list;
-    }
-}
+            if (UseFiddlerProxy)
+            {
+                var factory = new ProxyHttpClientFactory("http://127.0.0.1:8866");
+                flurlClient = new FlurlClient(factory.CreateHttpClient(factory.CreateMessageHandler()));
+            }
+            else
+            {
+                flurlClient = new FlurlClient();
+            }
+
+            
+
+            var list = new List<(string Name, object Context)>()
+            {
+                (FlurlClientFactoryKey, flurlClient),
+                (ServiceFactoryFactoryKey, new TemplateServiceFactoryFactory(flurlClient))
+            };
+
+            return list;
+        }
+
+        /// <summary>
+        /// Proxy class that lets you see requests in fiddler
+        /// </summary>
+         private class ProxyHttpClientFactory : DefaultHttpClientFactory {
+            private string _address;
+
+            public ProxyHttpClientFactory(string address) {
+                _address = address;
+            }
 
 }

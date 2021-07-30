@@ -19,7 +19,16 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
     public partial class ExampleTests
     {
 
-        public const string CreateMatterSCL = @"
+        public const string CreateMatterSCL = @"- <matterId> = RelativityCreateMatter
+    ClientId: 1018410
+    StatusId: ((RelativityGetMatterStatuses)[0]['ArtifactID'])
+    MatterName: 'Test Matter'
+    Number: '10'
+    Keywords: 'Test Keywords'
+    Notes: 'Test Notes'
+- log <matterId>";
+
+        public const string CreateWorkspaceSCL = @"
 - <matterId> = RelativityCreateMatter
     ClientId: ((RelativityGetClients)[0]['ArtifactID'])
     StatusId: ((RelativityGetMatterStatuses)[0]['ArtifactID'])
@@ -27,16 +36,32 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
     Number: '10'
     Keywords: 'Test Keywords'
     Notes: 'Test Notes'
+
+- <workspaceId> = RelativityCreateWorkspace
+    WorkspaceName: 'Test Workspace'
+    MatterId: <matterId>
+    StatusId: ((RelativityGetMatterStatuses)[0]['ArtifactID'])
+
 - log <matterId>
 - RelativityDeleteMatter <matterId>
+- RelativityDeleteWorkspace <workspaceId>
+";
+
+        public const string CreateRDOsSCL = @"
+RelativityCreateRdos
+    WorkspaceArtifactId: 123
+    Entities: [(Name: 'My Entity')]
+    ArtifactTypeId: 10
+
 ";
 
 
         //[Theory(Skip = "Manual")]
         [Theory]
         [Trait("Category", "Integration")]
-        [InlineData("Log (RelativityGetClients)")]
-        [InlineData(CreateMatterSCL)]
+        //[InlineData("Log (RelativityGetClients)")]
+        //[InlineData(CreateMatterSCL)]
+        [InlineData("RelativityDeleteWorkspace 1003663")]
         public async Task RunSCLSequence(string scl)
         {
             var logger =
