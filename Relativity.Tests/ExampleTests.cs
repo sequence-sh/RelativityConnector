@@ -28,6 +28,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
     Keywords: 'Test Keywords'
     Notes: 'Test Notes'
 - log <matterId>
+- RelativityDeleteMatter <matterId>
 ";
 
 

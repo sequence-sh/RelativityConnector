@@ -31,31 +31,31 @@ public class TemplateMatterManager : ManagerBase, IMatterManager
 	public Task<MatterResponse> ReadAsync(Int32 matterID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{matterID:int}";
+		var route = $"{matterID}";
 		return GetJsonAsync<MatterResponse>(route, cancellationToken);
 	}
 	public Task<MatterResponse> ReadAsync(Int32 matterID, Boolean includeMetadata, Boolean includeActions)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{matterID:int}/{includeMetadata:bool}/{includeActions:bool}";
+		var route = $"{matterID}/{includeMetadata}/{includeActions}";
 		return GetJsonAsync<MatterResponse>(route, cancellationToken);
 	}
 	public Task UpdateAsync(Int32 matterID, MatterRequest matterRequest)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{matterID:int}";
+		var route = $"{matterID}";
 		return PutAsync(route, new{matterRequest}, cancellationToken);
 	}
 	public Task UpdateAsync(Int32 matterID, MatterRequest matterRequest, DateTime lastModifiedOn)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{matterID:int}";
+		var route = $"{matterID}";
 		return PutAsync(route, new{matterRequest}, cancellationToken);
 	}
 	public Task DeleteAsync(Int32 matterID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{matterID:int}";
+		var route = $"{matterID}";
 		return DeleteAsync(route, cancellationToken);
 	}
 	public Task<List<DisplayableObjectIdentifier>> GetEligibleClientsAsync()
@@ -112,49 +112,49 @@ public class TemplateWorkspaceManager : ManagerBase, IWorkspaceManager
 	public Task<WorkspaceResponse> ReadAsync(Int32 workspaceID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}";
+		var route = $"{workspaceID}";
 		return GetJsonAsync<WorkspaceResponse>(route, cancellationToken);
 	}
 	public Task<WorkspaceResponse> ReadAsync(Int32 workspaceID, Boolean includeMetadata, Boolean includeActions)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}/{includeMetadata:bool}/{includeActions:bool}";
+		var route = $"{workspaceID}/{includeMetadata}/{includeActions}";
 		return GetJsonAsync<WorkspaceResponse>(route, cancellationToken);
 	}
 	public Task<WorkspaceResponse> UpdateAsync(Int32 workspaceID, WorkspaceRequest workspaceRequest)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}";
+		var route = $"{workspaceID}";
 		return PutAsync<WorkspaceResponse>(route, new{workspaceRequest}, cancellationToken);
 	}
 	public Task<WorkspaceResponse> UpdateAsync(Int32 workspaceID, WorkspaceRequest workspaceRequest, DateTime lastModifiedOn)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}";
+		var route = $"{workspaceID}";
 		return PutAsync<WorkspaceResponse>(route, new{workspaceRequest}, cancellationToken);
 	}
 	public Task DeleteAsync(Int32 workspaceID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}";
+		var route = $"{workspaceID}";
 		return DeleteAsync(route, cancellationToken);
 	}
 	public Task DeleteAsync(Int32 workspaceID, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}";
+		var route = $"{workspaceID}";
 		return DeleteAsync(route, cancellationToken);
 	}
 	public Task DeleteAsync(Int32 workspaceID, CancellationToken cancel)
 	{
 		var cancellationToken = cancel;
-		var route = $"{workspaceID:int}";
+		var route = $"{workspaceID}";
 		return DeleteAsync(route, cancellationToken);
 	}
 	public Task DeleteAsync(Int32 workspaceID, CancellationToken cancel, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = cancel;
-		var route = $"{workspaceID:int}";
+		var route = $"{workspaceID}";
 		return DeleteAsync(route, cancellationToken);
 	}
 	public Task<Meta> GetMetaAsync()
@@ -166,25 +166,25 @@ public class TemplateWorkspaceManager : ManagerBase, IWorkspaceManager
 	public Task<QueryResultSlim> QueryWorkspaceByGroupAsync(QueryRequest request, Int32 start, Int32 length, Int32 groupID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"query-by-group/{groupID:int}";
+		var route = $"query-by-group/{groupID}";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryWorkspaceByGroupAsync(QueryRequest request, Int32 start, Int32 length, Int32 groupID, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"query-by-group/{groupID:int}";
+		var route = $"query-by-group/{groupID}";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryWorkspaceByGroupAsync(QueryRequest request, Int32 start, Int32 length, Int32 groupID, CancellationToken cancel)
 	{
 		var cancellationToken = cancel;
-		var route = $"query-by-group/{groupID:int}";
+		var route = $"query-by-group/{groupID}";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryWorkspaceByGroupAsync(QueryRequest request, Int32 start, Int32 length, Int32 groupID, CancellationToken cancel, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = cancel;
-		var route = $"query-by-group/{groupID:int}";
+		var route = $"query-by-group/{groupID}";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<List<DisplayableObjectIdentifier>> GetEligibleResourcePoolsAsync()
@@ -196,31 +196,31 @@ public class TemplateWorkspaceManager : ManagerBase, IWorkspaceManager
 	public Task<List<DisplayableObjectIdentifier>> GetEligibleFileRepositoriesAsync(Int32 resourcePoolID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"eligible-resource-pools/{resourcePoolID:int}/eligible-file-repositories";
+		var route = $"eligible-resource-pools/{resourcePoolID}/eligible-file-repositories";
 		return GetJsonAsync<List<DisplayableObjectIdentifier>>(route, cancellationToken);
 	}
 	public Task<List<DisplayableObjectIdentifier>> GetEligibleCacheLocationsAsync(Int32 resourcePoolID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"eligible-resource-pools/{resourcePoolID:int}/eligible-cache-locations";
+		var route = $"eligible-resource-pools/{resourcePoolID}/eligible-cache-locations";
 		return GetJsonAsync<List<DisplayableObjectIdentifier>>(route, cancellationToken);
 	}
 	public Task<List<DisplayableObjectIdentifier>> GetEligibleSqlServersAsync(Int32 resourcePoolID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"eligible-resource-pools/{resourcePoolID:int}/eligible-sql-servers";
+		var route = $"eligible-resource-pools/{resourcePoolID}/eligible-sql-servers";
 		return GetJsonAsync<List<DisplayableObjectIdentifier>>(route, cancellationToken);
 	}
 	public Task<List<DisplayableObjectIdentifier>> GetEligibleAzureCredentialsAsync(Int32 resourcePoolID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"eligible-resource-pools/{resourcePoolID:int}/eligible-azure-credentials";
+		var route = $"eligible-resource-pools/{resourcePoolID}/eligible-azure-credentials";
 		return GetJsonAsync<List<DisplayableObjectIdentifier>>(route, cancellationToken);
 	}
 	public Task<List<DisplayableObjectIdentifier>> GetEligibleAzureFileSystemCredentialsAsync(Int32 resourcePoolID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"eligible-resource-pools/{resourcePoolID:int}/eligible-azure-file-system-credentials";
+		var route = $"eligible-resource-pools/{resourcePoolID}/eligible-azure-file-system-credentials";
 		return GetJsonAsync<List<DisplayableObjectIdentifier>>(route, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryEligibleClientsAsync(QueryRequest request, Int32 start, Int32 length)
@@ -298,25 +298,25 @@ public class TemplateWorkspaceManager : ManagerBase, IWorkspaceManager
 	public Task<QueryResultSlim> QueryEligibleSavedSearchesAsync(QueryRequest request, Int32 start, Int32 length, Int32 workspaceID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}/query-eligible-saved-searches";
+		var route = $"{workspaceID}/query-eligible-saved-searches";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryEligibleSavedSearchesAsync(QueryRequest request, Int32 start, Int32 length, Int32 workspaceID, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}/query-eligible-saved-searches";
+		var route = $"{workspaceID}/query-eligible-saved-searches";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryEligibleSavedSearchesAsync(QueryRequest request, Int32 start, Int32 length, Int32 workspaceID, CancellationToken cancel)
 	{
 		var cancellationToken = cancel;
-		var route = $"{workspaceID:int}/query-eligible-saved-searches";
+		var route = $"{workspaceID}/query-eligible-saved-searches";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryEligibleSavedSearchesAsync(QueryRequest request, Int32 start, Int32 length, Int32 workspaceID, CancellationToken cancel, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = cancel;
-		var route = $"{workspaceID:int}/query-eligible-saved-searches";
+		var route = $"{workspaceID}/query-eligible-saved-searches";
 		return PostJsonAsync<QueryResultSlim>(route, new{request}, cancellationToken);
 	}
 	public Task<QueryResultSlim> QueryEligibleTemplatesAsync(QueryRequest request, Int32 start, Int32 length)
@@ -358,19 +358,19 @@ public class TemplateWorkspaceManager : ManagerBase, IWorkspaceManager
 	public Task RetryFailedCreateEventHandlersAsync(Int32 workspaceID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}/retry-failed-create-event-handlers";
+		var route = $"{workspaceID}/retry-failed-create-event-handlers";
 		return PostJsonAsync(route, new{workspaceID}, cancellationToken);
 	}
 	public Task<WorkspaceSummary> GetWorkspaceSummaryAsync(Int32 workspaceID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}/summary";
+		var route = $"{workspaceID}/summary";
 		return GetJsonAsync<WorkspaceSummary>(route, cancellationToken);
 	}
 	public Task MoveToColdStorageAsync(Int32 workspaceID)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"{workspaceID:int}/move-to-cold-storage";
+		var route = $"{workspaceID}/move-to-cold-storage";
 		return PostJsonAsync(route, new{workspaceID}, cancellationToken);
 	}
 }

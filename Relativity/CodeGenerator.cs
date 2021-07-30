@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Flurl.Http;
@@ -124,7 +125,7 @@ namespace Reductech.EDR.Connectors.Relativity
             }
 
             var route = methodInfo.GetCustomAttribute<RouteAttribute>()!;
-            sb.AppendLine($"var route = $\"{route.Template}\";");
+            sb.AppendLine($"var route = $\"{FixRouteTemplate(route.Template)}\";");
 
 
             if (methodInfo.GetCustomAttribute<HttpPostAttribute>() is not null)
@@ -173,6 +174,12 @@ namespace Reductech.EDR.Connectors.Relativity
             sb.UnIndent();
             sb.AppendLine("}");
         }
+
+        private static string FixRouteTemplate(string s)
+        {
+            return ParameterRegex.Replace(s, match => $"{{{match.Groups["name"].Value}}}" );
+        }
+        private static readonly Regex ParameterRegex = new (@"{(?<name>\w+)\s*:\s*(?<type>\w+)}", RegexOptions.Compiled);
 
 
         public static string ToGenericTypeString(Type t)
