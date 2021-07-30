@@ -15,13 +15,24 @@ namespace Reductech.EDR.Connectors.Relativity
 
         public const string ServiceFactoryFactoryKey = "RelativityServiceFactoryFactory";
 
+        private const bool UseFiddlerProxy = false;
+
         /// <inheritdoc />
         public Result<IReadOnlyCollection<(string Name, object Context)>, IErrorBuilder> TryGetInjectedContexts()
         {
-            var factory = new ProxyHttpClientFactory("http://127.0.0.1:8866");
+            IFlurlClient flurlClient;
 
+            if (UseFiddlerProxy)
+            {
+                var factory = new ProxyHttpClientFactory("http://127.0.0.1:8866");
+                flurlClient = new FlurlClient(factory.CreateHttpClient(factory.CreateMessageHandler()));
+            }
+            else
+            {
+                flurlClient = new FlurlClient();
+            }
 
-            IFlurlClient flurlClient = new FlurlClient(factory.CreateHttpClient(factory.CreateMessageHandler()));
+            
 
             var list = new List<(string Name, object Context)>()
             {
@@ -36,7 +47,7 @@ namespace Reductech.EDR.Connectors.Relativity
         /// Proxy class that lets you see requests in fiddler
         /// </summary>
          private class ProxyHttpClientFactory : DefaultHttpClientFactory {
-            private readonly string _address;
+            private string _address;
 
             public ProxyHttpClientFactory(string address) {
                 _address = address;
