@@ -36,7 +36,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
             if (!serviceOutput.Success)
                 return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(serviceOutput.Message);
 
-            var array= serviceOutput.Objects.Select(x => x.ArtifactID).ToList().ToSCLArray();
+            var array = serviceOutput.Objects.Select(x => x.ArtifactID).ToList().ToSCLArray();
             return array;
         }
 
@@ -59,7 +59,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
             var (workspaceId, entities, artifactTypeId) = stepsResult.Value;
 
-            var fieldManager = TryGetService<IFieldManager>(stateMonad);
+            var fieldManager = stateMonad.TryGetService<IFieldManager>();
             if (fieldManager.IsFailure)
                 return fieldManager.MapError(x => x.WithLocation(this))
                     .ConvertFailure<(int workspaceId, MassCreateRequest createRequest)>();

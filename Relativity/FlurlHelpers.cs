@@ -35,11 +35,5 @@ namespace Reductech.EDR.Connectors.Relativity
 
             return request;
         }
-
-        //private static readonly ISerializer Serializer = new NewtonsoftJsonSerializer(
-        //    new JsonSerializerSettings
-        //    {
-        //    }
-        //);
     }
 }

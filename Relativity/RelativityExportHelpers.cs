@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Flurl;
-using Flurl.Http;
-using Newtonsoft.Json;
+using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal.Errors;
+using Relativity.Kepler.Transport;
+using Relativity.Services.DataContracts.DTOs.Results;
+using Relativity.Services.Interfaces.Document;
+using Relativity.Services.Objects;
+using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
@@ -18,28 +22,31 @@ namespace Reductech.EDR.Connectors.Relativity
     public static class RelativityExportHelpers
     {
         public static async Task<Result<Array<Entity>, IError>> ExportAsync(
-            RelativitySettings relativitySettings,
             int workspaceId,
             ArtifactType artifactType,
             IReadOnlyList<string> fieldNames,
             string condition,
             int start,
             int batchSize,
-            IFlurlClient flurlClient,
+            IDocumentFileManager documentFileManager,
+            IObjectManager objectManager,
             ErrorLocation errorLocation,
             CancellationToken cancellationToken
         )
         {
-            var setupExportResult = await SetupExportAsync(relativitySettings, workspaceId, artifactType,
-                fieldNames, condition, start, flurlClient, cancellationToken);
+            var setupExportResult = await SetupExportAsync(
+                workspaceId, artifactType, fieldNames, condition, start,
+                objectManager
+            );
 
             if (setupExportResult.IsFailure)
                 return setupExportResult.MapError(x => x.WithLocation(errorLocation))
                     .ConvertFailure<Array<Entity>>();
 
 
-            var allResults = GetResultElements(relativitySettings, setupExportResult.Value, workspaceId,
-                batchSize, fieldNames, flurlClient, errorLocation, cancellationToken);
+            var allResults = GetResultElements(setupExportResult.Value,
+                workspaceId, batchSize, fieldNames, documentFileManager, objectManager, errorLocation, cancellationToken
+            );
 
             var array = new LazyArray<Entity>(allResults);
 
@@ -55,36 +62,24 @@ namespace Reductech.EDR.Connectors.Relativity
 
 
         public static async IAsyncEnumerable<Entity> GetResultElements(
-            RelativitySettings relativitySettings,
-            ExportResult exportResult,
+            ExportInitializationResults exportResult,
             int workspaceId,
             int batchSize,
             IReadOnlyList<string> fieldNames,
-            IFlurlClient flurlClient,
+            IDocumentFileManager documentFileManager,
+            IObjectManager objectManager,
             ErrorLocation errorLocation,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var fields = fieldNames.Select(x => new Field() { Name = x }).ToList();
-
-            var request = new ExportBatchRequest()
-            {
-                RunID = exportResult.RunID,
-                BatchSize = batchSize
-            };
 
             var current = 0;
 
             while (current < exportResult.RecordCount)
             {
                 var resultElements =
-                    await flurlClient.SetupRelativityRequest(
-                        relativitySettings, "Relativity.Objects", "workspace",
-                        workspaceId.ToString(), "object", 
-                        "retrieveNextResultsBlockFromExport"
-                        
-                        )
-                        .PostJsonAsync(request, cancellationToken)
-                        .ReceiveJson<IList<ExportResultElement>>();
+                    await objectManager.RetrieveNextResultsBlockFromExportAsync(workspaceId, exportResult.RunID,
+                        batchSize);
 
                 if (resultElements is not null)
                 {
@@ -99,13 +94,11 @@ namespace Reductech.EDR.Connectors.Relativity
                         {
                             if (fieldValue?.ToString() == LongStringToken)
                             {
-                                var v = await GetLongText(relativitySettings, workspaceId, field.Name,
-                                    resultElement.ArtifactID,
-                                    flurlClient,
-                                    cancellationToken);
+                                var v = await
+                                    GetLongText(workspaceId, field.Name, resultElement.ArtifactID, objectManager);
 
                                 if (v.IsFailure)
-                                    throw v.Error;
+                                    throw new ErrorException(v.Error.WithLocation(errorLocation));
 
                                 properties.Add(new EntityProperty(field.Name,
                                     new EntityValue.String(v.Value), null, order
@@ -124,19 +117,26 @@ namespace Reductech.EDR.Connectors.Relativity
                             order++;
                         }
 
-                        var downloadResult = await DocumentFileManager.DownloadFile(relativitySettings,
-                            flurlClient,
-                            errorLocation,
-                            workspaceId,
-                            resultElement.ArtifactID, cancellationToken);
+                        string data;
 
-                        if (downloadResult.IsFailure)
+                        try
                         {
-                            throw new ErrorException(downloadResult.Error);
+                            using IKeplerStream keplerStream =
+                                await documentFileManager.DownloadNativeFileAsync(workspaceId,
+                                    resultElement.ArtifactID);
+                            await using Stream fileStream = await keplerStream.GetStreamAsync();
+                            using var streamReader = new StreamReader(fileStream);
+                            data = await streamReader.ReadToEndAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            throw new ErrorException(ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message)
+                                .WithLocationSingle(errorLocation));
                         }
 
+
                         properties.Add(new EntityProperty(NativeFileKey,
-                            new EntityValue.String(downloadResult.Value),
+                            new EntityValue.String(data),
                             null, order
                         ));
 
@@ -152,43 +152,30 @@ namespace Reductech.EDR.Connectors.Relativity
         }
 
 
-        public static async Task<Result<ExportResult, IErrorBuilder>> SetupExportAsync(
-            RelativitySettings relativitySettings,
+        public static async Task<Result<ExportInitializationResults, IErrorBuilder>> SetupExportAsync(
             int workspaceId,
             ArtifactType artifactType,
             IReadOnlyList<string> fieldNames,
             string condition,
             int start,
-            IFlurlClient flurlClient,
-            CancellationToken cancellationToken)
+            IObjectManager objectManager)
         {
-            var request = new ExportRequestRoot
+            var request = new QueryRequest()
             {
-                Start = start,
-                QueryRequest = new QueryRequest
-                {
-                    Condition = condition,
-                    Fields = fieldNames.Select(i => new Field() { Name = i }).ToList(),
-                    ObjectType = new ObjectType { ArtifactType = artifactType }
-                }
+                Condition = condition,
+                Fields = fieldNames.Select(s => new FieldRef() { Name = s }).ToList(),
+                ObjectType = new ObjectTypeRef() { ArtifactTypeID = (int)artifactType }
             };
 
-            ExportResult exportResult;
+            ExportInitializationResults exportResult;
 
             try
             {
-                exportResult = await
-                    flurlClient.SetupRelativityRequest(relativitySettings,
-                            "Relativity.Objects",
-                            "workspace",
-                            workspaceId.ToString(),
-                            "object",
-                            "initializeexport"
-                        )
-                        .PostJsonAsync(request, cancellationToken)
-                        .ReceiveJson<ExportResult>();
+                exportResult = await objectManager.InitializeExportAsync(
+                    workspaceId, request, start
+                );
             }
-            catch (FlurlHttpException e)
+            catch (Exception e)
             {
                 return ErrorCode.Unknown.ToErrorBuilder(e);
             }
@@ -198,152 +185,29 @@ namespace Reductech.EDR.Connectors.Relativity
         }
 
 
-        public static async Task<Result<string, FlurlHttpException>> GetLongText(
-            RelativitySettings relativitySettings,
+        public static async Task<Result<string, IErrorBuilder>> GetLongText(
             int workspaceId,
             string fieldName,
             int artifactId,
-            IFlurlClient flurlClient,
-            CancellationToken cancellationToken)
+            IObjectManager objectManager)
         {
-            var request = new LongTextRequest
-            {
-                LongTextField = new LongTextField
-                {
-                    Name = fieldName
-                },
-                ExportObject = new ExportObject
-                {
-                    ArtifactID = artifactId
-                }
-            };
-
-
             string longText;
 
             try
             {
-                longText = await flurlClient.SetupRelativityRequest(relativitySettings,
-                    "Relativity.Objects","workspace",
-                    workspaceId.ToString(),"object","streamlongtext"
-                    
-                    )
-                    .PostJsonAsync(request, cancellationToken).ReceiveString();
+                using var keplerStream = await objectManager.StreamLongTextAsync(workspaceId,
+                    new RelativityObjectRef() { ArtifactID = artifactId },
+                    new FieldRef() { Name = fieldName });
+                await using var stream = await keplerStream.GetStreamAsync();
+                using var streamReader = new StreamReader(stream);
+                longText = await streamReader.ReadToEndAsync();
             }
-            catch (FlurlHttpException e)
+            catch (Exception e)
             {
-                return Result.Failure<string, FlurlHttpException>(e);
+                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
             }
 
             return longText;
-        }
-
-
-        public class ExportBatchRequest
-        {
-            [JsonProperty("runID")] public string RunID { get; set; }
-
-            [JsonProperty("batchSize")] public int BatchSize { get; set; }
-        }
-
-
-        public class ExportResultElement
-        {
-            [JsonProperty("ArtifactID")] public int ArtifactID { get; set; }
-
-            [JsonProperty("Values")] public List<object> Values { get; set; }
-        }
-
-
-        public class ExportRequestRoot
-        {
-            [JsonProperty("queryRequest")] public QueryRequest QueryRequest { get; set; }
-
-            [JsonProperty("start")] public int Start { get; set; }
-        }
-
-        public class QueryRequest
-        {
-            [JsonProperty("ObjectType")] public ObjectType ObjectType { get; set; }
-
-            [JsonProperty("fields")] public List<Field> Fields { get; set; }
-
-            [JsonProperty("condition")] public string Condition { get; set; }
-        }
-
-
-        public class ExportResult
-        {
-            [JsonProperty("RunID")] public string RunID { get; set; }
-
-            [JsonProperty("RecordCount")] public int RecordCount { get; set; }
-        }
-
-        public class ObjectType
-        {
-            [JsonProperty("ArtifactTypeID")] public int ArtifactTypeID { get; set; }
-
-            [JsonIgnore]
-            public ArtifactType ArtifactType
-            {
-                get => (ArtifactType)ArtifactTypeID;
-                set => ArtifactTypeID = (int)value;
-            }
-        }
-
-        public class Field : IEquatable<Field>
-        {
-            /// <inheritdoc />
-            public override string ToString() => Name;
-
-            [JsonProperty("Name")] public string Name { get; set; }
-
-            ///// <inheritdoc />
-            //public override int GetHashCode() => ArtifactID;
-            /// <inheritdoc />
-            public bool Equals(Field? other)
-            {
-                if (other is null) return false;
-                if (ReferenceEquals(this, other)) return true;
-                return Name == other.Name;
-            }
-
-            /// <inheritdoc />
-            public override bool Equals(object? obj)
-            {
-                if (obj is null) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != GetType()) return false;
-                return Equals((Field)obj);
-            }
-
-            /// <inheritdoc />
-            public override int GetHashCode() => Name.GetHashCode();
-        }
-
-
-        public class LongTextRequest
-        {
-            [JsonProperty("exportObject")] public ExportObject ExportObject { get; set; }
-
-            [JsonProperty("longTextField")] public LongTextField LongTextField { get; set; }
-        }
-
-        public class ExportObject
-        {
-            /// <summary>
-            /// Artifact Id of the object
-            /// </summary>
-            [JsonProperty("ArtifactID")]
-            public int ArtifactID { get; set; }
-        }
-
-        public class LongTextField
-        {
-            [JsonProperty("Name")] public string Name { get; set; }
-
-            //[JsonProperty("ArtifactID")]
-            //public int ArtifactID { get; set; }
         }
     }
 

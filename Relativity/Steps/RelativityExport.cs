@@ -7,6 +7,8 @@ using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
+using Relativity.Services.Interfaces.Document;
+using Relativity.Services.Objects;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
@@ -35,16 +37,17 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
             var (workspaceId, fieldNames, condition, batchSize) = stepsResult.Value;
 
-            var flurlClientResult = stateMonad.GetFlurlClientFactory().Map(x => x.FlurlClient);
+            var documentFileManager = stateMonad.TryGetService<IDocumentFileManager>();
+            if (documentFileManager.IsFailure) return documentFileManager.ConvertFailure<Array<Entity>>().MapError(x=>x.WithLocation(this));
 
-            if (flurlClientResult.IsFailure)
-                return flurlClientResult.MapError(x => x.WithLocation(this)).ConvertFailure<Array<Entity>>();
+            var objectManager = stateMonad.TryGetService<IObjectManager>();
+            if (objectManager.IsFailure) return objectManager.ConvertFailure<Array<Entity>>().MapError(x=>x.WithLocation(this));
 
             var entitiesResult = await
-                RelativityExportHelpers.ExportAsync(settingsResult.Value, workspaceId, ArtifactType.Document,
+                RelativityExportHelpers.ExportAsync(workspaceId, ArtifactType.Document,
                     fieldNames, condition, 0,
                     batchSize,
-                    flurlClientResult.Value,
+                    documentFileManager.Value, objectManager.Value,
                     new ErrorLocation(this), CancellationToken.None);
 
             if (entitiesResult.IsFailure)

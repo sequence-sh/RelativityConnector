@@ -13,7 +13,7 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-    [SCLExample("RelativityGetMatterStatuses()", ExecuteInTests = false, ExpectedOutput = "[(Name: \"Status 1\" ArtifactID: 1 Guids: \"\"), (Name: \"Status 2\" ArtifactID: 2 Guids: \"\")]")]
+    [SCLExample("RelativityGetMatterStatuses", ExecuteInTests = false, ExpectedOutput = "[(Name: \"Status 1\" ArtifactID: 1 Guids: \"\"), (Name: \"Status 2\" ArtifactID: 2 Guids: \"\")]")]
     public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterManager,
         List<DisplayableObjectIdentifier>, Array<Entity>>
     {

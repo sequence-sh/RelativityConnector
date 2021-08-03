@@ -13,11 +13,9 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
-
     public abstract class RelativityApiRequest<TRequest, TService, TServiceOutput, TOutput> : CompoundStep<TOutput>
-    where TService : IDisposable
+        where TService : IDisposable
     {
-
         protected static Result<Array<Entity>, IErrorBuilder> TryConvertToEntityArray<T>(IEnumerable<T> stuff)
         {
             var array = new List<Entity>();
@@ -31,7 +29,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
             return array.ToSCLArray();
         }
 
-        protected static  Result<Entity, IErrorBuilder> TryConvertToEntity<T>(T thing)
+        protected static Result<Entity, IErrorBuilder> TryConvertToEntity<T>(T thing)
         {
             var json = JsonConvert.SerializeObject(thing);
 
@@ -42,51 +40,20 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
                 return ErrorCode.CouldNotParse.ToErrorBuilder(json, nameof(Entity));
 
             return responseEntity;
-
         }
 
-        /// <summary>
-        /// Get a service from the Relativity proxy
-        /// </summary>
-        protected Result<TService2, IErrorBuilder> TryGetService<TService2>(IStateMonad stateMonad)
-        where TService2: IDisposable
-        {
-            var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
-            if (settingsResult.IsFailure)
-                return settingsResult.ConvertFailure<TService2>();
-
-            var serviceFactoryFactory = stateMonad.ExternalContext.TryGetContext<IServiceFactoryFactory>(ConnectorInjection.ServiceFactoryFactoryKey);
-
-            if (serviceFactoryFactory.IsFailure) 
-                return serviceFactoryFactory.ConvertFailure<TService2>();
-
-            var serviceFactory = serviceFactoryFactory.Value.CreateServiceFactory(settingsResult.Value);
-
-            TService2 service;
-
-            try
-            {
-                service = serviceFactory.CreateProxy<TService2>();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
-
-            return service;
-        }
 
         /// <inheritdoc />
-        protected override async Task<Result<TOutput, IError>> Run(IStateMonad stateMonad, CancellationToken cancellationToken)
+        protected override async Task<Result<TOutput, IError>> Run(IStateMonad stateMonad,
+            CancellationToken cancellationToken)
         {
             var requestObjectResult = await TryCreateRequest(stateMonad, cancellationToken);
             if (requestObjectResult.IsFailure) return requestObjectResult.ConvertFailure<TOutput>();
 
 
-            var serviceResult = TryGetService<TService>(stateMonad);
-            if (serviceResult.IsFailure) return serviceResult.MapError(x=>x.WithLocation(this)) .ConvertFailure<TOutput>();
+            var serviceResult = stateMonad.TryGetService<TService>();
+            if (serviceResult.IsFailure)
+                return serviceResult.MapError(x => x.WithLocation(this)).ConvertFailure<TOutput>();
 
             using var service = serviceResult.Value;
 
@@ -94,15 +61,15 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
             try
             {
-                serviceOutput = await SendRequest(stateMonad, serviceResult.Value, requestObjectResult.Value, cancellationToken);
-
+                serviceOutput = await SendRequest(stateMonad, serviceResult.Value, requestObjectResult.Value,
+                    cancellationToken);
             }
             catch (Exception ex)
             {
                 return Result.Failure<TOutput, IError>(ErrorCode.Unknown.ToErrorBuilder(ex).WithLocation(this));
             }
 
-            var output = ConvertOutput(serviceOutput).MapError(x=>x.WithLocation(this));
+            var output = ConvertOutput(serviceOutput).MapError(x => x.WithLocation(this));
 
             return output;
         }
