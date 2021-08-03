@@ -1,421 +1,246 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using Flurl;
-using Flurl.Http;
-using Newtonsoft.Json;
+using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal.Errors;
+using Relativity.Kepler.Transport;
+using Relativity.Services.DataContracts.DTOs.Results;
+using Relativity.Services.Interfaces.Document;
+using Relativity.Services.Objects;
+using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
-
-public static class RelativityExportHelpers
-{
-    public static async Task<Result<Array<Entity>, IError>> ExportAsync(
-        RelativitySettings relativitySettings,
-        int workspaceId,
-        ArtifactType artifactType,
-        IReadOnlyList<string> fieldNames,
-        string condition,
-        int start,
-        int batchSize,
-        IFlurlClient flurlClient,
-        ErrorLocation errorLocation,
-        CancellationToken cancellationToken)
+    public static class RelativityExportHelpers
     {
-        var setupExportResult = await SetupExportAsync(
-            relativitySettings,
-            workspaceId,
-            artifactType,
-            fieldNames,
-            condition,
-            start,
-            flurlClient,
-            cancellationToken
-        );
-
-        if (setupExportResult.IsFailure)
-            return setupExportResult.MapError(x => x.WithLocation(errorLocation))
-                .ConvertFailure<Array<Entity>>();
-
-        var allResults = GetResultElements(
-            relativitySettings,
-            setupExportResult.Value,
-            workspaceId,
-            batchSize,
-            fieldNames,
-            flurlClient,
-            errorLocation,
-            cancellationToken
-        );
-
-        var array = new LazyArray<Entity>(allResults);
-
-        return array;
-    }
-
-    /// <summary>
-    /// A token indicating a long string that should be downloaded separately
-    /// </summary>
-    public const string LongStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
-
-    public const string NativeFileKey = "NativeFile";
-
-    public static async IAsyncEnumerable<Entity> GetResultElements(
-        RelativitySettings relativitySettings,
-        ExportResult exportResult,
-        int workspaceId,
-        int batchSize,
-        IReadOnlyList<string> fieldNames,
-        IFlurlClient flurlClient,
-        ErrorLocation errorLocation,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
-    {
-        var fields = fieldNames.Select(x => new Field() { Name = x }).ToList();
-
-        var request = new ExportBatchRequest()
+        public static async Task<Result<Array<Entity>, IError>> ExportAsync(
+            int workspaceId,
+            ArtifactType artifactType,
+            IReadOnlyList<string> fieldNames,
+            string condition,
+            int start,
+            int batchSize,
+            IDocumentFileManager documentFileManager,
+            IObjectManager objectManager,
+            ErrorLocation errorLocation,
+            CancellationToken cancellationToken
+        )
         {
-            RunID = exportResult.RunID, BatchSize = batchSize
-        };
+            var setupExportResult = await SetupExportAsync(
+                workspaceId, artifactType, fieldNames, condition, start,
+                objectManager
+            );
 
-        var current = 0;
+            if (setupExportResult.IsFailure)
+                return setupExportResult.MapError(x => x.WithLocation(errorLocation))
+                    .ConvertFailure<Array<Entity>>();
 
-        while (current < exportResult.RecordCount)
+
+            var allResults = GetResultElements(setupExportResult.Value,
+                workspaceId, batchSize, fieldNames, documentFileManager, objectManager, errorLocation, cancellationToken
+            );
+
+            var array = new LazyArray<Entity>(allResults);
+
+            return array;
+        }
+
+        /// <summary>
+        /// A token indicating a long string that should be downloaded separately
+        /// </summary>
+        public const string LongStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
+
+        public const string NativeFileKey = "NativeFile";
+
+
+        public static async IAsyncEnumerable<Entity> GetResultElements(
+            ExportInitializationResults exportResult,
+            int workspaceId,
+            int batchSize,
+            IReadOnlyList<string> fieldNames,
+            IDocumentFileManager documentFileManager,
+            IObjectManager objectManager,
+            ErrorLocation errorLocation,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var resultElements =
-                await flurlClient.SetupRelativityRequest(
-                        relativitySettings,
-                        "Relativity.REST",
-                        "api",
-                        "Relativity.Objects",
-                        "workspace",
-                        workspaceId.ToString(),
-                        "object",
-                        "retrieveNextResultsBlockFromExport"
-                    )
-                    .PostJsonAsync(request, cancellationToken)
-                    .ReceiveJson<IList<ExportResultElement>>();
+            var fields = fieldNames.Select(x => new Field() { Name = x }).ToList();
 
-            if (resultElements is not null)
+            var current = 0;
+
+            while (current < exportResult.RecordCount)
             {
-                foreach (var resultElement in resultElements)
+                var resultElements =
+                    await objectManager.RetrieveNextResultsBlockFromExportAsync(workspaceId, exportResult.RunID,
+                        batchSize);
+
+                if (resultElements is not null)
                 {
-                    var properties = new List<EntityProperty>();
-
-                    var pairs = fields.Zip(resultElement.Values);
-
-                    var order = 0;
-
-                    foreach (var (field, fieldValue) in pairs)
+                    foreach (var resultElement in resultElements)
                     {
-                        if (fieldValue?.ToString() == LongStringToken)
-                        {
-                            var v = await GetLongText(
-                                relativitySettings,
-                                workspaceId,
-                                field.Name,
-                                resultElement.ArtifactID,
-                                flurlClient,
-                                cancellationToken
-                            );
+                        var properties = new List<EntityProperty>();
 
-                            if (v.IsFailure)
-                                throw v.Error;
+                        var pairs = fields.Zip(resultElement.Values);
 
-                            properties.Add(
-                                new EntityProperty(
-                                    field.Name,
-                                    new EntityValue.String(v.Value),
-                                    null,
-                                    order
-                                )
-                            );
-                        }
-                        else
+                        var order = 0;
+                        foreach (var (field, fieldValue) in pairs)
                         {
-                            properties.Add(
-                                new EntityProperty(
+                            if (fieldValue?.ToString() == LongStringToken)
+                            {
+                                var v = await
+                                    GetLongText(workspaceId, field.Name, resultElement.ArtifactID, objectManager);
+
+                                if (v.IsFailure)
+                                    throw new ErrorException(v.Error.WithLocation(errorLocation));
+
+                                properties.Add(new EntityProperty(field.Name,
+                                    new EntityValue.String(v.Value), null, order
+                                ));
+                            }
+                            else
+                            {
+                                properties.Add(new EntityProperty(
                                     field.Name,
                                     EntityValue.CreateFromObject(fieldValue),
-                                    null,
-                                    order
-                                )
-                            );
+                                    null, order
+                                ));
+                            }
+
+
+                            order++;
                         }
 
-                        order++;
+                        string data;
+
+                        try
+                        {
+                            using IKeplerStream keplerStream =
+                                await documentFileManager.DownloadNativeFileAsync(workspaceId,
+                                    resultElement.ArtifactID);
+                            await using Stream fileStream = await keplerStream.GetStreamAsync();
+                            using var streamReader = new StreamReader(fileStream);
+                            data = await streamReader.ReadToEndAsync();
+                        }
+                        catch (Exception e)
+                        {
+                            throw new ErrorException(ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message)
+                                .WithLocationSingle(errorLocation));
+                        }
+
+
+                        properties.Add(new EntityProperty(NativeFileKey,
+                            new EntityValue.String(data),
+                            null, order
+                        ));
+
+                        var entity = new Entity(properties);
+
+                        yield return entity;
                     }
-
-                    var downloadResult = await DocumentFileManager.DownloadFile(
-                        relativitySettings,
-                        flurlClient,
-                        errorLocation,
-                        workspaceId,
-                        resultElement.ArtifactID,
-                        cancellationToken
-                    );
-
-                    if (downloadResult.IsFailure)
-                    {
-                        throw new ErrorException(downloadResult.Error);
-                    }
-
-                    properties.Add(
-                        new EntityProperty(
-                            NativeFileKey,
-                            new EntityValue.String(downloadResult.Value),
-                            null,
-                            order
-                        )
-                    );
-
-                    var entity = new Entity(properties);
-
-                    yield return entity;
                 }
+
+
+                current += batchSize;
             }
-
-            current += batchSize;
         }
-    }
 
-    public static async Task<Result<ExportResult, IErrorBuilder>> SetupExportAsync(
-        RelativitySettings relativitySettings,
-        int workspaceId,
-        ArtifactType artifactType,
-        IReadOnlyList<string> fieldNames,
-        string condition,
-        int start,
-        IFlurlClient flurlClient,
-        CancellationToken cancellationToken)
-    {
-        var request = new ExportRequestRoot
+
+        public static async Task<Result<ExportInitializationResults, IErrorBuilder>> SetupExportAsync(
+            int workspaceId,
+            ArtifactType artifactType,
+            IReadOnlyList<string> fieldNames,
+            string condition,
+            int start,
+            IObjectManager objectManager)
         {
-            Start = start,
-            QueryRequest = new QueryRequest
+            var request = new QueryRequest()
             {
-                Condition  = condition,
-                Fields     = fieldNames.Select(i => new Field() { Name = i }).ToList(),
-                ObjectType = new ObjectType { ArtifactType = artifactType }
+                Condition = condition,
+                Fields = fieldNames.Select(s => new FieldRef() { Name = s }).ToList(),
+                ObjectType = new ObjectTypeRef() { ArtifactTypeID = (int)artifactType }
+            };
+
+            ExportInitializationResults exportResult;
+
+            try
+            {
+                exportResult = await objectManager.InitializeExportAsync(
+                    workspaceId, request, start
+                );
             }
-        };
+            catch (Exception e)
+            {
+                return ErrorCode.Unknown.ToErrorBuilder(e);
+            }
 
-        ExportResult exportResult;
 
-        try
-        {
-            exportResult = await
-                flurlClient.SetupRelativityRequest(
-                        relativitySettings,
-                        "Relativity.REST",
-                        "api",
-                        "Relativity.Objects",
-                        "workspace",
-                        workspaceId.ToString(),
-                        "object",
-                        "initializeexport"
-                    )
-                    .PostJsonAsync(request, cancellationToken)
-                    .ReceiveJson<ExportResult>();
-        }
-        catch (FlurlHttpException e)
-        {
-            return ErrorCode.Unknown.ToErrorBuilder(e);
+            return exportResult;
         }
 
-        return exportResult;
-    }
 
-    public static async Task<Result<string, FlurlHttpException>> GetLongText(
-        RelativitySettings relativitySettings,
-        int workspaceId,
-        string fieldName,
-        int artifactId,
-        IFlurlClient flurlClient,
-        CancellationToken cancellationToken)
-    {
-        var request = new LongTextRequest
+        public static async Task<Result<string, IErrorBuilder>> GetLongText(
+            int workspaceId,
+            string fieldName,
+            int artifactId,
+            IObjectManager objectManager)
         {
-            LongTextField = new LongTextField { Name      = fieldName },
-            ExportObject  = new ExportObject { ArtifactID = artifactId }
-        };
+            string longText;
 
-        string longText;
+            try
+            {
+                using var keplerStream = await objectManager.StreamLongTextAsync(workspaceId,
+                    new RelativityObjectRef() { ArtifactID = artifactId },
+                    new FieldRef() { Name = fieldName });
+                await using var stream = await keplerStream.GetStreamAsync();
+                using var streamReader = new StreamReader(stream);
+                longText = await streamReader.ReadToEndAsync();
+            }
+            catch (Exception e)
+            {
+                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
+            }
 
-        try
-        {
-            longText = await flurlClient.SetupRelativityRequest(
-                    relativitySettings,
-                    "Relativity.REST",
-                    "api",
-                    "Relativity.Objects",
-                    "workspace",
-                    workspaceId.ToString(),
-                    "object",
-                    "streamlongtext"
-                )
-                .PostJsonAsync(request, cancellationToken)
-                .ReceiveString();
-        }
-        catch (FlurlHttpException e)
-        {
-            return Result.Failure<string, FlurlHttpException>(e);
-        }
-
-        return longText;
-    }
-
-    public class ExportBatchRequest
-    {
-        [JsonProperty("runID")] public string RunID { get; set; }
-
-        [JsonProperty("batchSize")] public int BatchSize { get; set; }
-    }
-
-    public class ExportResultElement
-    {
-        [JsonProperty("ArtifactID")] public int ArtifactID { get; set; }
-
-        [JsonProperty("Values")] public List<object> Values { get; set; }
-    }
-
-    public class ExportRequestRoot
-    {
-        [JsonProperty("queryRequest")] public QueryRequest QueryRequest { get; set; }
-
-        [JsonProperty("start")] public int Start { get; set; }
-    }
-
-    public class QueryRequest
-    {
-        [JsonProperty("ObjectType")] public ObjectType ObjectType { get; set; }
-
-        [JsonProperty("fields")] public List<Field> Fields { get; set; }
-
-        [JsonProperty("condition")] public string Condition { get; set; }
-    }
-
-    public class ExportResult
-    {
-        [JsonProperty("RunID")] public string RunID { get; set; }
-
-        [JsonProperty("RecordCount")] public int RecordCount { get; set; }
-    }
-
-    public class ObjectType
-    {
-        [JsonProperty("ArtifactTypeID")] public int ArtifactTypeID { get; set; }
-
-        [JsonIgnore]
-        public ArtifactType ArtifactType
-        {
-            get => (ArtifactType)ArtifactTypeID;
-            set => ArtifactTypeID = (int)value;
+            return longText;
         }
     }
 
-    public class Field : IEquatable<Field>
+
+    public enum ArtifactType
     {
-        /// <inheritdoc />
-        public override string ToString() => Name;
+        //https://platform.relativity.com/RelativityOne/index.htm#../Subsystems/rsapiclasses/Content/html/T_kCura_Relativity_Client_ArtifactType.htm
 
-        [JsonProperty("Name")] public string Name { get; set; }
-
-        ///// <inheritdoc />
-        //public override int GetHashCode() => ArtifactID;
-        /// <inheritdoc />
-        public bool Equals(Field? other)
-        {
-            if (other is null)
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
-
-            return Name == other.Name;
-        }
-
-        /// <inheritdoc />
-        public override bool Equals(object? obj)
-        {
-            if (obj is null)
-                return false;
-
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((Field)obj);
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode() => Name.GetHashCode();
+        Batch = 27,
+        BatchSet = 24,
+        Case = 8,
+        Client = 5,
+        Code = 7,
+        Document = 10,
+        Error = 18,
+        Field = 14,
+        Folder = 9,
+        Group = 3,
+        Layout = 16,
+        Matter = 6,
+        MarkupSet = 22,
+        Production = 17,
+        ObjectType = 25,
+        RelativityScript = 28,
+        ResourcePool = 31,
+        ResourceServer = 32,
+        SearchIndex = 29,
+        Search = 15,
+        Tab = 23,
+        User = 2,
+        View = 4,
+        SearchContainer = 26,
+        InstanceSetting = 42,
+        Credential = 43,
     }
-
-    public class LongTextRequest
-    {
-        [JsonProperty("exportObject")] public ExportObject ExportObject { get; set; }
-
-        [JsonProperty("longTextField")] public LongTextField LongTextField { get; set; }
-    }
-
-    public class ExportObject
-    {
-        /// <summary>
-        /// Artifact Id of the object
-        /// </summary>
-        [JsonProperty("ArtifactID")]
-        public int ArtifactID { get; set; }
-    }
-
-    public class LongTextField
-    {
-        [JsonProperty("Name")] public string Name { get; set; }
-
-        //[JsonProperty("ArtifactID")]
-        //public int ArtifactID { get; set; }
-    }
-}
-
-public enum ArtifactType
-{
-    //https://platform.relativity.com/RelativityOne/index.htm#../Subsystems/rsapiclasses/Content/html/T_kCura_Relativity_Client_ArtifactType.htm
-
-    Batch = 27,
-    BatchSet = 24,
-    Case = 8,
-    Client = 5,
-    Code = 7,
-    Document = 10,
-    Error = 18,
-    Field = 14,
-    Folder = 9,
-    Group = 3,
-    Layout = 16,
-    Matter = 6,
-    MarkupSet = 22,
-    Production = 17,
-    ObjectType = 25,
-    RelativityScript = 28,
-    ResourcePool = 31,
-    ResourceServer = 32,
-    SearchIndex = 29,
-    Search = 15,
-    Tab = 23,
-    User = 2,
-    View = 4,
-    SearchContainer = 26,
-    InstanceSetting = 42,
-    Credential = 43,
-}
-
 }

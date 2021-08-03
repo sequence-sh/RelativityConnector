@@ -48,8 +48,8 @@ namespace Reductech.EDR.Connectors.Relativity.Tests
 ";
 
         public const string CreateRDOsSCL = @"
-RelativityCreateRdos
-    WorkspaceArtifactId: 123
+RelativityCreateDynamicObjects
+    WorkspaceArtifactId: 1003663
     Entities: [(Name: 'My Entity')]
     ArtifactTypeId: 10
 
@@ -61,7 +61,8 @@ RelativityCreateRdos
         [Trait("Category", "Integration")]
         //[InlineData("Log (RelativityGetClients)")]
         //[InlineData(CreateMatterSCL)]
-        [InlineData("RelativityDeleteWorkspace 1003663")]
+        //[InlineData("RelativityDeleteWorkspace 1003663")]
+        [InlineData(CreateRDOsSCL)]
         public async Task RunSCLSequence(string scl)
         {
             var logger =

@@ -10,12 +10,30 @@ using Flurl.Http;
 using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Workspace;
 using Relativity.Kepler.Services;
+using Relativity.Services.Folder;
+using Relativity.Services.Search;
 using Relativity.Services.ServiceProxy;
+using Relativity.Services.Objects;
+using IFieldManager = Relativity.Services.Interfaces.Field.IFieldManager;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
     internal class CodeGenerator
     {
+        public static IEnumerable<Type> Types
+        {
+            get
+            {
+                yield return typeof(IMatterManager);
+                yield return typeof(IWorkspaceManager);
+                yield return typeof(IFieldManager);
+                yield return typeof(IKeywordSearchManager);
+                yield return typeof(IFolderManager);
+                
+                yield return typeof(IObjectManager);
+            }
+        }
+
         public static string Generate()
         {
             var sb = new StringBuilder();
@@ -80,7 +98,11 @@ namespace Reductech.EDR.Connectors.Relativity
             sb.AppendLine($"public {className}(RelativitySettings relativitySettings, IFlurlClient flurlClient)");
             sb.AppendLine(":base(relativitySettings, flurlClient) { }");
 
-            var route = type.GetCustomAttribute<RoutePrefixAttribute>()!;
+            var route = type.GetCustomAttribute<RoutePrefixAttribute>();
+
+            if (route is null)
+                throw new Exception($"Type {type.FullName} does not have a RoutePrefixAttribute");
+
             sb.AppendLine($"public override string RoutePrefix => \"{route.Prefix}\";");
 
             foreach (var methodInfo in type.GetMethods())
@@ -164,7 +186,7 @@ namespace Reductech.EDR.Connectors.Relativity
             {
                 sb.AppendLine($"return DeleteAsync(route, cancellationToken);");
             }
-            
+
             else
             {
                 sb.AppendLine("throw new NotImplementedException();");
@@ -177,9 +199,10 @@ namespace Reductech.EDR.Connectors.Relativity
 
         private static string FixRouteTemplate(string s)
         {
-            return ParameterRegex.Replace(s, match => $"{{{match.Groups["name"].Value}}}" );
+            return ParameterRegex.Replace(s, match => $"{{{match.Groups["name"].Value}}}");
         }
-        private static readonly Regex ParameterRegex = new (@"{(?<name>\w+)\s*:\s*(?<type>\w+)}", RegexOptions.Compiled);
+
+        private static readonly Regex ParameterRegex = new(@"{(?<name>\w+)\s*:\s*(?<type>\w+)}", RegexOptions.Compiled);
 
 
         public static string ToGenericTypeString(Type t)
@@ -195,14 +218,6 @@ namespace Reductech.EDR.Connectors.Relativity
             return genericTypeName + "<" + genericArgs + ">";
         }
 
-        public static IEnumerable<Type> Types
-        {
-            get
-            {
-                yield return typeof(IMatterManager);
-                yield return typeof(IWorkspaceManager);
-            }
-        }
 
         private class CodeStringBuilder
         {
@@ -352,7 +367,7 @@ namespace Reductech.EDR.Connectors.Relativity
 
             if (routeSuffix.Any() && routeSuffix.First() == "~")
             {
-                return Prefixes.Concat(routeSuffix[1..]).ToArray() ;
+                return Prefixes.Concat(routeSuffix[1..]).ToArray();
             }
 
             return Prefixes.Concat(SplitRoute(managerPrefix)).Concat(routeSuffix).ToArray();

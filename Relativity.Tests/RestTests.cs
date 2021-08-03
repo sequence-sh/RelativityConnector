@@ -1,162 +1,149 @@
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Flurl.Http;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.TestHarness;
-using Xunit;
-using Xunit.Abstractions;
+//using System.Net.Http;
+//using System.Threading;
+//using System.Threading.Tasks;
+//using FluentAssertions;
+//using Flurl.Http;
+//using Reductech.EDR.Core.Internal.Errors;
+//using Reductech.EDR.Core.TestHarness;
+//using Xunit;
+//using Xunit.Abstractions;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests
-{
+//namespace Reductech.EDR.Connectors.Relativity.Tests
+//{
+//    public class Tests //These are integration tests. At some point we need to set up ci for them properly
+//    {
+//        public Tests(ITestOutputHelper testOutputHelper)
+//        {
+//            TestOutputHelper = testOutputHelper;
+//            Settings = new RelativitySettings
+//            {
+//                RelativityUsername = "relativity.admin@relativity.com",
+//                RelativityPassword = "Test1234!",
+//                Url = "http://172.20.0.11"
+//            };
 
-public class
-    Tests //These are integration tests. At some point we need to set up ci for them properly
-{
-    public Tests(ITestOutputHelper testOutputHelper)
-    {
-        TestOutputHelper = testOutputHelper;
+//            WorkspaceId = 1017936;
+//        }
 
-        Settings = new RelativitySettings
-        {
-            RelativityUsername = "relativity.admin@relativity.com",
-            RelativityPassword = "Test1234!",
-            Url                = "http://172.20.0.11"
-        };
+//        public RelativitySettings Settings { get; }
 
-        WorkspaceId = 1017936;
-    }
+//        public ITestOutputHelper TestOutputHelper { get; }
 
-    public RelativitySettings Settings { get; }
+//        public int WorkspaceId { get; }
 
-    public ITestOutputHelper TestOutputHelper { get; }
+//        [Fact(Skip = "integration")]
+//        public async Task TestFieldMapping()
+//        {
+//            var fields = await FieldMapping.GetMappableFields(Settings, GetFlurlClient(), false, WorkspaceId);
 
-    public int WorkspaceId { get; }
+//            fields.Should().NotBeEmpty();
 
-    [Fact(Skip = "integration")]
-    public async Task TestFieldMapping()
-    {
-        var fields = await FieldMapping.GetMappableFields(
-            Settings,
-            GetFlurlClient(),
-            false,
-            WorkspaceId
-        );
+//            foreach (var mappableSourceField in fields)
+//            {
+//                TestOutputHelper.WriteLine(mappableSourceField.ToString());
+//            }
+//        }
 
-        fields.Should().NotBeEmpty();
 
-        foreach (var mappableSourceField in fields)
-        {
-            TestOutputHelper.WriteLine(mappableSourceField.ToString());
-        }
-    }
+//        //[Fact(Skip = "integration")]
+//        //public async Task TestFirstDocument()
+//        //{
+//        //    var r = await DocumentQueryHelper.GetDocumentQueryResultAsync(Settings, WorkspaceId, GetFlurlClient());
 
-    [Fact(Skip = "integration")]
-    public async Task TestFirstDocument()
-    {
-        var r = await DocumentQueryHelper.GetDocumentQueryResultAsync(
-            Settings,
-            WorkspaceId,
-            GetFlurlClient()
-        );
+//        //    r.ShouldBeSuccessful();
 
-        r.ShouldBeSuccessful();
 
-        r.Value.Results.Should()
-            .NotBeEmpty()
-            .And.NotContainNulls()
-            .And
-            .OnlyContain(x => x.ArtifactID > 0)
-            .And.OnlyContain(x => x.Location != null);
+//        //    r.Value.Results.Should().NotBeEmpty().And.NotContainNulls().And
+//        //        .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x => x.Location != null);
 
-        foreach (var documentResult in r.Value.Results)
-        {
-            TestOutputHelper.WriteLine(documentResult.Location);
-        }
-    }
+//        //    foreach (var documentResult in r.Value.Results)
+//        //    {
+//        //        TestOutputHelper.WriteLine(documentResult.Location);
+//        //    }
+//        //}
 
-    [Fact(Skip = "integration")]
-    public async Task TestRetrieve()
-    {
-        var r = await RestRetrieve.GetResultAsync(Settings, GetFlurlClient(), WorkspaceId);
+//        //[Fact(Skip = "integration")]
+//        //public async Task TestRetrieve()
+//        //{
+//        //    var r = await RestRetrieve.GetResultAsync(Settings, GetFlurlClient(), WorkspaceId);
 
-        r.ShouldBeSuccessful();
+//        //    r.ShouldBeSuccessful();
 
-        r.Value.Object.FieldValues.Should().NotBeEmpty();
+//        //    r.Value.Object.FieldValues.Should().NotBeEmpty();
 
-        foreach (var fv in r.Value.Object.FieldValues)
-        {
-            var o = (fv.Field.Name, fv.Field.FieldType, fv.Field.ArtifactID, fv.Field.FieldCategory,
-                     fv.Value);
+//        //    foreach (var fv in r.Value.Object.FieldValues)
+//        //    {
+//        //        var o = (fv.Field.Name, fv.Field.FieldType, fv.Field.ArtifactID, fv.Field.FieldCategory, fv.Value);
 
-            TestOutputHelper.WriteLine(o.ToString());
-        }
-    }
 
-    [Fact(Skip = "integration")]
-    public async Task TestDownloadFile()
-    {
-        var result = await DocumentFileManager.DownloadFile(
-            Settings,
-            GetFlurlClient(),
-            ErrorLocation.EmptyLocation,
-            WorkspaceId,
-            1040848,
-            CancellationToken.None
-        );
+//        //        TestOutputHelper.WriteLine(o.ToString());
+//        //    }
+//        //}
 
-        result.ShouldBeSuccessful();
 
-        result.Value.Should().NotBeNullOrWhiteSpace();
+//        [Fact(Skip = "integration")]
+//        public async Task TestDownloadFile()
+//        {
+//            var result = await DocumentFileManager.DownloadFile(Settings,
+//                GetFlurlClient(),
+//                ErrorLocation.EmptyLocation,
+//                WorkspaceId,
+//                1040848,
+//                CancellationToken.None);
 
-        TestOutputHelper.WriteLine(result.Value);
-    }
+//            result.ShouldBeSuccessful();
 
-    public static IFlurlClient GetFlurlClient() => new FlurlClient(new HttpClient());
+//            result.Value.Should().NotBeNullOrWhiteSpace();
 
-    //[Fact(Skip = "integration")]
-    //public void TestExport()
-    //{
-    //    var fieldNames = new List<string>
-    //    {
-    //        //1003667,// Control number,
-    //        //1035374, // File name
-    //        //1035395, //Title
-    //        //1003669, //md5 hash
-    //        //1003672, //has images
-    //        //1003673, //has native
-    //        //1035352, //Date created
-    //        "Title",
-    //        "Extracted Text"
-    //    };
+//            TestOutputHelper.WriteLine(result.Value);
+//        }
 
-    //    var condition = "'Extracted Text' ISSET ";
 
-    //    var exportStep = new RelativityExportStep()
-    //    {
-    //        BatchSize = StaticHelpers.Constant(10),
-    //        Condition = StaticHelpers.Constant(condition),
-    //        FieldNames = StaticHelpers.Array(fieldNames.ToArray()),
-    //        WorkspaceId = Constant(WorkspaceId)
-    //    };
+//        public static IFlurlClient GetFlurlClient() => new FlurlClient(new HttpClient());
 
-    //    var loggerFactory = new LoggerFactory(new[] { new XunitLoggerProvider(TestOutputHelper) });
-    //    var logger = loggerFactory.CreateLogger("Export");
+//        //[Fact(Skip = "integration")]
+//        //public void TestExport()
+//        //{
+//        //    var fieldNames = new List<string>
+//        //    {
+//        //        //1003667,// Control number,
+//        //        //1035374, // File name
+//        //        //1035395, //Title
+//        //        //1003669, //md5 hash
+//        //        //1003672, //has images
+//        //        //1003673, //has native
+//        //        //1035352, //Date created
+//        //        "Title",
+//        //        "Extracted Text"
+//        //    };
 
-    //    var state = new StateMonad(logger,  Settings, null);
+//        //    var condition = "'Extracted Text' ISSET ";
 
-    //    var result = exportStep.Run(state);
 
-    //    result.ShouldBeSuccessful(x => x.AsString);
+//        //    var exportStep = new RelativityExportStep()
+//        //    {
+//        //        BatchSize = StaticHelpers.Constant(10),
+//        //        Condition = StaticHelpers.Constant(condition),
+//        //        FieldNames = StaticHelpers.Array(fieldNames.ToArray()),
+//        //        WorkspaceId = Constant(WorkspaceId)
+//        //    };
 
-    //    result.Value.Count.Should().BeGreaterThan(0);
+//        //    var loggerFactory = new LoggerFactory(new[] { new XunitLoggerProvider(TestOutputHelper) });
+//        //    var logger = loggerFactory.CreateLogger("Export");
 
-    //    foreach (var r in result.Value.Take(5))
-    //    {
-    //        TestOutputHelper.WriteLine(r);
-    //    }
-    //}
-}
+//        //    var state = new StateMonad(logger,  Settings, null);
 
-}
+
+//        //    var result = exportStep.Run(state);
+
+//        //    result.ShouldBeSuccessful(x => x.AsString);
+
+//        //    result.Value.Count.Should().BeGreaterThan(0);
+
+//        //    foreach (var r in result.Value.Take(5))
+//        //    {
+//        //        TestOutputHelper.WriteLine(r);
+//        //    }
+//        //}
+//    }
+//}
