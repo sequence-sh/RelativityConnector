@@ -9,13 +9,14 @@ using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Shared.Models;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Field;
 using Relativity.Services.Interfaces.Document;
 using Relativity.Services.Objects;
+using Relativity.Services.Objects.DataContracts;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
+using FieldRef = Relativity.Services.Objects.DataContracts.FieldRef;
 using QueryRequest = Relativity.Services.Objects.DataContracts.QueryRequest;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
@@ -27,52 +28,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
         {
             get
             {
-                Guid runId = new Guid("8321b8c6-7b47-4cf7-a309-ad163ea907d0");
-                //var expectedExportResult = new RelativityExportHelpers.ExportResult()
-                //{
-                //    RecordCount = 10, RunID = "acbd"
-                //};
-
-                //var flurlClientFactory = new TestFlurlClientFactory();
-                //flurlClientFactory.HttpTest
-                //    .ForCallsTo(
-                //        "http://TestRelativityServer/Relativity.REST/api/Relativity.Objects/workspace/12345/object/initializeexport"
-                //    )
-                //    .RespondWithJson(expectedExportResult);
-
-
-                //flurlClientFactory.HttpTest
-                //    .ForCallsTo(
-                //        "http://TestRelativityServer/Relativity.REST/api/Relativity.Objects/workspace/12345/object/retrieveNextResultsBlockFromExport")
-                //    .RespondWithJson(
-                //        new List<RelativityExportHelpers.ExportResultElement>()
-                //        {
-                //            new()
-                //            {
-                //                ArtifactID = 5678,
-                //                Values = new List<object>()
-                //                {
-                //                    "Hello",
-                //                    RelativityExportHelpers.LongStringToken
-                //                }
-                //            }
-                //        }
-                //    );
-
-                //flurlClientFactory.HttpTest
-                //    .ForCallsTo(
-                //        "http://TestRelativityServer/Relativity.REST/api/Relativity.Objects/workspace/12345/object/streamlongtext")
-                //    .RespondWith("Streamed Long Text");
-
-
-                //flurlClientFactory.HttpTest
-                //    .ForCallsTo(
-                //        "http://TestRelativityServer/Relativity.REST/api/Relativity.Document/workspace/12345/downloadnativefile/5678")
-                //    .RespondWith("My Native Text");
-
-                //flurlClientFactory.HttpTest.RespondWith(status: 417);
-                //flurlClientFactory.HttpTest
-
+                var runId = new Guid("8321b8c6-7b47-4cf7-a309-ad163ea907d0");
                 yield return new StepCase(
                         "Export with condition",
                         new ForEach<Entity>()
@@ -95,12 +51,9 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                     )
                     .WithTestRelativitySettings()
                     .WithService(
-                        new MockSetup<IDocumentFileManager, IKeplerStream>
-                        (d => d.DownloadNativeFileAsync(42, 111),
-                            MakeKeplerStream("Long long long text")
-                        ),
+                        //Initialize Export
                         new MockSetup<IObjectManager, ExportInitializationResults>(manager =>
-                                manager.InitializeExportAsync(42, It.IsAny<QueryRequest>(), 0),
+                                manager.InitializeExportAsync(12345, It.IsAny<QueryRequest>(), 0),
                             new ExportInitializationResults()
                             {
                                 RecordCount = 10,
@@ -108,16 +61,56 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
                                 FieldData =
                                     new List<FieldMetadata>()
                                     {
-                                        new() { Name = "Field 1" }
+                                        new() { Name = "ShortField" },
+                                        new() { Name = "LongField" },
                                     }
                             }
-                        ));
+                        ),
+
+                        //Get results block
+                        new MockSetup<IObjectManager, RelativityObjectSlim[]>(
+                            d => d.RetrieveNextResultsBlockFromExportAsync(12345, runId, 10),
+                            new[]
+                            {
+                                new RelativityObjectSlim()
+                                {
+                                    ArtifactID = 111,
+                                    Values = new List<object>()
+                                    {
+                                        "Hello",
+                                        RelativityExportHelpers.LongStringToken
+                                    }
+                                }
+                            }
+                        ),
+
+                        //Get long text
+                        new MockSetup<IObjectManager, IKeplerStream>
+                        (d => d.StreamLongTextAsync(12345,
+                                It.Is<RelativityObjectRef>(x => x.ArtifactID == 111),
+                                It.Is<FieldRef>(x => x.Name == "LongField")
+                            ),
+                            MakeKeplerStream("Streamed Long Text")
+                        ),
+
+                        //Get Native Text
+                        new MockSetup<IDocumentFileManager, IKeplerStream>
+                        (d => d.DownloadNativeFileAsync(12345, 111),
+                            MakeKeplerStream("My Native Text")
+                        )
+                    );
             }
         }
 
         public static IKeplerStream MakeKeplerStream(string s)
         {
-            return new KeplerStream(new MemoryStream(Encoding.UTF8.GetBytes(s)));
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return new KeplerStream(stream);
         }
 
 

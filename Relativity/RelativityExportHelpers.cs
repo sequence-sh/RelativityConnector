@@ -117,16 +117,13 @@ namespace Reductech.EDR.Connectors.Relativity
                             order++;
                         }
 
-                        string data;
+                        IKeplerStream keplerStream;
 
                         try
                         {
-                            using IKeplerStream keplerStream =
+                            keplerStream =
                                 await documentFileManager.DownloadNativeFileAsync(workspaceId,
                                     resultElement.ArtifactID);
-                            await using Stream fileStream = await keplerStream.GetStreamAsync();
-                            using var streamReader = new StreamReader(fileStream);
-                            data = await streamReader.ReadToEndAsync();
                         }
                         catch (Exception e)
                         {
@@ -134,9 +131,13 @@ namespace Reductech.EDR.Connectors.Relativity
                                 .WithLocationSingle(errorLocation));
                         }
 
+                        var data = await ReadKeplerStream(keplerStream);
+
+                        if (data.IsFailure) throw new ErrorException(data.Error.WithLocation(errorLocation));
+                        keplerStream.Dispose();
 
                         properties.Add(new EntityProperty(NativeFileKey,
-                            new EntityValue.String(data),
+                            new EntityValue.String(data.Value),
                             null, order
                         ));
 
@@ -191,56 +192,45 @@ namespace Reductech.EDR.Connectors.Relativity
             int artifactId,
             IObjectManager objectManager)
         {
-            string longText;
+            IKeplerStream keplerStream;
 
             try
             {
-                using var keplerStream = await objectManager.StreamLongTextAsync(workspaceId,
+                keplerStream = await objectManager.StreamLongTextAsync(workspaceId,
                     new RelativityObjectRef() { ArtifactID = artifactId },
                     new FieldRef() { Name = fieldName });
-                await using var stream = await keplerStream.GetStreamAsync();
-                using var streamReader = new StreamReader(stream);
-                longText = await streamReader.ReadToEndAsync();
             }
             catch (Exception e)
             {
                 return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
             }
 
-            return longText;
+            var r = await ReadKeplerStream(keplerStream);
+            keplerStream.Dispose();
+
+            return r;
         }
-    }
 
 
-    public enum ArtifactType
-    {
-        //https://platform.relativity.com/RelativityOne/index.htm#../Subsystems/rsapiclasses/Content/html/T_kCura_Relativity_Client_ArtifactType.htm
+        private static async Task<Result<string, IErrorBuilder>> ReadKeplerStream(IKeplerStream keplerStream)
+        {
+            try
+            {
+                await using var stream = await keplerStream.GetStreamAsync();
 
-        Batch = 27,
-        BatchSet = 24,
-        Case = 8,
-        Client = 5,
-        Code = 7,
-        Document = 10,
-        Error = 18,
-        Field = 14,
-        Folder = 9,
-        Group = 3,
-        Layout = 16,
-        Matter = 6,
-        MarkupSet = 22,
-        Production = 17,
-        ObjectType = 25,
-        RelativityScript = 28,
-        ResourcePool = 31,
-        ResourceServer = 32,
-        SearchIndex = 29,
-        Search = 15,
-        Tab = 23,
-        User = 2,
-        View = 4,
-        SearchContainer = 26,
-        InstanceSetting = 42,
-        Credential = 43,
+                if (stream.CanSeek)
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                using var streamReader = new StreamReader(stream);
+
+                var t = await streamReader.ReadToEndAsync();
+                return t;
+            }
+            catch (Exception e)
+            {
+                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
+            }
+            
+        }
     }
 }
