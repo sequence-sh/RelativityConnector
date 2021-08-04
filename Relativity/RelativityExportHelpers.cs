@@ -19,218 +19,249 @@ using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
-    public static class RelativityExportHelpers
+
+public static class RelativityExportHelpers
+{
+    public static async Task<Result<Array<Entity>, IError>> ExportAsync(
+        int workspaceId,
+        ArtifactType artifactType,
+        IReadOnlyList<string> fieldNames,
+        string condition,
+        int start,
+        int batchSize,
+        IDocumentFileManager documentFileManager,
+        IObjectManager objectManager,
+        ErrorLocation errorLocation,
+        CancellationToken cancellationToken)
     {
-        public static async Task<Result<Array<Entity>, IError>> ExportAsync(
-            int workspaceId,
-            ArtifactType artifactType,
-            IReadOnlyList<string> fieldNames,
-            string condition,
-            int start,
-            int batchSize,
-            IDocumentFileManager documentFileManager,
-            IObjectManager objectManager,
-            ErrorLocation errorLocation,
-            CancellationToken cancellationToken
-        )
+        var setupExportResult = await SetupExportAsync(
+            workspaceId,
+            artifactType,
+            fieldNames,
+            condition,
+            start,
+            objectManager
+        );
+
+        if (setupExportResult.IsFailure)
+            return setupExportResult.MapError(x => x.WithLocation(errorLocation))
+                .ConvertFailure<Array<Entity>>();
+
+        var allResults = GetResultElements(
+            setupExportResult.Value,
+            workspaceId,
+            batchSize,
+            fieldNames,
+            documentFileManager,
+            objectManager,
+            errorLocation,
+            cancellationToken
+        );
+
+        var array = new LazyArray<Entity>(allResults);
+
+        return array;
+    }
+
+    /// <summary>
+    /// A token indicating a long string that should be downloaded separately
+    /// </summary>
+    public const string LongStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
+
+    public const string NativeFileKey = "NativeFile";
+
+    public static async IAsyncEnumerable<Entity> GetResultElements(
+        ExportInitializationResults exportResult,
+        int workspaceId,
+        int batchSize,
+        IReadOnlyList<string> fieldNames,
+        IDocumentFileManager documentFileManager,
+        IObjectManager objectManager,
+        ErrorLocation errorLocation,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        var fields = fieldNames.Select(x => new Field() { Name = x }).ToList();
+
+        var current = 0;
+
+        while (current < exportResult.RecordCount)
         {
-            var setupExportResult = await SetupExportAsync(
-                workspaceId, artifactType, fieldNames, condition, start,
-                objectManager
-            );
+            var resultElements =
+                await objectManager.RetrieveNextResultsBlockFromExportAsync(
+                    workspaceId,
+                    exportResult.RunID,
+                    batchSize
+                );
 
-            if (setupExportResult.IsFailure)
-                return setupExportResult.MapError(x => x.WithLocation(errorLocation))
-                    .ConvertFailure<Array<Entity>>();
-
-
-            var allResults = GetResultElements(setupExportResult.Value,
-                workspaceId, batchSize, fieldNames, documentFileManager, objectManager, errorLocation, cancellationToken
-            );
-
-            var array = new LazyArray<Entity>(allResults);
-
-            return array;
-        }
-
-        /// <summary>
-        /// A token indicating a long string that should be downloaded separately
-        /// </summary>
-        public const string LongStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
-
-        public const string NativeFileKey = "NativeFile";
-
-
-        public static async IAsyncEnumerable<Entity> GetResultElements(
-            ExportInitializationResults exportResult,
-            int workspaceId,
-            int batchSize,
-            IReadOnlyList<string> fieldNames,
-            IDocumentFileManager documentFileManager,
-            IObjectManager objectManager,
-            ErrorLocation errorLocation,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            var fields = fieldNames.Select(x => new Field() { Name = x }).ToList();
-
-            var current = 0;
-
-            while (current < exportResult.RecordCount)
+            if (resultElements is not null)
             {
-                var resultElements =
-                    await objectManager.RetrieveNextResultsBlockFromExportAsync(workspaceId, exportResult.RunID,
-                        batchSize);
-
-                if (resultElements is not null)
+                foreach (var resultElement in resultElements)
                 {
-                    foreach (var resultElement in resultElements)
+                    var properties = new List<EntityProperty>();
+
+                    var pairs = fields.Zip(resultElement.Values);
+
+                    var order = 0;
+
+                    foreach (var (field, fieldValue) in pairs)
                     {
-                        var properties = new List<EntityProperty>();
-
-                        var pairs = fields.Zip(resultElement.Values);
-
-                        var order = 0;
-                        foreach (var (field, fieldValue) in pairs)
+                        if (fieldValue?.ToString() == LongStringToken)
                         {
-                            if (fieldValue?.ToString() == LongStringToken)
-                            {
-                                var v = await
-                                    GetLongText(workspaceId, field.Name, resultElement.ArtifactID, objectManager);
+                            var v = await
+                                GetLongText(
+                                    workspaceId,
+                                    field.Name,
+                                    resultElement.ArtifactID,
+                                    objectManager
+                                );
 
-                                if (v.IsFailure)
-                                    throw new ErrorException(v.Error.WithLocation(errorLocation));
+                            if (v.IsFailure)
+                                throw new ErrorException(v.Error.WithLocation(errorLocation));
 
-                                properties.Add(new EntityProperty(field.Name,
-                                    new EntityValue.String(v.Value), null, order
-                                ));
-                            }
-                            else
-                            {
-                                properties.Add(new EntityProperty(
+                            properties.Add(
+                                new EntityProperty(
+                                    field.Name,
+                                    new EntityValue.String(v.Value),
+                                    null,
+                                    order
+                                )
+                            );
+                        }
+                        else
+                        {
+                            properties.Add(
+                                new EntityProperty(
                                     field.Name,
                                     EntityValue.CreateFromObject(fieldValue),
-                                    null, order
-                                ));
-                            }
-
-
-                            order++;
+                                    null,
+                                    order
+                                )
+                            );
                         }
 
-                        IKeplerStream keplerStream;
-
-                        try
-                        {
-                            keplerStream =
-                                await documentFileManager.DownloadNativeFileAsync(workspaceId,
-                                    resultElement.ArtifactID);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new ErrorException(ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message)
-                                .WithLocationSingle(errorLocation));
-                        }
-
-                        var data = await ReadKeplerStream(keplerStream);
-
-                        if (data.IsFailure) throw new ErrorException(data.Error.WithLocation(errorLocation));
-                        keplerStream.Dispose();
-
-                        properties.Add(new EntityProperty(NativeFileKey,
-                            new EntityValue.String(data.Value),
-                            null, order
-                        ));
-
-                        var entity = new Entity(properties);
-
-                        yield return entity;
+                        order++;
                     }
+
+                    IKeplerStream keplerStream;
+
+                    try
+                    {
+                        keplerStream =
+                            await documentFileManager.DownloadNativeFileAsync(
+                                workspaceId,
+                                resultElement.ArtifactID
+                            );
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ErrorException(
+                            ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message)
+                                .WithLocationSingle(errorLocation)
+                        );
+                    }
+
+                    var data = await ReadKeplerStream(keplerStream);
+
+                    if (data.IsFailure)
+                        throw new ErrorException(data.Error.WithLocation(errorLocation));
+
+                    keplerStream.Dispose();
+
+                    properties.Add(
+                        new EntityProperty(
+                            NativeFileKey,
+                            new EntityValue.String(data.Value),
+                            null,
+                            order
+                        )
+                    );
+
+                    var entity = new Entity(properties);
+
+                    yield return entity;
                 }
-
-
-                current += batchSize;
-            }
-        }
-
-
-        public static async Task<Result<ExportInitializationResults, IErrorBuilder>> SetupExportAsync(
-            int workspaceId,
-            ArtifactType artifactType,
-            IReadOnlyList<string> fieldNames,
-            string condition,
-            int start,
-            IObjectManager objectManager)
-        {
-            var request = new QueryRequest()
-            {
-                Condition = condition,
-                Fields = fieldNames.Select(s => new FieldRef() { Name = s }).ToList(),
-                ObjectType = new ObjectTypeRef() { ArtifactTypeID = (int)artifactType }
-            };
-
-            ExportInitializationResults exportResult;
-
-            try
-            {
-                exportResult = await objectManager.InitializeExportAsync(
-                    workspaceId, request, start
-                );
-            }
-            catch (Exception e)
-            {
-                return ErrorCode.Unknown.ToErrorBuilder(e);
             }
 
-
-            return exportResult;
-        }
-
-
-        public static async Task<Result<string, IErrorBuilder>> GetLongText(
-            int workspaceId,
-            string fieldName,
-            int artifactId,
-            IObjectManager objectManager)
-        {
-            IKeplerStream keplerStream;
-
-            try
-            {
-                keplerStream = await objectManager.StreamLongTextAsync(workspaceId,
-                    new RelativityObjectRef() { ArtifactID = artifactId },
-                    new FieldRef() { Name = fieldName });
-            }
-            catch (Exception e)
-            {
-                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
-            }
-
-            var r = await ReadKeplerStream(keplerStream);
-            keplerStream.Dispose();
-
-            return r;
-        }
-
-
-        private static async Task<Result<string, IErrorBuilder>> ReadKeplerStream(IKeplerStream keplerStream)
-        {
-            try
-            {
-                await using var stream = await keplerStream.GetStreamAsync();
-
-                if (stream.CanSeek)
-                    stream.Seek(0, SeekOrigin.Begin);
-
-                using var streamReader = new StreamReader(stream);
-
-                var t = await streamReader.ReadToEndAsync();
-                return t;
-            }
-            catch (Exception e)
-            {
-                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
-            }
-            
+            current += batchSize;
         }
     }
+
+    public static async Task<Result<ExportInitializationResults, IErrorBuilder>> SetupExportAsync(
+        int workspaceId,
+        ArtifactType artifactType,
+        IReadOnlyList<string> fieldNames,
+        string condition,
+        int start,
+        IObjectManager objectManager)
+    {
+        var request = new QueryRequest()
+        {
+            Condition  = condition,
+            Fields     = fieldNames.Select(s => new FieldRef() { Name = s }).ToList(),
+            ObjectType = new ObjectTypeRef() { ArtifactTypeID = (int)artifactType }
+        };
+
+        ExportInitializationResults exportResult;
+
+        try
+        {
+            exportResult = await objectManager.InitializeExportAsync(workspaceId, request, start);
+        }
+        catch (Exception e)
+        {
+            return ErrorCode.Unknown.ToErrorBuilder(e);
+        }
+
+        return exportResult;
+    }
+
+    public static async Task<Result<string, IErrorBuilder>> GetLongText(
+        int workspaceId,
+        string fieldName,
+        int artifactId,
+        IObjectManager objectManager)
+    {
+        IKeplerStream keplerStream;
+
+        try
+        {
+            keplerStream = await objectManager.StreamLongTextAsync(
+                workspaceId,
+                new RelativityObjectRef() { ArtifactID = artifactId },
+                new FieldRef() { Name                  = fieldName }
+            );
+        }
+        catch (Exception e)
+        {
+            return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
+        }
+
+        var r = await ReadKeplerStream(keplerStream);
+        keplerStream.Dispose();
+
+        return r;
+    }
+
+    private static async Task<Result<string, IErrorBuilder>> ReadKeplerStream(
+        IKeplerStream keplerStream)
+    {
+        try
+        {
+            await using var stream = await keplerStream.GetStreamAsync();
+
+            if (stream.CanSeek)
+                stream.Seek(0, SeekOrigin.Begin);
+
+            using var streamReader = new StreamReader(stream);
+
+            var t = await streamReader.ReadToEndAsync();
+            return t;
+        }
+        catch (Exception e)
+        {
+            return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
+        }
+    }
+}
+
 }

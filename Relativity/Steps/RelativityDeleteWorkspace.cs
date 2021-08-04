@@ -11,44 +11,54 @@ using Relativity.Environment.V1.Workspace;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
+
+/// <summary>
+/// Deletes a relativity workspace
+/// </summary>
+[SCLExample(
+    "RelativityDeleteWorkspace 42",
+    ExecuteInTests = false,
+    Description = "Deletes workspace 42"
+)]
+public sealed class
+    RelativityDeleteWorkspace : RelativityApiRequest<int, IWorkspaceManager, Unit, Unit>
+{
     /// <summary>
-    /// Deletes a relativity workspace
+    /// The id of the workspace to delete
     /// </summary>
-    [SCLExample("RelativityDeleteWorkspace 42", ExecuteInTests = false, Description = "Deletes workspace 42")]
-    public sealed class RelativityDeleteWorkspace : RelativityApiRequest<int, IWorkspaceManager, Unit, Unit>
+    [StepProperty(1)]
+    [Required]
+    public IStep<int> WorkspaceId { get; set; } = null!;
+
+    public override IStepFactory StepFactory { get; } =
+        new SimpleStepFactory<RelativityDeleteWorkspace, Unit>();
+
+    /// <inheritdoc />
+    public override Result<Unit, IErrorBuilder> ConvertOutput(Unit serviceOutput)
     {
-        /// <summary>
-        /// The id of the workspace to delete
-        /// </summary>
-        [StepProperty(1)]
-        [Required]
-        public IStep<int> WorkspaceId { get; set; } = null!;
-
-        public override IStepFactory StepFactory { get; } = new SimpleStepFactory<RelativityDeleteWorkspace, Unit>();
-
-
-        /// <inheritdoc />
-        public override Result<Unit, IErrorBuilder> ConvertOutput(Unit serviceOutput)
-        {
-            return serviceOutput;
-        }
-
-        /// <inheritdoc />
-        public override async Task<Unit> SendRequest(IStateMonad stateMonad, IWorkspaceManager service,
-            int requestObject,
-            CancellationToken cancellationToken)
-        {
-            await service.DeleteAsync(requestObject, cancellationToken);
-
-            return Unit.Default;
-        }
-
-        /// <inheritdoc />
-        public override async Task<Result<int, IError>> TryCreateRequest(IStateMonad stateMonad,
-            CancellationToken cancellation)
-        {
-            var workspaceId = await WorkspaceId.Run(stateMonad, cancellation);
-            return workspaceId;
-        }
+        return serviceOutput;
     }
+
+    /// <inheritdoc />
+    public override async Task<Unit> SendRequest(
+        IStateMonad stateMonad,
+        IWorkspaceManager service,
+        int requestObject,
+        CancellationToken cancellationToken)
+    {
+        await service.DeleteAsync(requestObject, cancellationToken);
+
+        return Unit.Default;
+    }
+
+    /// <inheritdoc />
+    public override async Task<Result<int, IError>> TryCreateRequest(
+        IStateMonad stateMonad,
+        CancellationToken cancellation)
+    {
+        var workspaceId = await WorkspaceId.Run(stateMonad, cancellation);
+        return workspaceId;
+    }
+}
+
 }

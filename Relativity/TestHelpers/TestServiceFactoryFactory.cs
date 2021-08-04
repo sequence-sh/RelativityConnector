@@ -5,41 +5,42 @@ using Relativity.Services.ServiceProxy;
 
 namespace Reductech.EDR.Connectors.Relativity.TestHelpers
 {
-    public class TestServiceFactoryFactory : IServiceFactoryFactory
+
+public class TestServiceFactoryFactory : IServiceFactoryFactory
+{
+    public TestServiceFactoryFactory(params IDisposable[] services)
     {
-        public TestServiceFactoryFactory(params IDisposable[] services)
+        MyTestServiceFactory = new TestServiceFactory(services);
+    }
+
+    public TestServiceFactory MyTestServiceFactory { get; }
+
+    /// <inheritdoc />
+    public IServiceFactory CreateServiceFactory(RelativitySettings relativitySettings)
+    {
+        return MyTestServiceFactory;
+    }
+
+    public class TestServiceFactory : IServiceFactory
+    {
+        public TestServiceFactory(IReadOnlyList<IDisposable> services)
         {
-            MyTestServiceFactory = new TestServiceFactory(services);
+            Services = services;
         }
 
-        
-        public TestServiceFactory MyTestServiceFactory { get; }
+        public IReadOnlyList<IDisposable> Services { get; }
 
         /// <inheritdoc />
-        public IServiceFactory CreateServiceFactory(RelativitySettings relativitySettings)
+        public T CreateProxy<T>() where T : IDisposable
         {
-            return MyTestServiceFactory;
-        }
+            var result = Services.OfType<T>().FirstOrDefault();
 
-        public class TestServiceFactory : IServiceFactory
-        {
-            public TestServiceFactory(IReadOnlyList<IDisposable> services)
-            {
-                Services = services;
-            }
+            if (result is null)
+                throw new Exception($"Could not create a service of type {typeof(T).Name}");
 
-            public IReadOnlyList<IDisposable> Services { get; }
-
-            /// <inheritdoc />
-            public T CreateProxy<T>() where T : IDisposable
-            {
-                var result = Services.OfType<T>().FirstOrDefault();
-
-                if (result is null)
-                    throw new Exception($"Could not create a service of type {typeof(T).Name}");
-
-                return result;
-            }
+            return result;
         }
     }
+}
+
 }
