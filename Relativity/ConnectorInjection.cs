@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using CSharpFunctionalExtensions;
 using Flurl.Http;
+using Flurl.Http.Configuration;
+using Reductech.EDR.Connectors.Relativity.Managers;
 using Reductech.EDR.Core.Connectors;
 using Reductech.EDR.Core.Internal.Errors;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
+    public sealed class ConnectorInjection : IConnectorInjection
+    {
+        public const string FlurlClientFactoryKey = "FlurlClientFactory";
 
-public sealed class ConnectorInjection : IConnectorInjection
-{
-    public const string FlurlClientFactoryKey = "FlurlClientFactory";
-
-    public const string ServiceFactoryFactoryKey = "RelativityServiceFactoryFactory";
+        public const string ServiceFactoryFactoryKey = "RelativityServiceFactoryFactory";
 
         private const bool UseFiddlerProxy = false;
 
@@ -52,4 +54,12 @@ public sealed class ConnectorInjection : IConnectorInjection
                 _address = address;
             }
 
+            public override HttpMessageHandler CreateMessageHandler() {
+                return new HttpClientHandler {
+                    Proxy = new WebProxy(_address),
+                    UseProxy = true
+                };
+            }
+        } 
+    }
 }

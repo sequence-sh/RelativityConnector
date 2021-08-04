@@ -1,72 +1,132 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Divergic.Logging.Xunit;
 using Microsoft.Extensions.Logging;
 using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Core;
 using Reductech.EDR.Core.Abstractions;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Serialization;
+using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
+using Reductech.EDR.Core.Util;
 using Xunit;
 using Xunit.Abstractions;
+using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests
 {
     [AutoTheory.UseTestOutputHelper]
     public partial class ExampleTests
     {
-
-        public const string CreateMatterSCL = @"- <matterId> = RelativityCreateMatter
-    ClientId: 1018410
-    StatusId: ((RelativityGetMatterStatuses)[0]['ArtifactID'])
-    MatterName: 'Test Matter'
-    Number: '10'
-    Keywords: 'Test Keywords'
-    Notes: 'Test Notes'
-- log <matterId>";
-
-        public const string CreateWorkspaceSCL = @"
-- <matterId> = RelativityCreateMatter
-    ClientId: ((RelativityGetClients)[0]['ArtifactID'])
-    StatusId: ((RelativityGetMatterStatuses)[0]['ArtifactID'])
-    MatterName: 'Test Matter'
-    Number: '10'
-    Keywords: 'Test Keywords'
-    Notes: 'Test Notes'
-
-- <workspaceId> = RelativityCreateWorkspace
-    WorkspaceName: 'Test Workspace'
-    MatterId: <matterId>
-    StatusId: ((RelativityGetMatterStatuses)[0]['ArtifactID'])
-
-- log <matterId>
-- RelativityDeleteMatter <matterId>
-- RelativityDeleteWorkspace <workspaceId>
-";
-
         public const string CreateRDOsSCL = @"
 RelativityCreateDynamicObjects
-    WorkspaceArtifactId: 1003663
+    WorkspaceArtifactId: 1018846
     Entities: [(Name: 'My Entity')]
     ArtifactTypeId: 10
 
 ";
 
+        public static IEnumerable<IStep> IntegrationTestCases
+        {
+            get
+            {
+                //yield return new RelativityDeleteMatter()
+                //{
+                //    MatterArtifactId = Constant(1018999)
+                //};
+
+                //yield return new RelativityDeleteWorkspace()
+                //{
+                //    WorkspaceId = Constant(1018994)
+                //};
+                //yield break;
+                yield return new Sequence<Unit>()
+                {
+                    InitialSteps = new List<IStep<Unit>>()
+                    {
+                        new SetVariable<int>()
+                        {
+                            Value = new RelativityCreateMatter()
+                            {
+                                ClientId = Constant(1018410),
+                                StatusId = Constant(671),
+                                MatterName = Constant("Test Matter"),
+                                Number = Constant("Ten"),
+                                Keywords = Constant("Test Keywords"),
+                                Notes = Constant("Test Notes")
+                            },
+                            Variable = new VariableName("MatterId")
+                        },
+                        new SetVariable<Entity>()
+                        {
+                            Variable = new VariableName("Workspace"),
+                            Value = new RelativityCreateWorkspace()
+                            {
+                                WorkspaceName = Constant("Integration Test Workspace"),
+                                MatterId = GetVariable<int>("MatterId"),
+                                TemplateId = Constant(1015024),
+                                StatusId = Constant(675),
+                                ResourcePoolId = Constant(1015040),
+                                SqlServerId = Constant(1015096),
+                                DefaultFileRepositoryId = Constant(1014887),
+                                DefaultCacheLocationId = Constant(1015534)
+                            }
+                        },
+                        new RelativityImport()
+                        {
+                            FilePath = Constant(@"C:\Users\wainw\source\repos\Examples\Concordance\Carla2\loadfile.dat"),
+                            FileImportType = Constant(FileImportType.Object),
+                            SettingsFilePath = Constant(@"C:\Users\wainw\source\repos\Examples\Concordance\CarlaSettings.kwe"),
+                            StartLineNumber = null,
+                            WorkspaceId = new EntityGetValue<int>()
+                            {
+                                Property = Constant("ArtifactID"), 
+                                Entity = new GetVariable<Entity>()
+                                {
+                                    Variable = new VariableName("Workspace")
+                                }
+                            }
+                        },
+                        new RelativityDeleteWorkspace()
+                        {
+                            WorkspaceId = new EntityGetValue<int>()
+                            {
+                                Property = Constant("ArtifactID"), 
+                                Entity = new GetVariable<Entity>()
+                                {
+                                    Variable = new VariableName("Workspace")
+                                }
+                            }
+                        },
+                        new RelativityDeleteMatter()
+                        {
+                            MatterArtifactId = GetVariable<int>("MatterId"),
+                        }
+
+                    }
+                };
+            }
+        }
+
+        public static IEnumerable<object[]> IntegrationTestCaseArgs =>
+            IntegrationTestCases.Select(x => new[] { x.Serialize() });
+
 
         //[Theory(Skip = "Manual")]
         [Theory]
         [Trait("Category", "Integration")]
-        //[InlineData("Log (RelativityGetClients)")]
-        //[InlineData(CreateMatterSCL)]
-        //[InlineData("RelativityDeleteWorkspace 1003663")]
-        [InlineData(CreateRDOsSCL)]
+        [MemberData(nameof(IntegrationTestCaseArgs))]
         public async Task RunSCLSequence(string scl)
         {
             var logger =
                 TestOutputHelper.BuildLogger(new LoggingConfig() { LogLevel = LogLevel.Information });
+
+            logger.LogInformation(scl);
 
             var sfs = StepFactoryStore.Create(new ConnectorData(
                 new ConnectorSettings()
@@ -76,10 +136,11 @@ RelativityCreateDynamicObjects
                     Version = "0.10.0",
                     Settings = new RelativitySettings()
                     {
-                        RelativityUsername = "Mark@reduc.tech", //TODO maybe change this
+                        RelativityUsername = "relativity.admin@relativity.com",
                         RelativityPassword = "Test1234!",
                         Url = "http://relativitydevvm/",
-                        APIVersionNumber = 1
+                        APIVersionNumber = 1,
+                        DesktopClientPath = @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
                     }.ToDictionary()
                 },
                 typeof(RelativityGetClients).Assembly
@@ -88,7 +149,10 @@ RelativityCreateDynamicObjects
             var runner = new SCLRunner(
                 logger,
                 sfs,
-                ExternalContext.Default with{ InjectedContexts = new ConnectorInjection().TryGetInjectedContexts().Value.ToArray()}
+                ExternalContext.Default with
+                {
+                    InjectedContexts = new ConnectorInjection().TryGetInjectedContexts().Value.ToArray()
+                }
             );
 
             var r = await runner.RunSequenceFromTextAsync(

@@ -5,56 +5,106 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Flurl.Http;
 using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Workspace;
 using Relativity.Kepler.Services;
-using Relativity.Services.Folder;
-using Relativity.Services.Search;
-using Relativity.Services.ServiceProxy;
+using Relativity.Services.Interfaces.Document;
 using Relativity.Services.Objects;
+using Relativity.Services.ServiceProxy;
 using IFieldManager = Relativity.Services.Interfaces.Field.IFieldManager;
 
-namespace Reductech.EDR.Connectors.Relativity
+namespace Reductech.EDR.Connectors.Relativity.Managers
 {
+    public record ManagerGenerator(Type Type, IReadOnlyList<string> ServicePrefixes,
+        IReadOnlyList<string> ExtraNamespaces)
+    {
+    }
+
     internal class CodeGenerator
     {
-        public static IEnumerable<Type> Types
+        public static readonly IReadOnlyList<string> RelativityObjectModelPrefixes = new List<string>()
+        {
+            "relativity-object-model",
+            "v{RelativitySettings.APIVersionNumber}",
+        };
+
+        public static readonly IReadOnlyList<string> RelativityEnvironmentPrefixes = new List<string>()
+        {
+            "relativity-environment",
+            "v{RelativitySettings.APIVersionNumber}",
+        };
+
+        public static readonly IReadOnlyList<string> EmptyList = new List<string>(0);
+
+        public static IEnumerable<ManagerGenerator> ManagerGenerators
         {
             get
             {
-                yield return typeof(IMatterManager);
-                yield return typeof(IWorkspaceManager);
-                yield return typeof(IFieldManager);
-                yield return typeof(IKeywordSearchManager);
-                yield return typeof(IFolderManager);
-                
-                yield return typeof(IObjectManager);
+                yield return new ManagerGenerator(typeof(IMatterManager),
+                    RelativityEnvironmentPrefixes,
+                    new List<string>()
+                    {
+                        "Relativity.Shared.V1.Models"
+                    });
+                yield return new ManagerGenerator(typeof(IWorkspaceManager),
+                    RelativityEnvironmentPrefixes,
+                    new List<string>()
+                    {
+                        "Relativity.Environment.V1.Shared.Models",
+                        "Relativity.Shared.V1.Models",
+                    });
+                yield return new ManagerGenerator(typeof(IFieldManager),
+                    RelativityObjectModelPrefixes,
+                    new List<string>()
+                    {
+                        "Relativity.Services.Interfaces.Field",
+                        "Relativity.Services.Interfaces.Shared.Models",
+                        "Relativity.Services.Interfaces.Shared",
+                        "Relativity.Services.Interfaces.Field.Models"
+                    });
+                yield return new ManagerGenerator(typeof(IObjectManager),
+                    EmptyList,
+                    new List<string>()
+                    {
+                        "Relativity.Services.Objects",
+                        "Relativity.Services.Objects.DataContracts",
+                        "Relativity.Services.DataContracts.DTOs",
+                        "Relativity.Services.DataContracts.DTOs.Results",
+                        "Relativity.Services.Interfaces.Shared"
+                    });
+                yield return new ManagerGenerator(typeof(IDocumentFileManager),
+                    RelativityObjectModelPrefixes,
+                    new List<string>()
+                    {
+                        "Relativity.Services.Interfaces.Document",
+                        "Relativity.Services.Interfaces.Document.Models",
+                    });
+
+
+                //yield return typeof(IKeywordSearchManager);
+                //yield return typeof(IFolderManager);
             }
         }
 
-        public static string Generate()
+        public static string Generate(ManagerGenerator managerGenerator)
         {
             var sb = new StringBuilder();
 
-            foreach (var ns in Namespaces)
+            foreach (var ns in Namespaces.Concat(managerGenerator.ExtraNamespaces).Distinct())
             {
                 sb.AppendLine($"using {ns};");
             }
 
             sb.AppendLine();
 
-            sb.AppendLine("namespace Reductech.EDR.Connectors.Relativity");
+            sb.AppendLine("namespace Reductech.EDR.Connectors.Relativity.Managers");
             sb.AppendLine("{");
 
-            foreach (var type in Types)
-            {
-                var text = GetFileText(type);
+            var text = GetFileText(managerGenerator);
 
-                sb.AppendLine(text);
-                sb.AppendLine();
-            }
+            sb.AppendLine(text);
+            sb.AppendLine();
 
             sb.AppendLine("}");
 
@@ -72,20 +122,19 @@ namespace Reductech.EDR.Connectors.Relativity
                 yield return "System.Text";
                 yield return "System.Threading";
                 yield return "System.Threading.Tasks";
-
                 yield return "Flurl.Http";
 
+                yield return "Relativity.Kepler.Transport";
                 yield return "Relativity.Environment.V1.Matter";
                 yield return "Relativity.Environment.V1.Matter.Models";
-                yield return "Relativity.Environment.V1.Shared.Models";
-                yield return "Relativity.Shared.V1.Models";
                 yield return "Relativity.Environment.V1.Workspace.Models";
                 yield return "Relativity.Environment.V1.Workspace";
             }
         }
 
-        public static string GetFileText(Type type)
+        public static string GetFileText(ManagerGenerator managerGenerator)
         {
+            var type = managerGenerator.Type;
             var sb = new CodeStringBuilder();
 
             var className = "Template" + type.Name[1..];
@@ -98,16 +147,32 @@ namespace Reductech.EDR.Connectors.Relativity
             sb.AppendLine($"public {className}(RelativitySettings relativitySettings, IFlurlClient flurlClient)");
             sb.AppendLine(":base(relativitySettings, flurlClient) { }");
 
+            sb.AppendLine("");
+            sb.AppendLine("/// <inheritdoc />");
+            sb.AppendLine("protected override IEnumerable<string> Prefixes");
+            sb.AppendLine("{");
+            sb.Indent();
+            sb.AppendLine("get");
+            sb.AppendLine("{");
+            sb.Indent();
+            foreach (var prefix in managerGenerator.ServicePrefixes)
+            {
+                sb.AppendLine($"yield return $\"{prefix}\";");
+            }
+            sb.AppendLine("yield break;");
+            sb.UnIndent();
+            sb.AppendLine("}");
+            sb.UnIndent();
+            sb.AppendLine("}");
+            sb.AppendLine("");
+
             var route = type.GetCustomAttribute<RoutePrefixAttribute>();
 
-            if (route is null)
-                throw new Exception($"Type {type.FullName} does not have a RoutePrefixAttribute");
-
-            sb.AppendLine($"public override string RoutePrefix => \"{route.Prefix}\";");
+            var routePrefix = FixRouteTemplate(route?.Prefix ?? "");
 
             foreach (var methodInfo in type.GetMethods())
             {
-                AppendMethod(sb, methodInfo);
+                AppendMethod(sb, methodInfo, routePrefix);
             }
 
             sb.UnIndent();
@@ -116,7 +181,7 @@ namespace Reductech.EDR.Connectors.Relativity
             return sb.ToString();
         }
 
-        private static void AppendMethod(CodeStringBuilder sb, MethodInfo methodInfo)
+        private static void AppendMethod(CodeStringBuilder sb, MethodInfo methodInfo, string routePrefix)
         {
             StringBuilder signature = new();
 
@@ -130,6 +195,7 @@ namespace Reductech.EDR.Connectors.Relativity
             signature.Append(string.Join(", ", parameters));
             signature.Append(")");
 
+            sb.AppendLine("");
             sb.AppendLine(signature.ToString());
             sb.AppendLine("{");
             sb.Indent();
@@ -146,8 +212,14 @@ namespace Reductech.EDR.Connectors.Relativity
                 sb.AppendLine($"var cancellationToken = {ctParameter.Name};");
             }
 
-            var route = methodInfo.GetCustomAttribute<RouteAttribute>()!;
-            sb.AppendLine($"var route = $\"{FixRouteTemplate(route.Template)}\";");
+
+            var route = methodInfo.GetCustomAttribute<RouteAttribute>();
+
+            if (route is null)
+                throw new Exception(
+                    $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name} does not have a route attribute");
+
+            sb.AppendLine($"var route = $\"{routePrefix}/{FixRouteTemplate(route.Template)}\";");
 
 
             if (methodInfo.GetCustomAttribute<HttpPostAttribute>() is not null)
@@ -195,6 +267,7 @@ namespace Reductech.EDR.Connectors.Relativity
 
             sb.UnIndent();
             sb.AppendLine("}");
+            sb.AppendLine("");
         }
 
         private static string FixRouteTemplate(string s)
@@ -283,108 +356,6 @@ namespace Reductech.EDR.Connectors.Relativity
                        throw new InvalidOperationException(
                            $"Could not create a proxy of type {typeof(T).Name} with a TemplateServiceFactory");
             }
-        }
-    }
-
-    public abstract class ManagerBase : IDisposable
-    {
-        protected ManagerBase(RelativitySettings relativitySettings, IFlurlClient flurlClient)
-        {
-            RelativitySettings = relativitySettings;
-            FlurlClient = flurlClient;
-        }
-
-        public RelativitySettings RelativitySettings { get; }
-
-        public IFlurlClient FlurlClient { get; }
-
-
-        public abstract string RoutePrefix { get; }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-        }
-
-        public Task PutAsync(string routeSuffix, object data, CancellationToken cancellationToken)
-        {
-            var completeRoute = CreateCompleteRoute(RoutePrefix, routeSuffix);
-
-            return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
-                    .PutJsonAsync(data, cancellationToken)
-                ;
-        }
-
-        public Task<T> PutAsync<T>(string routeSuffix, object data, CancellationToken cancellationToken)
-        {
-            var completeRoute = CreateCompleteRoute(RoutePrefix, routeSuffix);
-
-            return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
-                    .PutJsonAsync(data, cancellationToken)
-                    .ReceiveJson<T>()
-                ;
-        }
-
-        public Task DeleteAsync(string routeSuffix, CancellationToken cancellationToken)
-        {
-            var completeRoute = CreateCompleteRoute(RoutePrefix, routeSuffix);
-
-            return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
-                .DeleteAsync(cancellationToken);
-        }
-
-        public Task<T> GetJsonAsync<T>(string routeSuffix, CancellationToken cancellationToken)
-        {
-            var completeRoute = CreateCompleteRoute(RoutePrefix, routeSuffix);
-
-            return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
-                .GetJsonAsync<T>(cancellationToken);
-        }
-
-
-        public Task<T> PostJsonAsync<T>(string routeSuffix, object thing, CancellationToken cancellation)
-        {
-            var completeRoute = CreateCompleteRoute(RoutePrefix, routeSuffix);
-
-            return FlurlClient.SetupRelativityRequest(RelativitySettings,
-                    completeRoute)
-                .PostJsonAsync(thing, cancellation).ReceiveJson<T>();
-        }
-
-        public Task PostJsonAsync(string routeSuffix, object thing, CancellationToken cancellation)
-        {
-            var completeRoute = CreateCompleteRoute(RoutePrefix, routeSuffix);
-
-            return FlurlClient.SetupRelativityRequest(RelativitySettings,
-                    completeRoute)
-                .PostJsonAsync(thing, cancellation);
-        }
-
-
-        private string[] CreateCompleteRoute(string managerPrefix, string suffix)
-        {
-            var routeSuffix = SplitRoute(suffix);
-
-            if (routeSuffix.Any() && routeSuffix.First() == "~")
-            {
-                return Prefixes.Concat(routeSuffix[1..]).ToArray();
-            }
-
-            return Prefixes.Concat(SplitRoute(managerPrefix)).Concat(routeSuffix).ToArray();
-        }
-
-        private IEnumerable<string> Prefixes
-        {
-            get
-            {
-                yield return "relativity-environment";
-                yield return "v" + RelativitySettings.APIVersionNumber;
-            }
-        }
-
-        private static string[] SplitRoute(string s)
-        {
-            return s.Split("/");
         }
     }
 }
