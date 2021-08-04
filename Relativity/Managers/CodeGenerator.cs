@@ -22,7 +22,7 @@ public record ManagerGenerator(
     IReadOnlyList<string> ServicePrefixes,
     IReadOnlyList<string> ExtraNamespaces) { }
 
-internal class CodeGenerator
+public class CodeGenerator
 {
     public static readonly IReadOnlyList<string> RelativityObjectModelPrefixes = new List<string>()
     {
