@@ -44,7 +44,8 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
         {
             var progress = new ProgressReportProgress(stateMonad, this);
             var (workspaceId, request, indexOfFirst, lengthOfResults) = requestObject;
-            return service.QueryAsync(workspaceId, request, indexOfFirst, lengthOfResults, cancellationToken, progress );
+            return service.QueryAsync(workspaceId, request, indexOfFirst, lengthOfResults);
+                //, cancellationToken, progress ); TODO these
         }
 
         /// <inheritdoc />

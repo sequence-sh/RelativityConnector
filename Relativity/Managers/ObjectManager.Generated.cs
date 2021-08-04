@@ -47,7 +47,7 @@ public class TemplateObjectManager : ManagerBase, IObjectManager
 	public Task<QueryResult> QueryAsync(Int32 workspaceID, QueryRequest request, Int32 start, Int32 length)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"/~/workspace/{workspaceID}/object/query";
+		var route = $"Relativity.Objects/workspace/{workspaceID}/object/query";
 		return PostJsonAsync<QueryResult>(route, new{workspaceID}, cancellationToken);
 	}
 	
@@ -55,7 +55,7 @@ public class TemplateObjectManager : ManagerBase, IObjectManager
 	public Task<QueryResult> QueryAsync(Int32 workspaceID, QueryRequest request, Int32 start, Int32 length, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = CancellationToken.None;
-		var route = $"/~/workspace/{workspaceID}/object/query";
+		var route = $"Relativity.Objects/workspace/{workspaceID}/object/query";
 		return PostJsonAsync<QueryResult>(route, new{workspaceID}, cancellationToken);
 	}
 	
@@ -63,7 +63,7 @@ public class TemplateObjectManager : ManagerBase, IObjectManager
 	public Task<QueryResult> QueryAsync(Int32 workspaceID, QueryRequest request, Int32 start, Int32 length, CancellationToken cancel, IProgress<ProgressReport> progress)
 	{
 		var cancellationToken = cancel;
-		var route = $"/~/workspace/{workspaceID}/object/query";
+		var route = $"Relativity.Objects/workspace/{workspaceID}/object/query";
 		return PostJsonAsync<QueryResult>(route, new{workspaceID}, cancellationToken);
 	}
 	
