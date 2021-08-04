@@ -50,15 +50,8 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
     {
         var progress = new ProgressReportProgress(stateMonad, this);
         var (workspaceId, request, indexOfFirst, lengthOfResults) = requestObject;
-
-        return service.QueryAsync(
-            workspaceId,
-            request,
-            indexOfFirst,
-            lengthOfResults,
-            cancellationToken,
-            progress
-        );
+        return service.QueryAsync(workspaceId, request, indexOfFirst, lengthOfResults
+        , cancellationToken, progress );// TODO these
     }
 
     /// <inheritdoc />

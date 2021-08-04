@@ -1,71 +1,69 @@
 ﻿//using System.Collections.Generic;
+//using System.Linq;
+//using System.Threading;
+//using System.Threading.Tasks;
+//using Divergic.Logging.Xunit;
 //using Microsoft.Extensions.Logging;
-//using Microsoft.Extensions.Logging.Xunit;
-//using Reductech.EDR.Core;
+//using Reductech.EDR.ConnectorManagement.Base;
+//using Reductech.EDR.Connectors.Relativity.Steps;
+//using Reductech.EDR.Core.Abstractions;
 //using Reductech.EDR.Core.Internal;
+//using Reductech.EDR.Core.Internal.Serialization;
+//using Reductech.EDR.Core.TestHarness;
 //using Xunit;
 //using Xunit.Abstractions;
+//using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
-//namespace Reductech.Connectors.Relativity.Tests
+//namespace Reductech.EDR.Connectors.Relativity.Tests
 //{
 
-//    public class ImportIntegrationIntegrationTests : ImportIntegrationTestCases
+//    [AutoTheory.UseTestOutputHelper]
+//    public partial class ImportIntegrationTestCases 
 //    {
-//        public ImportIntegrationIntegrationTests(ITestOutputHelper testOutputHelper) => TestOutputHelper = testOutputHelper;
-
-//        /// <inheritdoc />
-//        //[Theory]
-//        [ClassData(typeof(ImportIntegrationTestCases))]
-//        public override void Test(string key)
+//        [Fact]
+//        [Trait("Category", "Integration")]
+//        public async Task RunSCLSequence()
 //        {
-//            base.Test(key);
-//        }
-//    }
+//            var logger =
+//                TestOutputHelper.BuildLogger(new LoggingConfig() { LogLevel = LogLevel.Information });
 
-//    public class ImportIntegrationTestCases : TestBase
-//    {
-//        /// <inheritdoc />
-//        protected override IEnumerable<ITestBaseCase> TestCases {
-//            get
-//            {
-//                yield return  new TestCase();
-//            }
-//        }
+//            var step = ;
 
-//        public class TestCase : ITestBaseCase
-//        {
-//            /// <inheritdoc />
-//            public void Execute(ITestOutputHelper testOutputHelper)
-//            {
-//                var settings = new RelativitySettings()
+//            var scl = step.Serialize();
+
+//            logger.LogInformation(scl);
+
+//            var sfs = StepFactoryStore.Create(new ConnectorData(
+//                new ConnectorSettings()
 //                {
-//                    DesktopClientPath = @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe",
-//                    RelativityPassword = "Test1234!",
-//                    RelativityUsername = "relativity.admin@relativity.com"
-//                };
+//                    Id = "Reductech.EDR.Connectors.Relativity",
+//                    Enable = true,
+//                    Version = "0.10.0",
+//                    Settings = new RelativitySettings()
+//                    {
+//                        RelativityUsername = "relativity.admin@relativity.com", //TODO maybe change this
+//                        RelativityPassword = "Test1234!",
+//                        Url = "http://relativitydevvm/",
+//                        APIVersionNumber = 1,
+//                        DesktopClientPath = @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
+//                    }.ToDictionary()
+//                },
+//                typeof(RelativityGetClients).Assembly
+//            ));
 
-//                var step = new RelativityImportStep()
-//                {
-//                    FilePath = new Constant<string>(@"C:\Users\wainw\source\repos\Examples\Concordance\Carla2\loadfile.dat"),
-//                    FileImportType = new Constant<FileImportType>(FileImportType.Object),
-//                    SettingsFilePath = new Constant<string>(@"C:\Users\wainw\source\repos\Examples\Concordance\LoadSettings.kwe"),
-//                    Configuration = null,
-//                    StartLineNumber = null,
-//                    WorkspaceId = new Constant<int>(1017936)
-//                };
+//            var runner = new SCLRunner(
+//                logger,
+//                sfs,
+//                ExternalContext.Default with{ InjectedContexts = new ConnectorInjection().TryGetInjectedContexts().Value.ToArray()}
+//            );
 
-//                var loggerFactory = new LoggerFactory(new[] { new XunitLoggerProvider(testOutputHelper) });
+//            var r = await runner.RunSequenceFromTextAsync(
+//                scl,
+//                new Dictionary<string, object>(),
+//                CancellationToken.None
+//            );
 
-//                var logger = loggerFactory.CreateLogger(Name);
-//                var stateMonad = new StateMonad(logger, settings, ExternalProcessRunner.Instance);
-
-//                var r = step.Run(stateMonad);
-
-//                r.ShouldBeSuccessful(x=>x.AsString);
-//            }
-
-//            /// <inheritdoc />
-//            public string Name => "Import Test";
+//            r.ShouldBeSuccessful();
 //        }
 //    }
 

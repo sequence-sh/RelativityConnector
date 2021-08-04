@@ -46,8 +46,8 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
                 StatusId,
                 MatterName.WrapStringStream(),
                 Number.WrapStringStream(),
-                Keywords.WrapStringStream(),
-                Notes.WrapStringStream(),
+                Keywords.WrapNullable(x => x.WrapStringStream()),
+                Notes.WrapNullable(x => x.WrapStringStream()),
                 cancellation
             )
             .Map(
@@ -55,7 +55,7 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
                 {
                     var (clientId, statusId, matterName, number, keywords, notes) = x;
 
-                    return new MatterRequest()
+                    var request = new MatterRequest()
                     {
                         Name = matterName,
                         Client =
@@ -65,10 +65,16 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
                         Status = new Securable<ObjectIdentifier>(
                             new ObjectIdentifier() { ArtifactID = statusId }
                         ),
-                        Keywords = keywords,
-                        Notes    = notes,
-                        Number   = number
+                        Number = number
                     };
+
+                    if (keywords.HasValue)
+                        request.Keywords = keywords.Value;
+
+                    if (notes.HasValue)
+                        request.Notes = notes.Value;
+
+                    return request;
                 }
             );
 
@@ -83,9 +89,9 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
 
     [StepProperty(4)][Required] public IStep<StringStream> Number { get; set; } = null!;
 
-    [StepProperty(5)][Required] public IStep<StringStream> Keywords { get; set; } = null!;
+    [StepProperty(5)][Required] public IStep<StringStream>? Keywords { get; set; } = null!;
 
-    [StepProperty(6)][Required] public IStep<StringStream> Notes { get; set; } = null!;
+    [StepProperty(6)][Required] public IStep<StringStream>? Notes { get; set; } = null!;
 }
 
 }

@@ -72,7 +72,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
 
         var (workspaceId, entities, artifactTypeId) = stepsResult.Value;
 
-        var fieldManager = TryGetService<IFieldManager>(stateMonad);
+        var fieldManager = stateMonad.TryGetService<IFieldManager>();
 
         if (fieldManager.IsFailure)
             return fieldManager.MapError(x => x.WithLocation(this))

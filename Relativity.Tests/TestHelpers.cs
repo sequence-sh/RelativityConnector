@@ -5,10 +5,13 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Flurl.Http.Testing;
 using Moq;
 using Moq.Language.Flow;
 using Reductech.EDR.ConnectorManagement.Base;
+using Reductech.EDR.Connectors.Relativity.Managers;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Connectors.Relativity.TestHelpers;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
@@ -98,18 +101,31 @@ public static class TestHelpers
         };
     }
 
+    public static RelativitySettings TestRelativitySettings = new()
+    {
+        RelativityUsername = "UN",
+        RelativityPassword = "PW",
+        Url                = "http://TestRelativityServer",
+        DesktopClientPath  = "C:/DesktopClientPath"
+    };
+
     public static T WithTestRelativitySettings<T>(this T stepCase)
         where T : ICaseThatExecutes
     {
-        var settings = new RelativitySettings()
-        {
-            RelativityUsername = "UN",
-            RelativityPassword = "PW",
-            Url                = "http://TestRelativityServer",
-            DesktopClientPath  = "C:/DesktopClientPath"
-        };
+        return stepCase.WithRelativitySettings(TestRelativitySettings);
+    }
 
-        return stepCase.WithRelativitySettings(settings);
+    public static T WithFlurlMocks<T>(this T stepCase, HttpTest httpTest)
+        where T : ICaseWithSetup
+    {
+        var flurlClient = TestFlurlClientFactory.GetFlurlClient(httpTest);
+
+        stepCase.WithContext(
+            ConnectorInjection.ServiceFactoryFactoryKey,
+            new TemplateServiceFactoryFactory(flurlClient)
+        );
+
+        return stepCase;
     }
 
     public static T WithService<T>(this T stepCase, params IMockSetup[] mockSetups)

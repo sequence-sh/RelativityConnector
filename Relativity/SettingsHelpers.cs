@@ -1,4 +1,5 @@
-﻿using CSharpFunctionalExtensions;
+﻿using System;
+using CSharpFunctionalExtensions;
 using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
@@ -11,7 +12,7 @@ namespace Reductech.EDR.Connectors.Relativity
 {
 
 /// <summary>
-/// Contains helper methods for Tesseract settings
+/// Contains helper methods for Relativity settings
 /// </summary>
 public static class SettingsHelpers
 {
@@ -40,6 +41,43 @@ public static class SettingsHelpers
             EntityConversionHelpers.TryCreateFromEntity<RelativitySettings>(nestedEntity.Value);
 
         return connectorSettings;
+    }
+
+    /// <summary>
+    /// Get a service from the Relativity proxy
+    /// </summary>
+    public static Result<TService, IErrorBuilder> TryGetService<TService>(
+        this IStateMonad stateMonad)
+        where TService : IDisposable
+    {
+        var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
+
+        if (settingsResult.IsFailure)
+            return settingsResult.ConvertFailure<TService>();
+
+        var serviceFactoryFactory =
+            stateMonad.ExternalContext.TryGetContext<IServiceFactoryFactory>(
+                ConnectorInjection.ServiceFactoryFactoryKey
+            );
+
+        if (serviceFactoryFactory.IsFailure)
+            return serviceFactoryFactory.ConvertFailure<TService>();
+
+        var serviceFactory = serviceFactoryFactory.Value.CreateServiceFactory(settingsResult.Value);
+
+        TService service;
+
+        try
+        {
+            service = serviceFactory.CreateProxy<TService>();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
+        return service;
     }
 }
 

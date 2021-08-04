@@ -52,29 +52,6 @@ public abstract class
         return responseEntity;
     }
 
-    protected Result<T, IErrorBuilder> TryGetService<T>(IStateMonad stateMonad)
-        where T : IDisposable
-    {
-        var settingsResult = stateMonad.Settings.TryGetRelativitySettings();
-
-        if (settingsResult.IsFailure)
-            return settingsResult.ConvertFailure<T>();
-
-        var serviceFactoryFactory =
-            stateMonad.ExternalContext.TryGetContext<IServiceFactoryFactory>(
-                ConnectorInjection.ServiceFactoryFactoryKey
-            );
-
-        if (serviceFactoryFactory.IsFailure)
-            return serviceFactoryFactory.ConvertFailure<T>();
-
-        var serviceFactory = serviceFactoryFactory.Value.CreateServiceFactory(settingsResult.Value);
-
-        var service = serviceFactory.CreateProxy<T>();
-
-        return service;
-    }
-
     /// <inheritdoc />
     protected override async Task<Result<TOutput, IError>> Run(
         IStateMonad stateMonad,
@@ -85,7 +62,7 @@ public abstract class
         if (requestObjectResult.IsFailure)
             return requestObjectResult.ConvertFailure<TOutput>();
 
-        var serviceResult = TryGetService<TService>(stateMonad);
+        var serviceResult = stateMonad.TryGetService<TService>();
 
         if (serviceResult.IsFailure)
             return serviceResult.MapError(x => x.WithLocation(this)).ConvertFailure<TOutput>();
