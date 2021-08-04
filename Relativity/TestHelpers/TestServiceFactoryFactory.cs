@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Relativity.Services.ServiceProxy;
 
-namespace Reductech.EDR.Connectors.Relativity
+namespace Reductech.EDR.Connectors.Relativity.TestHelpers
 {
     public class TestServiceFactoryFactory : IServiceFactoryFactory
     {

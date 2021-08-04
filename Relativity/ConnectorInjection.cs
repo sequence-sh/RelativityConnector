@@ -4,6 +4,7 @@ using System.Net.Http;
 using CSharpFunctionalExtensions;
 using Flurl.Http;
 using Flurl.Http.Configuration;
+using Reductech.EDR.Connectors.Relativity.Managers;
 using Reductech.EDR.Core.Connectors;
 using Reductech.EDR.Core.Internal.Errors;
 
