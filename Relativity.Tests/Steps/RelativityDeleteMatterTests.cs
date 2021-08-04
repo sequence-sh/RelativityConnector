@@ -6,25 +6,23 @@ using Relativity.Environment.V1.Matter;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
-    public partial class RelativityDeleteMatterTests : StepTestBase<RelativityDeleteMatter, Unit>
+
+public partial class RelativityDeleteMatterTests : StepTestBase<RelativityDeleteMatter, Unit>
+{
+    /// <inheritdoc />
+    protected override IEnumerable<StepCase> StepCases
     {
-        /// <inheritdoc />
-        protected override IEnumerable<StepCase> StepCases
+        get
         {
-            get
-            {
-                yield return new StepCase("Delete Matter",
-                        new RelativityDeleteMatter()
-                        {
-                            MatterArtifactId = StaticHelpers.Constant(123)
-                        }, Unit.Default)
-                    .WithTestRelativitySettings()
-                    .WithService(
-                        new MockSetupUnit<IMatterManager>(
-                            x => x.DeleteAsync(123)
-                        )
-                    );
-            }
+            yield return new StepCase(
+                    "Delete Matter",
+                    new RelativityDeleteMatter() { MatterArtifactId = StaticHelpers.Constant(123) },
+                    Unit.Default
+                )
+                .WithTestRelativitySettings()
+                .WithService(new MockSetupUnit<IMatterManager>(x => x.DeleteAsync(123)));
         }
     }
+}
+
 }

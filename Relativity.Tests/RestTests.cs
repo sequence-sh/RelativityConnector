@@ -44,14 +44,12 @@
 //            }
 //        }
 
-
 //        //[Fact(Skip = "integration")]
 //        //public async Task TestFirstDocument()
 //        //{
 //        //    var r = await DocumentQueryHelper.GetDocumentQueryResultAsync(Settings, WorkspaceId, GetFlurlClient());
 
 //        //    r.ShouldBeSuccessful();
-
 
 //        //    r.Value.Results.Should().NotBeEmpty().And.NotContainNulls().And
 //        //        .OnlyContain(x => x.ArtifactID > 0).And.OnlyContain(x => x.Location != null);
@@ -75,11 +73,9 @@
 //        //    {
 //        //        var o = (fv.Field.Name, fv.Field.FieldType, fv.Field.ArtifactID, fv.Field.FieldCategory, fv.Value);
 
-
 //        //        TestOutputHelper.WriteLine(o.ToString());
 //        //    }
 //        //}
-
 
 //        [Fact(Skip = "integration")]
 //        public async Task TestDownloadFile()
@@ -97,7 +93,6 @@
 
 //            TestOutputHelper.WriteLine(result.Value);
 //        }
-
 
 //        public static IFlurlClient GetFlurlClient() => new FlurlClient(new HttpClient());
 
@@ -119,7 +114,6 @@
 
 //        //    var condition = "'Extracted Text' ISSET ";
 
-
 //        //    var exportStep = new RelativityExportStep()
 //        //    {
 //        //        BatchSize = StaticHelpers.Constant(10),
@@ -132,7 +126,6 @@
 //        //    var logger = loggerFactory.CreateLogger("Export");
 
 //        //    var state = new StateMonad(logger,  Settings, null);
-
 
 //        //    var result = exportStep.Run(state);
 
@@ -147,3 +140,5 @@
 //        //}
 //    }
 //}
+
+

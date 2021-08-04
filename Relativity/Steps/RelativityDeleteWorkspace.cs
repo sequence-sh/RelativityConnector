@@ -18,7 +18,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 [SCLExample(
     "RelativityDeleteWorkspace 42",
     ExecuteInTests = false,
-    Description    = "Deletes workspace 42"
+    Description = "Deletes workspace 42"
 )]
 public sealed class
     RelativityDeleteWorkspace : RelativityApiRequest<int, IWorkspaceManager, Unit, Unit>

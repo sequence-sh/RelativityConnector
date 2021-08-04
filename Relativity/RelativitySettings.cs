@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using Reductech.EDR.Core;
@@ -33,6 +34,18 @@ public sealed class RelativitySettings : IEntityConvertible
         var base64UsernameAndPassword    = Convert.ToBase64String(unencodedBytes);
 
         return $"Basic {base64UsernameAndPassword}";
+    }
+
+    public Dictionary<string, object> ToDictionary()
+    {
+        return new Dictionary<string, object>()
+        {
+            { nameof(RelativityUsername), RelativityUsername },
+            { nameof(RelativityPassword), RelativityPassword },
+            { nameof(Url), Url },
+            { nameof(DesktopClientPath), DesktopClientPath },
+            { nameof(APIVersionNumber), APIVersionNumber },
+        };
     }
 }
 
