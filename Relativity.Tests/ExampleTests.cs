@@ -114,8 +114,8 @@ public partial class ExampleTests
     public static IEnumerable<object[]> IntegrationTestCaseArgs =>
         IntegrationTestCases.Select(x => new[] { x.Serialize() });
 
-    //[Theory(Skip = "Manual")]
-    [Theory]
+    [Theory(Skip = "Manual")]
+    //[Theory]
     [Trait("Category", "Integration")]
     [MemberData(nameof(IntegrationTestCaseArgs))]
     public async Task RunSCLSequence(string scl)
