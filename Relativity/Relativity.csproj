@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RootNamespace>Reductech.EDR.Connectors.Relativity</RootNamespace>
     <AssemblyName>Reductech.EDR.Connectors.Relativity</AssemblyName>
-    <Version>0.1.0$(VersionSuffix)</Version>
+    <Version>0.11.0$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <PropertyGroup>
