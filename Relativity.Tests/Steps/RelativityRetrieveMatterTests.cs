@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Flurl.Http.Testing;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.TestHarness;
@@ -34,6 +36,28 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         new MatterResponse() { ArtifactID = 1234, Number = "My Number", }
                     )
                 );
+
+
+
+            var httpTest = new HttpTest();
+            httpTest
+                
+                //.ForCallsTo("http://TestRelativityServer/Relativity.REST/api/relativity-environment/v1/workspaces/-1/matters")
+                //.WithVerb(HttpMethod.Get)
+                .RespondWithJson(new MatterResponse() { ArtifactID = 1234, Number = "My Number", });
+
+            yield return new StepCase(
+                    "Retrieve Matter with HTTP",
+                    TestHelpers.LogEntity(
+                        new RelativityRetrieveMatter()
+                        {
+                            MatterArtifactId = StaticHelpers.Constant(1234)
+                        }
+                    ),
+                    Unit.Default,
+                    "(Client: \"\" Number: \"My Number\" Status: \"\" Keywords: \"\" Notes: \"\" Meta: \"\" Actions: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Name: \"\" ArtifactID: 1234 Guids: \"\")"
+                ).WithTestRelativitySettings()
+                .WithFlurlMocks(httpTest);
         }
     }
 }

@@ -13,7 +13,6 @@ namespace Reductech.EDR.Connectors.Relativity
 
 public sealed class ConnectorInjection : IConnectorInjection
 {
-    public const string FlurlClientFactoryKey = "FlurlClientFactory";
 
     public const string ServiceFactoryFactoryKey = "RelativityServiceFactoryFactory";
 
@@ -37,7 +36,6 @@ public sealed class ConnectorInjection : IConnectorInjection
 
         var list = new List<(string Name, object Context)>()
         {
-            (FlurlClientFactoryKey, flurlClient),
             (ServiceFactoryFactoryKey, new TemplateServiceFactoryFactory(flurlClient))
         };
 
