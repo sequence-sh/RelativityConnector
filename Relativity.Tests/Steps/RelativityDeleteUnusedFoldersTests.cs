@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
@@ -23,7 +24,7 @@ public partial class
                     Unit.Default
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IFolderManager, FolderResultSet>(
+                    new MockSetup<IFolderManager1, FolderResultSet>(
                         x => x.DeleteUnusedFoldersAsync(42),
                         new FolderResultSet() { Success = true }
                     )
@@ -42,7 +43,7 @@ public partial class
                     ErrorCode_Relativity.Unsuccessful.ToErrorBuilder("Test Error Message")
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IFolderManager, FolderResultSet>(
+                    new MockSetup<IFolderManager1, FolderResultSet>(
                         x => x.DeleteUnusedFoldersAsync(42),
                         new FolderResultSet() { Success = false, Message = "Test Error Message" }
                     )

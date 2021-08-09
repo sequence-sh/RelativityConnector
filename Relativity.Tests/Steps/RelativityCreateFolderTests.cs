@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Relativity.Services.Folder;
@@ -26,7 +27,7 @@ public partial class RelativityCreateFolderTests : StepTestBase<RelativityCreate
                     42
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IFolderManager, int>(
+                    new MockSetup<IFolderManager1, int>(
                         x => x.CreateSingleAsync(
                             13,
                             It.Is<Folder>(

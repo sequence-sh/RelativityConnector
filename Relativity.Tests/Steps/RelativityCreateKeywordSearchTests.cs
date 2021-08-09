@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Relativity.Services.Search;
@@ -33,7 +34,7 @@ public partial class
                         42
                     ).WithTestRelativitySettings()
                     .WithService(
-                        new MockSetup<IKeywordSearchManager, int>(
+                        new MockSetup<IKeywordSearchManager1, int>(
                             x =>
                                 x.CreateSingleAsync(
                                     10,

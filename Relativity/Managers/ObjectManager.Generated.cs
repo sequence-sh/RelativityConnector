@@ -72,6 +72,42 @@ public class TemplateObjectManager1 : ManagerBase, IObjectManager1
 		return PostJsonAsync<QueryResult>(route, jsonObject, cancellationToken);
 	}
 	
+	
+	public Task<RelativityObjectSlim[]> RetrieveNextResultsBlockFromExportAsync(Int32 workspaceID, Guid runID, Int32 batchSize)
+	{
+		var cancellationToken = CancellationToken.None;
+		var route = $"/~/workspace/{workspaceID}/object/retrievenextresultsblockfromexport";
+		var jsonObject = new {
+			runID,
+			batchSize,
+		};
+		return PostJsonAsync<RelativityObjectSlim[]>(route, jsonObject, cancellationToken);
+	}
+	
+	
+	public Task<IKeplerStream> StreamLongTextAsync(Int32 workspaceID, RelativityObjectRef exportObject, FieldRef longTextField)
+	{
+		var cancellationToken = CancellationToken.None;
+		var route = $"/~/workspace/{workspaceID}/object/streamlongtext";
+		var jsonObject = new {
+			exportObject,
+			longTextField,
+		};
+		return PostJsonAsync<IKeplerStream>(route, jsonObject, cancellationToken);
+	}
+	
+	
+	public Task<ExportInitializationResults> InitializeExportAsync(Int32 workspaceID, QueryRequest queryRequest, Int32 start)
+	{
+		var cancellationToken = CancellationToken.None;
+		var route = $"/~/workspace/{workspaceID}/object/initializeexport";
+		var jsonObject = new {
+			queryRequest,
+			start,
+		};
+		return PostJsonAsync<ExportInitializationResults>(route, jsonObject, cancellationToken);
+	}
+	
 }
 
 

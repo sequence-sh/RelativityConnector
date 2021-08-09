@@ -2,7 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Relativity.Kepler.Services;
+using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs;
+using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Objects.DataContracts;
 
 namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
@@ -71,6 +73,60 @@ public interface IObjectManager1 : IManager //Relativity.Services.Objects.IObjec
         int length,
         CancellationToken cancel,
         IProgress<ProgressReport> progress);
+
+
+    /// <summary>Retrieves a results block from a given export set.</summary>
+    /// <param name="workspaceID">Workspace ID of the workspace containing the data to export.</param>
+    /// <param name="runID">The run ID of the export generated from initialization.</param>
+    /// <param name="batchSize">The desired number of results to return from the export set; note that this size may be capped by an internal limit.</param>
+    /// <returns>The next block of export results, or null if the export is complete .</returns>
+    [HttpPost]
+    [Route("~/workspace/{workspaceID:int}/object/retrievenextresultsblockfromexport")]
+    Task<RelativityObjectSlim[]> RetrieveNextResultsBlockFromExportAsync(
+        int workspaceID,
+        [JsonParameter]
+        Guid runID,
+        [JsonParameter]
+        int batchSize);
+
+
+    /// <summary>
+    /// Retrieves the contents of a long text field on a Document or Relativity Dynamic Object (RDO) as a stream.
+    /// </summary>
+    /// <param name="workspaceID">Workspace ID of the workspace containing the object to be retrieved.</param>
+    /// <param name="exportObject">A <see cref="T:Relativity.Services.Objects.DataContracts.RelativityObjectRef" /> of the Document or Relativity Dynamic Object (RDO) that contains the text to be streamed.</param>
+    /// <param name="longTextField">A <see cref="T:Relativity.Services.Objects.DataContracts.FieldRef" /> of the long text field that contains the text to be streamed.</param>
+    /// <returns>
+    /// A <see cref="T:Relativity.Kepler.Transport.IKeplerStream" /> that contains the content of the selected long text field.
+    /// This stream is the text encoded in either <see cref="P:System.Text.Encoding.Unicode" /> for unicode-enabled fields or <see cref="P:System.Text.Encoding.ASCII" /> otherwise.
+    /// </returns>
+    [HttpPost]
+    [Route("~/workspace/{workspaceID:int}/object/streamlongtext")]
+    Task<IKeplerStream> StreamLongTextAsync(
+        int workspaceID,
+        [JsonParameter]
+        RelativityObjectRef exportObject,
+        [JsonParameter]
+        FieldRef longTextField);
+
+
+    /// <summary>
+    /// Initializes an export job, populated with the results of a <see cref="T:Relativity.Services.Objects.DataContracts.QueryRequest" />.
+    /// </summary>
+    /// <param name="workspaceID">Workspace ID of the workspace containing the data to export.</param>
+    /// <param name="queryRequest">Query that specifies the data set to export.
+    /// Includes ObjectType and Fields to be exported, query information to determine the set of objects to export, and an optional maximum length to export inline.</param>
+    /// <param name="start">The record index to begin exporting from.</param>
+    /// <returns>An <see cref="T:Relativity.Services.DataContracts.DTOs.Results.ExportInitializationResults" /> containing an export run ID, and a count of records to be exported.</returns>
+    /// <remarks>After initialization, results can be retrieved using <see cref="M:Relativity.Services.Objects.IObjectManager.RetrieveNextResultsBlockFromExportAsync(System.Int32,System.Guid,System.Int32)" /> or <see cref="M:Relativity.Services.Objects.IObjectManager.RetrieveResultsBlockFromExportAsync(System.Int32,System.Guid,System.Int32,System.Int32)" />.</remarks>
+    [HttpPost]
+    [Route("~/workspace/{workspaceID:int}/object/initializeexport")]
+    Task<ExportInitializationResults> InitializeExportAsync(
+        int workspaceID,
+        [JsonParameter]
+        QueryRequest queryRequest,
+        [JsonParameter]
+        int start);
 }
 
 }

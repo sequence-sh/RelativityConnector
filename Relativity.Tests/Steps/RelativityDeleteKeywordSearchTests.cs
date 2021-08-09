@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
@@ -25,7 +26,8 @@ public partial class
                     Unit.Default
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetupUnit<IKeywordSearchManager>(x => x.DeleteSingleAsync(123, 456))
+                    new MockSetupUnit<IKeywordSearchManager1>(x => 
+                                                                 x.DeleteSingleAsync(123, 456))
                 );
         }
     }

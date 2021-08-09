@@ -2,6 +2,7 @@
 using System.Net.Http;
 using Flurl.Http.Testing;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
@@ -32,7 +33,7 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
                     42
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IMatterManager, int>(
+                    new MockSetup<IMatterManager1, int>(
                         x => x.CreateAsync(
                             It.Is<MatterRequest>(
                                 mr =>

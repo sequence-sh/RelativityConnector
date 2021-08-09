@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.TestHarness;
@@ -26,7 +27,7 @@ public partial class
                     )
                     .WithTestRelativitySettings()
                     .WithService(
-                        new MockSetup<IMatterManager, List<DisplayableObjectIdentifier>>(
+                        new MockSetup<IMatterManager1, List<DisplayableObjectIdentifier>>(
                             x => x.GetEligibleStatusesAsync(),
                             new List<DisplayableObjectIdentifier>()
                             {

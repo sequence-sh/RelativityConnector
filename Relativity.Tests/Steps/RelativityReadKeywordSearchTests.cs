@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.TestHarness;
@@ -30,7 +31,7 @@ public partial class
                 )
                 .WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IKeywordSearchManager, KeywordSearch>(
+                    new MockSetup<IKeywordSearchManager1, KeywordSearch>(
                         x => x.ReadSingleAsync(11, 12),
                         new KeywordSearch() { Name = "My Search", ArtifactID = 12, }
                     )

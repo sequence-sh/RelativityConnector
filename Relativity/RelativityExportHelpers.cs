@@ -31,7 +31,7 @@ public static class RelativityExportHelpers
         int start,
         int batchSize,
         IDocumentFileManager1 documentFileManager,
-        IObjectManager objectManager,
+        IObjectManager1 objectManager,
         ErrorLocation errorLocation,
         CancellationToken cancellationToken)
     {
@@ -77,7 +77,7 @@ public static class RelativityExportHelpers
         int batchSize,
         IReadOnlyList<string> fieldNames,
         IDocumentFileManager1 documentFileManager,
-        IObjectManager objectManager,
+        IObjectManager1 objectManager,
         ErrorLocation errorLocation,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
@@ -193,7 +193,7 @@ public static class RelativityExportHelpers
         IReadOnlyList<string> fieldNames,
         string condition,
         int start,
-        IObjectManager objectManager)
+        IObjectManager1 objectManager)
     {
         var request = new QueryRequest()
         {
@@ -220,7 +220,7 @@ public static class RelativityExportHelpers
         int workspaceId,
         string fieldName,
         int artifactId,
-        IObjectManager objectManager)
+        IObjectManager1 objectManager)
     {
         IKeplerStream keplerStream;
 

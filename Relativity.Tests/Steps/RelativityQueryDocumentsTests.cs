@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Moq;
 using Moq.Language.Flow;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
@@ -54,7 +55,7 @@ public partial class
                     "(ParentObject: \"\" Name: \"Result 2\" FieldValues: [(Value: \"Test Value 2a\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field a\")), (Value: \"Test Value 2b\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field b\"))] ArtifactID: 22222 Guids: \"\")"
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IObjectManager, QueryResult>(
+                    new MockSetup<IObjectManager1, QueryResult>(
                         x =>
                             x.QueryAsync(
                                 11,
@@ -129,7 +130,7 @@ public partial class
                     )
                     {
                         AdditionalAction =
-                            Maybe<Action<ISetup<IObjectManager, Task<QueryResult>>>>.From(
+                            Maybe<Action<ISetup<IObjectManager1, Task<QueryResult>>>>.From(
                                 x => x.Callback(
                                     new Action<int, QueryRequest, int, int, CancellationToken,
                                         IProgress<ProgressReport>>(

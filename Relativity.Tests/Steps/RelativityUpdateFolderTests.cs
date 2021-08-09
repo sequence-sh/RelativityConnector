@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
@@ -27,7 +28,7 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
                     Unit.Default
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetupUnit<IFolderManager>(
+                    new MockSetupUnit<IFolderManager1>(
                         manager =>
                             manager.UpdateSingleAsync(
                                 11,
