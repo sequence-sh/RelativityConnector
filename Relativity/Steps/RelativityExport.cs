@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -45,7 +46,7 @@ public sealed class RelativityExport : CompoundStep<Array<Entity>>
 
         var (workspaceId, fieldNames, condition, batchSize) = stepsResult.Value;
 
-        var documentFileManager = stateMonad.TryGetService<IDocumentFileManager>();
+        var documentFileManager = stateMonad.TryGetService<IDocumentFileManager1>();
 
         if (documentFileManager.IsFailure)
             return documentFileManager.ConvertFailure<Array<Entity>>()

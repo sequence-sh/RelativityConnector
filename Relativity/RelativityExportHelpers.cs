@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal.Errors;
@@ -29,7 +30,7 @@ public static class RelativityExportHelpers
         string condition,
         int start,
         int batchSize,
-        IDocumentFileManager documentFileManager,
+        IDocumentFileManager1 documentFileManager,
         IObjectManager objectManager,
         ErrorLocation errorLocation,
         CancellationToken cancellationToken)
@@ -75,7 +76,7 @@ public static class RelativityExportHelpers
         int workspaceId,
         int batchSize,
         IReadOnlyList<string> fieldNames,
-        IDocumentFileManager documentFileManager,
+        IDocumentFileManager1 documentFileManager,
         IObjectManager objectManager,
         ErrorLocation errorLocation,
         [EnumeratorCancellation] CancellationToken cancellationToken)

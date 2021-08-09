@@ -6,16 +6,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Flurl.Http;
-using Relativity.Environment.V1.Matter;
-using Relativity.Environment.V1.Workspace;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Services;
-using Relativity.Services.Interfaces.Document;
-using Relativity.Services.Objects;
 using Relativity.Services.ServiceProxy;
-using IFieldManager = Relativity.Services.Interfaces.Field.IFieldManager;
 
 namespace Reductech.EDR.Connectors.Relativity.Managers
 {
+
+
 
 public record ManagerGenerator(
     Type Type,
@@ -34,20 +32,18 @@ public class CodeGenerator
         "relativity-environment", "v{RelativitySettings.APIVersionNumber}",
     };
 
-    public static readonly IReadOnlyList<string> EmptyList = new List<string>(0);
-
     public static IEnumerable<ManagerGenerator> ManagerGenerators
     {
         get
         {
             yield return new ManagerGenerator(
-                typeof(IMatterManager),
+                typeof(IMatterManager1),
                 RelativityEnvironmentPrefixes,
                 new List<string>() { "Relativity.Shared.V1.Models" }
             );
 
             yield return new ManagerGenerator(
-                typeof(IWorkspaceManager),
+                typeof(IWorkspaceManager1),
                 RelativityEnvironmentPrefixes,
                 new List<string>()
                 {
@@ -56,20 +52,8 @@ public class CodeGenerator
             );
 
             yield return new ManagerGenerator(
-                typeof(IFieldManager),
-                RelativityObjectModelPrefixes,
-                new List<string>()
-                {
-                    "Relativity.Services.Interfaces.Field",
-                    "Relativity.Services.Interfaces.Shared.Models",
-                    "Relativity.Services.Interfaces.Shared",
-                    "Relativity.Services.Interfaces.Field.Models"
-                }
-            );
-
-            yield return new ManagerGenerator(
-                typeof(IObjectManager),
-                EmptyList,
+                typeof(IObjectManager1),
+                new List<string>(){"Relativity.Objects"},
                 new List<string>()
                 {
                     "Relativity.Services.Objects",
@@ -81,7 +65,7 @@ public class CodeGenerator
             );
 
             yield return new ManagerGenerator(
-                typeof(IDocumentFileManager),
+                typeof(IDocumentFileManager1),
                 RelativityObjectModelPrefixes,
                 new List<string>()
                 {
@@ -90,8 +74,35 @@ public class CodeGenerator
                 }
             );
 
-            //yield return typeof(IKeywordSearchManager);
-            //yield return typeof(IFolderManager);
+            yield return new ManagerGenerator(
+                typeof(IKeywordSearchManager1),
+                new List<string>()
+                {
+                    "Relativity.Services.Search.ISearchModule",
+                    
+                    "Keyword Search Manager"
+                },
+                new List<string>()
+                {
+                    "Relativity.Services.Search",
+                    "Relativity.Services.Interfaces.Document",
+                    "Relativity.Services.Interfaces.Document.Models",
+                }
+            );
+            
+            yield return new ManagerGenerator(
+                typeof(IFolderManager1),
+                new List<string>()
+                {
+                    "Relativity.Services.Folder.IFolderModule",
+                    "Folder Manager"
+                },
+                new List<string>()
+                {
+                    "Relativity.Services.Interfaces.Document",
+                    "Relativity.Services.Interfaces.Document.Models",
+                }
+            );
         }
     }
 
@@ -131,6 +142,7 @@ public class CodeGenerator
             yield return "System.Threading";
             yield return "System.Threading.Tasks";
             yield return "Flurl.Http";
+            yield return "Reductech.EDR.Connectors.Relativity.ManagerInterfaces";
 
             yield return "Relativity.Kepler.Transport";
             yield return "Relativity.Environment.V1.Matter";
@@ -239,40 +251,60 @@ public class CodeGenerator
 
         sb.AppendLine($"var route = $\"{routePrefix}/{FixRouteTemplate(route.Template)}\";");
 
+
+        void AppendCreateJsonObject()
+        {
+            sb.AppendLine("var jsonObject = new {");
+            sb.Indent();
+
+            var jsonParameters = methodInfo.GetParameters()
+                .Where(x => x.GetCustomAttribute<JsonParameterAttribute>() is not null)
+                .ToList();
+
+            if (!jsonParameters.Any())
+            {
+                throw new Exception($"{methodInfo.Name} has no Json Parameters");
+            }
+
+            foreach (var jsonParameter in jsonParameters)
+            {
+                sb.AppendLine(jsonParameter.Name + ",");
+            }
+
+            sb.UnIndent();
+            sb.AppendLine("};");
+        }
+
         if (methodInfo.GetCustomAttribute<HttpPostAttribute>() is not null)
         {
-            var arg1 = methodInfo.GetParameters()[0].Name;
-
+            AppendCreateJsonObject();
             if (methodInfo.ReturnType.IsGenericType)
             {
                 var returnType = ToGenericTypeString(methodInfo.ReturnType.GenericTypeArguments[0]);
 
                 sb.AppendLine(
-                    $"return PostJsonAsync<{returnType}>(route, new{{{arg1}}}, cancellationToken);"
+                    $"return PostJsonAsync<{returnType}>(route, jsonObject, cancellationToken);"
                 );
             }
             else
             {
-                sb.AppendLine($"return PostJsonAsync(route, new{{{arg1}}}, cancellationToken);");
+                sb.AppendLine($"return PostJsonAsync(route, jsonObject, cancellationToken);");
             }
         }
         else if (methodInfo.GetCustomAttribute<HttpPutAttribute>() is not null)
         {
-            var arg1 = methodInfo.GetParameters()
-                .Last(x => x.ParameterType != typeof(DateTime))
-                .Name;
-
+            AppendCreateJsonObject();
             if (methodInfo.ReturnType.IsGenericType)
             {
                 var returnType = ToGenericTypeString(methodInfo.ReturnType.GenericTypeArguments[0]);
 
                 sb.AppendLine(
-                    $"return PutAsync<{returnType}>(route, new{{{arg1}}}, cancellationToken);"
+                    $"return PutAsync<{returnType}>(route, jsonObject, cancellationToken);"
                 );
             }
             else
             {
-                sb.AppendLine($"return PutAsync(route, new{{{arg1}}}, cancellationToken);");
+                sb.AppendLine($"return PutAsync(route, jsonObject, cancellationToken);");
             }
         }
         else if (methodInfo.GetCustomAttribute<HttpGetAttribute>() is not null)
@@ -368,6 +400,7 @@ public class TemplateServiceFactoryFactory : IServiceFactoryFactory
         {
             RelativitySettings = relativitySettings;
             FlurlClient        = flurlClient;
+                
 
             var types = typeof(TemplateServiceFactory).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsAssignableTo(typeof(ManagerBase)));
@@ -379,7 +412,7 @@ public class TemplateServiceFactoryFactory : IServiceFactoryFactory
                             t,
                             new object?[] { RelativitySettings, FlurlClient },
                             null
-                        )
+                        )!
                 )
                 .ToList();
         }

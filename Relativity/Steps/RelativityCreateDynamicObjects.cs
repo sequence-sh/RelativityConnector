@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -24,7 +25,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// </summary>
 public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspaceId,
     MassCreateRequest createRequest
-    ), IObjectManager, MassCreateResult, Array<int>>
+    ), IObjectManager1, MassCreateResult, Array<int>>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -43,7 +44,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     /// <inheritdoc />
     public override Task<MassCreateResult> SendRequest(
         IStateMonad stateMonad,
-        IObjectManager service,
+        IObjectManager1 service,
         (int workspaceId, MassCreateRequest createRequest) requestObject,
         CancellationToken cancellationToken)
     {

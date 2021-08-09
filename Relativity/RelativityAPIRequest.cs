@@ -7,6 +7,7 @@ using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
@@ -18,7 +19,7 @@ namespace Reductech.EDR.Connectors.Relativity
 
 public abstract class
     RelativityApiRequest<TRequest, TService, TServiceOutput, TOutput> : CompoundStep<TOutput>
-    where TService : IDisposable
+    where TService : IManager
 {
     protected static Result<Array<Entity>, IErrorBuilder> TryConvertToEntityArray<T>(
         IEnumerable<T> stuff)

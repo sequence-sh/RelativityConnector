@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -18,7 +19,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// </summary>
 [SCLExample("RelativityDeleteUnusedFolders WorkspaceArtifactId: 42", ExecuteInTests = false)]
 public sealed class
-    RelativityDeleteUnusedFolders : RelativityApiRequest<int, IFolderManager, FolderResultSet, Unit>
+    RelativityDeleteUnusedFolders : RelativityApiRequest<int, IFolderManager1, FolderResultSet, Unit>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory { get; } =
@@ -36,7 +37,7 @@ public sealed class
     /// <inheritdoc />
     public override async Task<FolderResultSet> SendRequest(
         IStateMonad stateMonad,
-        IFolderManager service,
+        IFolderManager1 service,
         int requestObject,
         CancellationToken cancellationToken)
     {

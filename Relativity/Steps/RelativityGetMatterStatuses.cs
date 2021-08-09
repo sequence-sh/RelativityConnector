@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -20,7 +21,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     ExpectedOutput =
         "[(Name: \"Status 1\" ArtifactID: 1 Guids: \"\"), (Name: \"Status 2\" ArtifactID: 2 Guids: \"\")]"
 )]
-public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterManager,
+public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterManager1,
     List<DisplayableObjectIdentifier>, Array<Entity>>
 {
     /// <inheritdoc />
@@ -37,7 +38,7 @@ public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterMan
     /// <inheritdoc />
     public override Task<List<DisplayableObjectIdentifier>> SendRequest(
         IStateMonad stateMonad,
-        IMatterManager service,
+        IMatterManager1 service,
         Unit requestObject,
         CancellationToken cancellationToken)
     {

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -14,7 +15,7 @@ using Relativity.Shared.V1.Models;
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
 
-public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatterManager, int, int>
+public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatterManager1, int, int>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -29,7 +30,7 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
     /// <inheritdoc />
     public override Task<int> SendRequest(
         IStateMonad stateMonad,
-        IMatterManager service,
+        IMatterManager1 service,
         MatterRequest requestObject,
         CancellationToken cancellationToken)
     {

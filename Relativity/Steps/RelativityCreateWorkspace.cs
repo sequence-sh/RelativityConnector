@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -19,7 +20,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// Creates a new Relativity Workspace
 /// </summary>
 public sealed class
-    RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, IWorkspaceManager,
+    RelativityCreateWorkspace : RelativityApiRequest<WorkspaceRequest, IWorkspaceManager1,
         WorkspaceResponse, Entity>
 {
     /// <inheritdoc />
@@ -32,7 +33,7 @@ public sealed class
     /// <inheritdoc />
     public override async Task<WorkspaceResponse> SendRequest(
         IStateMonad stateMonad,
-        IWorkspaceManager service,
+        IWorkspaceManager1 service,
         WorkspaceRequest requestObject,
         CancellationToken cancellationToken)
     {
