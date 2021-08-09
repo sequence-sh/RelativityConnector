@@ -4,7 +4,7 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
 using Relativity.Services.DataContracts.DTOs;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
+namespace Reductech.EDR.Connectors.Relativity
 {
 
 public class ProgressReportProgress : IProgress<ProgressReport>
