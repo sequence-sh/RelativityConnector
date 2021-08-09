@@ -14,7 +14,7 @@ public sealed record ErrorCode_Relativity : ErrorCodeBase
     private ErrorCode_Relativity(string code) : base(code) { }
 
     /// <summary>
-    /// Request Failed with status code {0}. {1}
+    /// Request Failed with status code {0}. {1} {2}
     /// </summary>
     public static readonly ErrorCode_Relativity RequestFailed = new(nameof(RequestFailed));
 

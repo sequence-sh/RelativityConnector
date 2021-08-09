@@ -70,19 +70,10 @@ public partial class ExampleTests
                             DefaultCacheLocationId  = Constant(1015534)
                         }
                     },
-                    new RelativityImport()
+                    new SetVariable<int>()
                     {
-                        FilePath =
-                            Constant(
-                                @"C:\Users\wainw\source\repos\Examples\Concordance\Carla2\loadfile.dat"
-                            ),
-                        FileImportType = Constant(FileImportType.Object),
-                        SettingsFilePath =
-                            Constant(
-                                @"C:\Users\wainw\source\repos\Examples\Concordance\CarlaSettings.kwe"
-                            ),
-                        StartLineNumber = null,
-                        WorkspaceId = new EntityGetValue<int>()
+                        Variable = new VariableName("WorkspaceId"),
+                        Value = new EntityGetValue<int>()
                         {
                             Property = Constant("ArtifactID"),
                             Entity = new GetVariable<Entity>()
@@ -91,16 +82,49 @@ public partial class ExampleTests
                             }
                         }
                     },
+                    new SetVariable<int>()
+                    {
+                        Variable = new VariableName("FolderId"),
+                        Value = new RelativityCreateFolder()
+                        {
+                            FolderName          = Constant("MyFolder"),
+                            WorkspaceArtifactId = GetVariable<int>("WorkspaceId"),
+                        }
+                    },
+                    new SetVariable<Array<int>>()
+                    {
+                        Variable = new VariableName("DynamicObjectIds"),
+                        Value = new RelativityCreateDynamicObjects()
+                        {
+                            ArtifactTypeId      = Constant(10),
+                            WorkspaceArtifactId = GetVariable<int>("WorkspaceId"),
+                            Entities = Array(
+                                Entity.Create(
+                                    ("Title", "Thing 1"),
+                                    ("Title", "Thing 2")
+                                )
+                            ),
+                            ParentArtifactId = GetVariable<int>("FolderId"),
+                        },
+                    },
+
+                    //new RelativityImport()
+                    //{
+                    //    FilePath =
+                    //        Constant(
+                    //            @"C:\Users\wainw\source\repos\Examples\Concordance\Carla2\loadfile.dat"
+                    //        ),
+                    //    FileImportType = Constant(FileImportType.Object),
+                    //    SettingsFilePath =
+                    //        Constant(
+                    //            @"C:\Users\wainw\source\repos\Examples\Concordance\CarlaSettings.kwe"
+                    //        ),
+                    //    StartLineNumber = null,
+                    //    WorkspaceId     = GetVariable<int>("WorkspaceId")
+                    //},
                     //new RelativityDeleteWorkspace()
                     //{
-                    //    WorkspaceId =  new EntityGetValue<int>()
-                    //    {
-                    //        Property = Constant("ArtifactID"),
-                    //        Entity = new GetVariable<Entity>()
-                    //        {
-                    //            Variable = new VariableName("Workspace")
-                    //        }
-                    //    }
+                    //    WorkspaceId = GetVariable<int>("WorkspaceId")
                     //},
                     //new RelativityDeleteMatter()
                     //{
@@ -114,8 +138,8 @@ public partial class ExampleTests
     public static IEnumerable<object[]> IntegrationTestCaseArgs =>
         IntegrationTestCases.Select(x => new[] { x.Serialize() });
 
-    [Theory(Skip = "Manual")]
-    //[Theory]
+    //[Theory(Skip = "Manual")]
+    [Theory]
     [Trait("Category", "Integration")]
     [MemberData(nameof(IntegrationTestCaseArgs))]
     public async Task RunSCLSequence(string scl)

@@ -36,11 +36,11 @@ public class TemplateObjectManager : ManagerBase, IObjectManager
 	}
 	
 	
-	public Task<MassCreateResult> CreateAsync(Int32 workspaceID, MassCreateRequest massRequest, CancellationToken cancel)
+	public Task<MassCreateResult>  CreateAsync(Int32 workspaceID, MassCreateRequest massRequest, CancellationToken cancel)
 	{
 		var cancellationToken = cancel;
-		var route = $"/~/workspace/{workspaceID}/object/create";
-		return PostJsonAsync<MassCreateResult>(route, new{workspaceID}, cancellationToken);
+		var route = $"Relativity.Objects/workspace/{workspaceID}/object/create";
+		return PostJsonAsync<MassCreateResult>(route, new {massRequest}, cancellationToken);
 	}
 	
 	

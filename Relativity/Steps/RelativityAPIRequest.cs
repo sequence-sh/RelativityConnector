@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
@@ -80,6 +83,21 @@ public abstract class
                 cancellationToken
             );
         }
+        catch (FlurlHttpException flurlHttpException)
+        {
+            IDictionary<string, object?> responseException = await flurlHttpException.GetResponseJsonAsync();
+
+            var responseMessage = responseException["Message"]?.ToString()??"";
+
+
+            return Result.Failure<TOutput, IError>(
+                ErrorCode_Relativity.RequestFailed
+                    .ToErrorBuilder(flurlHttpException.StatusCode??0, 
+                                    flurlHttpException.Message, responseMessage)
+                    .WithLocation(this)
+            );
+        }
+
         catch (Exception ex)
         {
             return Result.Failure<TOutput, IError>(
