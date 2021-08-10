@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -28,7 +29,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// </summary>
 public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspaceId, QueryRequest
     request, int
-    indexOfFirst, int lengthOfResults), IObjectManager, QueryResult, Array<Entity>>
+    indexOfFirst, int lengthOfResults), IObjectManager1, QueryResult, Array<Entity>>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory { get; } =
@@ -43,7 +44,7 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
     /// <inheritdoc />
     public override Task<QueryResult> SendRequest(
         IStateMonad stateMonad,
-        IObjectManager service,
+        IObjectManager1 service,
         (int workspaceId, QueryRequest request, int indexOfFirst, int lengthOfResults)
             requestObject,
         CancellationToken cancellationToken)

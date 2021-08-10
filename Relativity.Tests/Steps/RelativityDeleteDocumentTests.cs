@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Steps;
@@ -34,7 +35,7 @@ public partial class RelativityDeleteDocumentTests : StepTestBase<RelativityDele
                     "(Report: (DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")]))"
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IObjectManager, DeleteResult>(
+                    new MockSetup<IObjectManager1, DeleteResult>(
                         x =>
                             x.DeleteAsync(
                                 11,

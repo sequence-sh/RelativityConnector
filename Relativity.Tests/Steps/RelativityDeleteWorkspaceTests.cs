@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
@@ -24,7 +25,7 @@ public partial class RelativityDeleteWorkspaceTests : StepTestBase<RelativityDel
                         Unit.Default
                     ).WithTestRelativitySettings()
                     .WithService(
-                        new MockSetupUnit<IWorkspaceManager>(
+                        new MockSetupUnit<IWorkspaceManager1>(
                             x => x.DeleteAsync(42, CancellationToken.None)
                         )
                     )

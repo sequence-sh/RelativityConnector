@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -20,7 +21,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     ExecuteInTests = false
 )]
 public sealed class
-    RelativityUpdateFolder : RelativityApiRequest<(Folder folder, int workspaceId), IFolderManager,
+    RelativityUpdateFolder : RelativityApiRequest<(Folder folder, int workspaceId), IFolderManager1,
         Unit, Unit>
 {
     /// <inheritdoc />
@@ -36,7 +37,7 @@ public sealed class
     /// <inheritdoc />
     public override async Task<Unit> SendRequest(
         IStateMonad stateMonad,
-        IFolderManager service,
+        IFolderManager1 service,
         (Folder folder, int workspaceId) requestObject,
         CancellationToken cancellationToken)
     {

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Flurl.Http;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Matter.Models;
@@ -17,9 +18,9 @@ using Relativity.Shared.V1.Models;
 namespace Reductech.EDR.Connectors.Relativity.Managers
 {
 [GeneratedCode("CodeGenerator", "1")]
-public class TemplateMatterManager : ManagerBase, IMatterManager
+public class TemplateMatterManager1 : ManagerBase, IMatterManager1
 {
-	public TemplateMatterManager(RelativitySettings relativitySettings, IFlurlClient flurlClient)
+	public TemplateMatterManager1(RelativitySettings relativitySettings, IFlurlClient flurlClient)
 	:base(relativitySettings, flurlClient) { }
 	
 	/// <inheritdoc />
@@ -38,7 +39,10 @@ public class TemplateMatterManager : ManagerBase, IMatterManager
 	{
 		var cancellationToken = CancellationToken.None;
 		var route = $"workspaces/-1/matters/";
-		return PostJsonAsync<Int32>(route, new{matterRequest}, cancellationToken);
+		var jsonObject = new {
+			matterRequest,
+		};
+		return PostJsonAsync<Int32>(route, jsonObject, cancellationToken);
 	}
 	
 	
@@ -62,15 +66,10 @@ public class TemplateMatterManager : ManagerBase, IMatterManager
 	{
 		var cancellationToken = CancellationToken.None;
 		var route = $"workspaces/-1/matters/{matterID}";
-		return PutAsync(route, new{matterRequest}, cancellationToken);
-	}
-	
-	
-	public Task UpdateAsync(Int32 matterID, MatterRequest matterRequest, DateTime lastModifiedOn)
-	{
-		var cancellationToken = CancellationToken.None;
-		var route = $"workspaces/-1/matters/{matterID}";
-		return PutAsync(route, new{matterRequest}, cancellationToken);
+		var jsonObject = new {
+			matterRequest,
+		};
+		return PutAsync(route, jsonObject, cancellationToken);
 	}
 	
 	

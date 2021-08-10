@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
@@ -56,7 +57,7 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                 .WithTestRelativitySettings()
                 .WithService(
                     //Initialize Export
-                    new MockSetup<IObjectManager, ExportInitializationResults>(
+                    new MockSetup<IObjectManager1, ExportInitializationResults>(
                         manager =>
                             manager.InitializeExportAsync(12345, It.IsAny<QueryRequest>(), 0),
                         new ExportInitializationResults()
@@ -72,7 +73,7 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                     ),
 
                     //Get results block
-                    new MockSetup<IObjectManager, RelativityObjectSlim[]>(
+                    new MockSetup<IObjectManager1, RelativityObjectSlim[]>(
                         d => d.RetrieveNextResultsBlockFromExportAsync(12345, runId, 10),
                         new[]
                         {
@@ -88,7 +89,7 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                     ),
 
                     //Get long text
-                    new MockSetup<IObjectManager, IKeplerStream>(
+                    new MockSetup<IObjectManager1, IKeplerStream>(
                         d => d.StreamLongTextAsync(
                             12345,
                             It.Is<RelativityObjectRef>(x => x.ArtifactID == 111),
@@ -98,7 +99,7 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                     ),
 
                     //Get Native Text
-                    new MockSetup<IDocumentFileManager, IKeplerStream>(
+                    new MockSetup<IDocumentFileManager1, IKeplerStream>(
                         d => d.DownloadNativeFileAsync(12345, 111),
                         MakeKeplerStream("My Native Text")
                     )

@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.TestHarness;
-using Relativity.Services.Interfaces.Field;
-using Relativity.Services.Interfaces.Shared.Models;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
-using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
@@ -23,7 +22,7 @@ public partial class
         if (createRequest.ObjectType.ArtifactTypeID != 10)
             return false;
 
-        if (!createRequest.Fields.Select(x => x.ArtifactID).SequenceEqual(new[] { 111, 222 }))
+        if (!createRequest.Fields.Select(x => x.Name).SequenceEqual(new[] { "alpha", "beta" }))
             return false;
 
         var expectedValues = "1, null;null, 2;4, 3";
@@ -48,8 +47,19 @@ public partial class
     {
         get
         {
+            var massCreateResult = new MassCreateResult()
+            {
+                Success = true,
+                Objects = new List<RelativityObjectRef>()
+                {
+                    new() { ArtifactID = 100 },
+                    new() { ArtifactID = 101 },
+                    new() { ArtifactID = 102 },
+                }
+            };
+
             yield return new StepCase(
-                    "Create Dynamic objects",
+                    "Create Dynamic objects with mock service",
                     new RelativityCreateDynamicObjects()
                     {
                         ArtifactTypeId      = Constant(10),
@@ -63,43 +73,18 @@ public partial class
                     new[] { 100, 101, 102 }.ToSCLArray()
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IObjectManager, MassCreateResult>(
+                    new MockSetup<IObjectManager1, MassCreateResult>(
                         x => x.CreateAsync(
                             42,
                             It.Is<MassCreateRequest>(cr => CheckCreateRequest(cr)),
                             It.IsAny<CancellationToken>()
                         ),
-                        new MassCreateResult()
-                        {
-                            Success = true,
-                            Objects = new List<RelativityObjectRef>()
-                            {
-                                new() { ArtifactID = 100 },
-                                new() { ArtifactID = 101 },
-                                new() { ArtifactID = 102 },
-                            }
-                        }
-                    ),
-                    new MockSetup<IFieldManager, List<ObjectTypeIdentifier>>(
-                        x => x.GetAvailableObjectTypesAsync(42),
-                        new List<ObjectTypeIdentifier>()
-                        {
-                            new() { ArtifactID = 111, Name = "Alpha" },
-                            new() { ArtifactID = 222, Name = "Beta" },
-                            new() { ArtifactID = 333, Name = "Gamma" },
-                        }
+                        massCreateResult
                     )
                 );
-        }
-    }
 
-    /// <inheritdoc />
-    protected override IEnumerable<ErrorCase> ErrorCases
-    {
-        get
-        {
-            yield return new ErrorCase(
-                    "Missing Fields",
+            yield return new StepCase(
+                    "Create Dynamic objects with mock http",
                     new RelativityCreateDynamicObjects()
                     {
                         ArtifactTypeId      = Constant(10),
@@ -110,18 +95,23 @@ public partial class
                             Entity.Create(("beta", 3), ("alpha", 4))
                         )
                     },
-                    ErrorCode_Relativity.MissingField.ToErrorBuilder("beta")
+                    new[] { 100, 101, 102 }.ToSCLArray()
                 ).WithTestRelativitySettings()
-                .WithService(
-                    new MockSetup<IFieldManager, List<ObjectTypeIdentifier>>(
-                        x => x.GetAvailableObjectTypesAsync(42),
-                        new List<ObjectTypeIdentifier>()
-                        {
-                            new() { ArtifactID = 111, Name = "Alpha" },
-                        }
-                    )
+                .WithFlurlMocks(
+                    x => x.ForCallsTo(
+                            "http://TestRelativityServer/Relativity.REST/api/Relativity.Objects/workspace/42/object/create"
+                        )
+                        .WithVerb(HttpMethod.Post)
+                        .RespondWithJson(massCreateResult)
                 );
+        }
+    }
 
+    /// <inheritdoc />
+    protected override IEnumerable<ErrorCase> ErrorCases
+    {
+        get
+        {
             yield return new ErrorCase(
                     "Not Success",
                     new RelativityCreateDynamicObjects()
@@ -137,22 +127,13 @@ public partial class
                     ErrorCode_Relativity.Unsuccessful.ToErrorBuilder("Test Error")
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IObjectManager, MassCreateResult>(
+                    new MockSetup<IObjectManager1, MassCreateResult>(
                         x => x.CreateAsync(
                             42,
                             It.IsAny<MassCreateRequest>(),
                             It.IsAny<CancellationToken>()
                         ),
                         new MassCreateResult() { Success = false, Message = "Test Error" }
-                    ),
-                    new MockSetup<IFieldManager, List<ObjectTypeIdentifier>>(
-                        x => x.GetAvailableObjectTypesAsync(42),
-                        new List<ObjectTypeIdentifier>()
-                        {
-                            new() { ArtifactID = 111, Name = "Alpha" },
-                            new() { ArtifactID = 222, Name = "Beta" },
-                            new() { ArtifactID = 333, Name = "Gamma" },
-                        }
                     )
                 );
 

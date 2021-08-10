@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Steps;
@@ -35,7 +36,7 @@ public partial class
                         "(DocumentCount: 1234 FileSize: 5678)"
                     ).WithTestRelativitySettings()
                     .WithService(
-                        new MockSetup<IWorkspaceManager, WorkspaceSummary>(
+                        new MockSetup<IWorkspaceManager1, WorkspaceSummary>(
                             x => x.GetWorkspaceSummaryAsync(42),
                             new WorkspaceSummary() { DocumentCount = 1234, FileSize = 5678 }
                         )

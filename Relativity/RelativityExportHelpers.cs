@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal.Errors;
@@ -29,8 +30,8 @@ public static class RelativityExportHelpers
         string condition,
         int start,
         int batchSize,
-        IDocumentFileManager documentFileManager,
-        IObjectManager objectManager,
+        IDocumentFileManager1 documentFileManager,
+        IObjectManager1 objectManager,
         ErrorLocation errorLocation,
         CancellationToken cancellationToken)
     {
@@ -75,8 +76,8 @@ public static class RelativityExportHelpers
         int workspaceId,
         int batchSize,
         IReadOnlyList<string> fieldNames,
-        IDocumentFileManager documentFileManager,
-        IObjectManager objectManager,
+        IDocumentFileManager1 documentFileManager,
+        IObjectManager1 objectManager,
         ErrorLocation errorLocation,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
@@ -192,7 +193,7 @@ public static class RelativityExportHelpers
         IReadOnlyList<string> fieldNames,
         string condition,
         int start,
-        IObjectManager objectManager)
+        IObjectManager1 objectManager)
     {
         var request = new QueryRequest()
         {
@@ -219,7 +220,7 @@ public static class RelativityExportHelpers
         int workspaceId,
         string fieldName,
         int artifactId,
-        IObjectManager objectManager)
+        IObjectManager1 objectManager)
     {
         IKeplerStream keplerStream;
 

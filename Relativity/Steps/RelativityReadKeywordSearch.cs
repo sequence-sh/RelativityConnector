@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -17,7 +18,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// Reads a search
 /// </summary>
 public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId, int searchId),
-    IKeywordSearchManager, KeywordSearch, Entity>
+    IKeywordSearchManager1, KeywordSearch, Entity>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory { get; } =
@@ -32,7 +33,7 @@ public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId
     /// <inheritdoc />
     public override Task<KeywordSearch> SendRequest(
         IStateMonad stateMonad,
-        IKeywordSearchManager service,
+        IKeywordSearchManager1 service,
         (int workspaceId, int searchId) requestObject,
         CancellationToken cancellationToken)
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Steps;
@@ -34,7 +35,7 @@ public partial class RelativityMoveFoldersTests : StepTestBase<RelativityMoveFol
                     "(TotalOperations: 1 ProcessState: \"Complete\" OperationsCompleted: 1)"
                 ).WithTestRelativitySettings()
                 .WithService(
-                    new MockSetup<IFolderManager, FolderMoveResultSet>(
+                    new MockSetup<IFolderManager1, FolderMoveResultSet>(
                         x => x.MoveFolderAsync(11, 33, 22, It.IsAny<CancellationToken>()),
                         new FolderMoveResultSet()
                         {

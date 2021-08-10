@@ -9,6 +9,7 @@ using Flurl.Http.Testing;
 using Moq;
 using Moq.Language.Flow;
 using Reductech.EDR.ConnectorManagement.Base;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Managers;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Connectors.Relativity.TestHelpers;
@@ -34,7 +35,7 @@ public interface IMockSetup<TService> : IMockSetup
 }
 
 public class MockSetupUnit<TService> : IMockSetup<TService>
-    where TService : class, IDisposable
+    where TService : class, IManager
 {
     public MockSetupUnit(Expression<Func<TService, Task>> function)
     {
@@ -53,7 +54,7 @@ public class MockSetupUnit<TService> : IMockSetup<TService>
 }
 
 public class MockSetup<TService, TResult> : IMockSetup<TService>
-    where TService : class, IDisposable
+    where TService : class, IManager
 {
     public MockSetup(Expression<Func<TService, Task<TResult>>> function, TResult result)
     {
@@ -115,9 +116,16 @@ public static class TestHelpers
         return stepCase.WithRelativitySettings(TestRelativitySettings);
     }
 
-    public static T WithFlurlMocks<T>(this T stepCase, HttpTest httpTest)
+    public static T WithFlurlMocks<T>(this T stepCase, Action<HttpTest> setupHttpTest)
         where T : ICaseWithSetup
     {
+        var httpTest = new HttpTest();
+
+        setupHttpTest(httpTest);
+        httpTest.RespondWith(
+            "Http Call not set up",
+            status: 404);
+
         var flurlClient = TestFlurlClientFactory.GetFlurlClient(httpTest);
 
         stepCase.WithContext(

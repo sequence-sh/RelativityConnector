@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
@@ -22,7 +23,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 )]
 public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspaceId, DeleteRequest
     deleteRequest),
-    IObjectManager, DeleteResult, Entity>
+    IObjectManager1, DeleteResult, Entity>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -37,7 +38,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     /// <inheritdoc />
     public override Task<DeleteResult> SendRequest(
         IStateMonad stateMonad,
-        IObjectManager service,
+        IObjectManager1 service,
         (int workspaceId, DeleteRequest deleteRequest) requestObject,
         CancellationToken cancellationToken)
     {

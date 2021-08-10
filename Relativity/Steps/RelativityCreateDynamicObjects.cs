@@ -6,13 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Services.Interfaces.Field;
-using Relativity.Services.Interfaces.Shared.Models;
 using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
@@ -26,7 +25,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// </summary>
 public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspaceId,
     MassCreateRequest createRequest
-    ), IObjectManager, MassCreateResult, Array<int>>
+    ), IObjectManager1, MassCreateResult, Array<int>>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -45,7 +44,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     /// <inheritdoc />
     public override Task<MassCreateResult> SendRequest(
         IStateMonad stateMonad,
-        IObjectManager service,
+        IObjectManager1 service,
         (int workspaceId, MassCreateRequest createRequest) requestObject,
         CancellationToken cancellationToken)
     {
@@ -64,23 +63,16 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
             WorkspaceArtifactId,
             Entities.WrapArray(),
             ArtifactTypeId,
+            ParentArtifactId.WrapNullable(),
             cancellation
         );
 
         if (stepsResult.IsFailure)
             return stepsResult.ConvertFailure<(int workspaceId, MassCreateRequest createRequest)>();
 
-        var (workspaceId, entities, artifactTypeId) = stepsResult.Value;
+        var (workspaceId, entities, artifactTypeId, parentArtifactId) = stepsResult.Value;
 
-        var fieldManager = stateMonad.TryGetService<IFieldManager>();
-
-        if (fieldManager.IsFailure)
-            return fieldManager.MapError(x => x.WithLocation(this))
-                .ConvertFailure<(int workspaceId, MassCreateRequest createRequest)>();
-
-        var fields = await fieldManager.Value.GetAvailableObjectTypesAsync(workspaceId);
-
-        var request = ToCreateRequest(entities, artifactTypeId, fields);
+        var request = ToCreateRequest(entities, artifactTypeId, parentArtifactId);
 
         if (request.IsFailure)
             return request.MapError(x => x.WithLocation(this))
@@ -95,46 +87,26 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     public static Result<MassCreateRequest, IErrorBuilder> ToCreateRequest(
         IReadOnlyList<Entity> entities,
         int artifactTypeId,
-        List<ObjectTypeIdentifier> objectTypeIdentifiers)
+        Maybe<int> parentArtifactId)
     {
-        var fieldDictionary =
-            objectTypeIdentifiers.ToDictionary(
-                x => x.Name,
-                x => x.ArtifactID,
-                StringComparer.OrdinalIgnoreCase
-            );
-
         var createRequest = new MassCreateRequest
         {
             ObjectType = new ObjectTypeRef() { ArtifactTypeID = artifactTypeId }
         };
 
+        if (parentArtifactId.HasValue)
+            createRequest.ParentObject =
+                new RelativityObjectRef() { ArtifactID = parentArtifactId.Value };
+
         var fieldsNames = entities.SelectMany(x => x.Dictionary.Keys)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        var fieldRefs     = new List<FieldRef>(fieldsNames.Count);
-        var missingFields = new List<string>();
+        var fieldRefs = new List<FieldRef>(fieldsNames.Count);
 
         foreach (var fieldName in fieldsNames)
         {
-            if (fieldDictionary.TryGetValue(fieldName, out var artifactId))
-            {
-                fieldRefs.Add(new FieldRef() { ArtifactID = artifactId, Name = fieldName });
-            }
-            else
-            {
-                missingFields.Add(fieldName);
-            }
-        }
-
-        if (missingFields.Any())
-        {
-            var eb = ErrorBuilderList.Combine(
-                missingFields.Select(x => ErrorCode_Relativity.MissingField.ToErrorBuilder(x))
-            );
-
-            return Result.Failure<MassCreateRequest, IErrorBuilder>(eb);
+            fieldRefs.Add(new FieldRef() { Name = fieldName });
         }
 
         createRequest.Fields = fieldRefs;
@@ -183,6 +155,13 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     [StepProperty(3)]
     [Required]
     public IStep<int> ArtifactTypeId { get; set; } = null!;
+
+    /// <summary>
+    /// The artifact Id of the parent object
+    /// </summary>
+    [StepProperty(4)]
+    [DefaultValueExplanation("The Workspace Root")]
+    public IStep<int>? ParentArtifactId { get; set; } = null;
 }
 
 }

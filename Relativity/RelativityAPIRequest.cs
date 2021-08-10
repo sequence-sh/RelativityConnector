@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Reductech.EDR.Connectors.Relativity.Errors;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
+namespace Reductech.EDR.Connectors.Relativity
 {
 
 public abstract class
     RelativityApiRequest<TRequest, TService, TServiceOutput, TOutput> : CompoundStep<TOutput>
-    where TService : IDisposable
+    where TService : IManager
 {
     protected static Result<Array<Entity>, IErrorBuilder> TryConvertToEntityArray<T>(
         IEnumerable<T> stuff)
@@ -80,6 +83,21 @@ public abstract class
                 cancellationToken
             );
         }
+        catch (FlurlHttpException flurlHttpException)
+        {
+            IDictionary<string, object?> responseException = await flurlHttpException.GetResponseJsonAsync();
+
+            var responseMessage = responseException?["Message"]?.ToString()??"";
+
+
+            return Result.Failure<TOutput, IError>(
+                ErrorCode_Relativity.RequestFailed
+                    .ToErrorBuilder(flurlHttpException.StatusCode??0, 
+                                    flurlHttpException.Message, responseMessage)
+                    .WithLocation(this)
+            );
+        }
+
         catch (Exception ex)
         {
             return Result.Failure<TOutput, IError>(

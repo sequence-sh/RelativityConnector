@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Castle.Components.DictionaryAdapter;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Internal;
@@ -41,7 +42,7 @@ public partial class
                         "(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 102 Name: \"SubFolder 2\")"
                     ).WithTestRelativitySettings()
                     .WithService(
-                        new MockSetup<IFolderManager, List<Folder>>(
+                        new MockSetup<IFolderManager1, List<Folder>>(
                             x => x.GetChildrenAsync(11, 22),
                             new EditableList<Folder>()
                             {

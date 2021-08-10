@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -14,7 +15,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 
 public class
     RelativityDeleteKeywordSearch : RelativityApiRequest<(int workspaceId, int searchId),
-        IKeywordSearchManager,
+        IKeywordSearchManager1,
         Unit,
         Unit>
 {
@@ -31,7 +32,7 @@ public class
     /// <inheritdoc />
     public override async Task<Unit> SendRequest(
         IStateMonad stateMonad,
-        IKeywordSearchManager service,
+        IKeywordSearchManager1 service,
         (int workspaceId, int searchId) requestObject,
         CancellationToken cancellationToken)
     {

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
@@ -23,7 +24,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 public sealed class
     RelativityRetrieveWorkspace : RelativityApiRequest<(int workspaceId, bool includeMetadata, bool
         includeActions),
-        IWorkspaceManager, WorkspaceResponse, Entity>
+        IWorkspaceManager1, WorkspaceResponse, Entity>
 {
     /// <summary>
     /// The id of the workspace to retrieve
@@ -60,7 +61,7 @@ public sealed class
     /// <inheritdoc />
     public override async Task<WorkspaceResponse> SendRequest(
         IStateMonad stateMonad,
-        IWorkspaceManager service,
+        IWorkspaceManager1 service,
         (int workspaceId, bool includeMetadata, bool includeActions) requestObject,
         CancellationToken cancellationToken)
     {

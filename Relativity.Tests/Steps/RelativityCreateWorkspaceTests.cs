@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Moq;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Steps;
@@ -46,7 +47,7 @@ public partial class
                     )
                     .WithTestRelativitySettings()
                     .WithService(
-                        new MockSetup<IWorkspaceManager, WorkspaceResponse>(
+                        new MockSetup<IWorkspaceManager1, WorkspaceResponse>(
                             x => x.CreateAsync(
                                 It.IsAny<WorkspaceRequest>(),
                                 It.IsAny<CancellationToken>()
@@ -56,7 +57,7 @@ public partial class
                                 Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL"
                             }
                         ),
-                        new MockSetup<IWorkspaceManager, string>(
+                        new MockSetup<IWorkspaceManager1, string>(
                             x => x.GetDefaultDownloadHandlerURLAsync(),
                             "TestURL"
                         )
