@@ -39,14 +39,6 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
                     )
                 );
 
-            HttpTest httpTest = new ();
-
-            httpTest.ForCallsTo("http://TestRelativityServer/Relativity.REST/api/Relativity.Services.Folder.IFolderModule/Folder%20Manager/UpdateSingleAsync")
-                .WithVerb(HttpMethod.Post)
-                .RespondWith();
-
-            httpTest.RespondWith(status: 400);
-
             yield return new StepCase(
                     "Update Folder with http mock",
                     new RelativityUpdateFolder()
@@ -57,7 +49,13 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
                     },
                     Unit.Default
                 ).WithTestRelativitySettings()
-                .WithFlurlMocks(httpTest);
+                .WithFlurlMocks(
+                    x => x.ForCallsTo(
+                            "http://TestRelativityServer/Relativity.REST/api/Relativity.Services.Folder.IFolderModule/Folder%20Manager/UpdateSingleAsync"
+                        )
+                        .WithVerb(HttpMethod.Post)
+                        .RespondWith()
+                );
         }
     }
 }

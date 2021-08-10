@@ -25,20 +25,19 @@ public partial class RelativityDeleteMatterTests : StepTestBase<RelativityDelete
                 .WithTestRelativitySettings()
                 .WithService(new MockSetupUnit<IMatterManager1>(x => x.DeleteAsync(123)));
 
-            var httpTest = new HttpTest();
-
-            httpTest.ForCallsTo("http://TestRelativityServer/Relativity.REST/api/relativity-environment/v1/workspaces/-1/matters/123")
-                .WithVerb(HttpMethod.Delete)
-                .RespondWith();
-
             yield return new StepCase(
                     "Delete Matter using mock http",
                     new RelativityDeleteMatter() { MatterArtifactId = StaticHelpers.Constant(123) },
                     Unit.Default
                 )
                 .WithTestRelativitySettings()
-                .WithFlurlMocks(httpTest);
-
+                .WithFlurlMocks(
+                    x => x.ForCallsTo(
+                            "http://TestRelativityServer/Relativity.REST/api/relativity-environment/v1/workspaces/-1/matters/123"
+                        )
+                        .WithVerb(HttpMethod.Delete)
+                        .RespondWith()
+                );
         }
     }
 }

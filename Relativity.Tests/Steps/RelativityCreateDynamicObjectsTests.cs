@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
-using Flurl.Http.Testing;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
@@ -24,7 +22,7 @@ public partial class
         if (createRequest.ObjectType.ArtifactTypeID != 10)
             return false;
 
-        if (!createRequest.Fields.Select(x => x.Name).SequenceEqual(new[] {"alpha", "beta" }))
+        if (!createRequest.Fields.Select(x => x.Name).SequenceEqual(new[] { "alpha", "beta" }))
             return false;
 
         var expectedValues = "1, null;null, 2;4, 3";
@@ -85,15 +83,6 @@ public partial class
                     )
                 );
 
-
-            var httpTest = new HttpTest();
-
-            httpTest
-                .ForCallsTo("http://TestRelativityServer/Relativity.REST/api/Relativity.Objects/workspace/42/object/create")
-                .WithVerb(HttpMethod.Post)
-                .RespondWithJson(massCreateResult);
-
-            
             yield return new StepCase(
                     "Create Dynamic objects with mock http",
                     new RelativityCreateDynamicObjects()
@@ -108,7 +97,13 @@ public partial class
                     },
                     new[] { 100, 101, 102 }.ToSCLArray()
                 ).WithTestRelativitySettings()
-                .WithFlurlMocks(httpTest);
+                .WithFlurlMocks(
+                    x => x.ForCallsTo(
+                            "http://TestRelativityServer/Relativity.REST/api/Relativity.Objects/workspace/42/object/create"
+                        )
+                        .WithVerb(HttpMethod.Post)
+                        .RespondWithJson(massCreateResult)
+                );
         }
     }
 
@@ -117,7 +112,6 @@ public partial class
     {
         get
         {
-
             yield return new ErrorCase(
                     "Not Success",
                     new RelativityCreateDynamicObjects()
@@ -140,7 +134,8 @@ public partial class
                             It.IsAny<CancellationToken>()
                         ),
                         new MassCreateResult() { Success = false, Message = "Test Error" }
-                    ));
+                    )
+                );
 
             foreach (var errorCase in base.ErrorCases)
             {

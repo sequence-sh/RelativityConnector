@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using Flurl.Http.Testing;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Relativity.Environment.V1.Matter.Models;
-using IMatterManager = Relativity.Environment.V1.Matter.IMatterManager;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
@@ -48,12 +46,6 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
                     )
                 );
 
-            var httpTest = new HttpTest();
-            httpTest
-                .ForCallsTo("http://TestRelativityServer/Relativity.REST/api/relativity-environment/v1/workspaces/-1/matters")
-                .WithVerb(HttpMethod.Post)
-                .RespondWithJson("42");
-
             yield return new StepCase(
                     "Create Matter with API",
                     new RelativityCreateMatter()
@@ -67,7 +59,13 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
                     },
                     42
                 ).WithTestRelativitySettings()
-                .WithFlurlMocks(httpTest);
+                .WithFlurlMocks(
+                    x => x.ForCallsTo(
+                            "http://TestRelativityServer/Relativity.REST/api/relativity-environment/v1/workspaces/-1/matters"
+                        )
+                        .WithVerb(HttpMethod.Post)
+                        .RespondWithJson("42")
+                );
         }
     }
 }

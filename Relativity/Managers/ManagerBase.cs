@@ -32,15 +32,15 @@ public abstract class ManagerBase : IDisposable
             ;
     }
 
-    public Task<T> PutAsync<T>(string route, object data, CancellationToken cancellationToken)
-    {
-        var completeRoute = CreateCompleteRoute(route);
+    //public Task<T> PutAsync<T>(string route, object data, CancellationToken cancellationToken)
+    //{
+    //    var completeRoute = CreateCompleteRoute(route);
 
-        return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
-                .PutJsonAsync(data, cancellationToken)
-                .ReceiveJson<T>()
-            ;
-    }
+    //    return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
+    //            .PutJsonAsync(data, cancellationToken)
+    //            .ReceiveJson<T>()
+    //        ;
+    //}
 
     public Task DeleteAsync(string route, CancellationToken cancellationToken)
     {

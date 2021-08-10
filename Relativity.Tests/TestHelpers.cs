@@ -116,9 +116,16 @@ public static class TestHelpers
         return stepCase.WithRelativitySettings(TestRelativitySettings);
     }
 
-    public static T WithFlurlMocks<T>(this T stepCase, HttpTest httpTest)
+    public static T WithFlurlMocks<T>(this T stepCase, Action<HttpTest> setupHttpTest)
         where T : ICaseWithSetup
     {
+        var httpTest = new HttpTest();
+
+        setupHttpTest(httpTest);
+        httpTest.RespondWith(
+            "Http Call not set up",
+            status: 404);
+
         var flurlClient = TestFlurlClientFactory.GetFlurlClient(httpTest);
 
         stepCase.WithContext(
