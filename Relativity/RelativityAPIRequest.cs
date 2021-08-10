@@ -87,7 +87,7 @@ public abstract class
         {
             IDictionary<string, object?> responseException = await flurlHttpException.GetResponseJsonAsync();
 
-            var responseMessage = responseException["Message"]?.ToString()??"";
+            var responseMessage = responseException?["Message"]?.ToString()??"";
 
 
             return Result.Failure<TOutput, IError>(

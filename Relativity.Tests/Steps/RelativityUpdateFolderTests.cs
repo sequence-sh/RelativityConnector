@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
+using Flurl.Http.Testing;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
@@ -18,7 +20,7 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
         get
         {
             yield return new StepCase(
-                    "Update Folder",
+                    "Update Folder with service mock",
                     new RelativityUpdateFolder()
                     {
                         FolderName          = Constant("NewName"),
@@ -36,6 +38,26 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
                             )
                     )
                 );
+
+            HttpTest httpTest = new ();
+
+            httpTest.ForCallsTo("http://TestRelativityServer/Relativity.REST/api/Relativity.Services.Folder.IFolderModule/Folder%20Manager/UpdateSingleAsync")
+                .WithVerb(HttpMethod.Post)
+                .RespondWith();
+
+            httpTest.RespondWith(status: 400);
+
+            yield return new StepCase(
+                    "Update Folder with http mock",
+                    new RelativityUpdateFolder()
+                    {
+                        FolderName          = Constant("NewName"),
+                        FolderId            = Constant(22),
+                        WorkspaceArtifactId = Constant(11)
+                    },
+                    Unit.Default
+                ).WithTestRelativitySettings()
+                .WithFlurlMocks(httpTest);
         }
     }
 }

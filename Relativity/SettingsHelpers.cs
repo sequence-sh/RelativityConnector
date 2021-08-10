@@ -71,10 +71,9 @@ public static class SettingsHelpers
         {
             service = serviceFactory.CreateProxy<TService>();
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            Console.WriteLine(e);
-            throw;
+            return ErrorCode.MissingContext.ToErrorBuilder(nameof(TService));
         }
 
         return service;

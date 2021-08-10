@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
+using Flurl.Http.Testing;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
@@ -46,8 +49,19 @@ public partial class
     {
         get
         {
+            var massCreateResult = new MassCreateResult()
+            {
+                Success = true,
+                Objects = new List<RelativityObjectRef>()
+                {
+                    new() { ArtifactID = 100 },
+                    new() { ArtifactID = 101 },
+                    new() { ArtifactID = 102 },
+                }
+            };
+
             yield return new StepCase(
-                    "Create Dynamic objects",
+                    "Create Dynamic objects with mock service",
                     new RelativityCreateDynamicObjects()
                     {
                         ArtifactTypeId      = Constant(10),
@@ -67,18 +81,34 @@ public partial class
                             It.Is<MassCreateRequest>(cr => CheckCreateRequest(cr)),
                             It.IsAny<CancellationToken>()
                         ),
-                        new MassCreateResult()
-                        {
-                            Success = true,
-                            Objects = new List<RelativityObjectRef>()
-                            {
-                                new() { ArtifactID = 100 },
-                                new() { ArtifactID = 101 },
-                                new() { ArtifactID = 102 },
-                            }
-                        }
+                        massCreateResult
                     )
                 );
+
+
+            var httpTest = new HttpTest();
+
+            httpTest
+                .ForCallsTo("http://TestRelativityServer/Relativity.REST/api/Relativity.Objects/workspace/42/object/create")
+                .WithVerb(HttpMethod.Post)
+                .RespondWithJson(massCreateResult);
+
+            
+            yield return new StepCase(
+                    "Create Dynamic objects with mock http",
+                    new RelativityCreateDynamicObjects()
+                    {
+                        ArtifactTypeId      = Constant(10),
+                        WorkspaceArtifactId = Constant(42),
+                        Entities = Array(
+                            Entity.Create(("alpha", 1)),
+                            Entity.Create(("beta", 2)),
+                            Entity.Create(("beta", 3), ("alpha", 4))
+                        )
+                    },
+                    new[] { 100, 101, 102 }.ToSCLArray()
+                ).WithTestRelativitySettings()
+                .WithFlurlMocks(httpTest);
         }
     }
 
