@@ -7,6 +7,7 @@ using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Relativity.Services.Objects.DataContracts;
@@ -62,7 +63,32 @@ public partial class
                     "Create Dynamic objects with mock service",
                     new RelativityCreateDynamicObjects()
                     {
-                        ArtifactTypeId      = Constant(10),
+                        ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(10)) ,
+                        WorkspaceArtifactId = Constant(42),
+                        Entities = Array(
+                            Entity.Create(("alpha", 1)),
+                            Entity.Create(("beta", 2)),
+                            Entity.Create(("beta", 3), ("alpha", 4))
+                        )
+                    },
+                    new[] { 100, 101, 102 }.ToSCLArray()
+                ).WithTestRelativitySettings()
+                .WithService(
+                    new MockSetup<IObjectManager1, MassCreateResult>(
+                        x => x.CreateAsync(
+                            42,
+                            It.Is<MassCreateRequest>(cr => CheckCreateRequest(cr)),
+                            It.IsAny<CancellationToken>()
+                        ),
+                        massCreateResult
+                    )
+                );
+            
+            yield return new StepCase(
+                    "Create Dynamic objects with mock service using artifactType",
+                    new RelativityCreateDynamicObjects()
+                    {
+                        ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document)) ,
                         WorkspaceArtifactId = Constant(42),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
@@ -87,7 +113,7 @@ public partial class
                     "Create Dynamic objects with mock http",
                     new RelativityCreateDynamicObjects()
                     {
-                        ArtifactTypeId      = Constant(10),
+                        ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(10)),
                         WorkspaceArtifactId = Constant(42),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
@@ -116,7 +142,7 @@ public partial class
                     "Not Success",
                     new RelativityCreateDynamicObjects()
                     {
-                        ArtifactTypeId      = Constant(10),
+                        ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(10)),
                         WorkspaceArtifactId = Constant(42),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),

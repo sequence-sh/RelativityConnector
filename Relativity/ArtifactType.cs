@@ -21,7 +21,6 @@ public enum ArtifactType
     Case = 8,
     Folder = 9,
     Document = 10,
-    Document = 10,
     
     Field = 14,
     Search = 15,
