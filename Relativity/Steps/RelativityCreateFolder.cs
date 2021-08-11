@@ -9,7 +9,6 @@ using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
 using Relativity.Services.Folder;
-using Relativity.Services.Interfaces;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
