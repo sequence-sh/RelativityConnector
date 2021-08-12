@@ -26,7 +26,7 @@ public sealed class
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceResponse serviceOutput)
     {
-        var r = TryConvertToEntity(serviceOutput);
+        var r = APIRequestHelpers.TryConvertToEntity(serviceOutput);
         return r;
     }
 

@@ -8,7 +8,6 @@ using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Shared.V1.Models;
 
@@ -48,10 +47,10 @@ public class RelativityUpdateMatter : RelativityApiRequest<(int matterArtifactId
                     MatterArtifactId,
                     ClientId.WrapNullable(),
                     StatusId.WrapNullable(),
-                    MatterName.WrapNullable(x => x.WrapStringStream()),
-                    Number.WrapNullable(x => x.WrapStringStream()),
-                    Keywords.WrapNullable(x => x.WrapStringStream()),
-                    Notes.WrapNullable(x => x.WrapStringStream()),
+                    MatterName.WrapNullable(StepMaps.String()),
+                    Number.WrapNullable(StepMaps.String()),
+                    Keywords.WrapNullable(StepMaps.String()),
+                    Notes.WrapNullable(StepMaps.String()),
                     cancellation
                 )
                 .Map(

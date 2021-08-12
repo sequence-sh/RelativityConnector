@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -51,7 +52,7 @@ public sealed class
         CancellationToken cancellation)
     {
         var results = await stateMonad.RunStepsAsync(
-            WorkspaceArtifactId,
+            Workspace.WrapOneOf(StepMaps.DoNothing<int>(), StepMaps.String()),
             FolderName.WrapStringStream(),
             ParentFolderId.WrapNullable(),
             cancellation
@@ -60,7 +61,12 @@ public sealed class
         if (results.IsFailure)
             return results.ConvertFailure<(Folder folder, int workspaceId)>();
 
-        var (workspaceId, folderName, parentFolderId) = results.Value;
+        var (workspace, folderName, parentFolderId) = results.Value;
+
+        var workspaceId = await APIRequestHelpers.TryGetWorkspaceId(workspace, stateMonad, cancellation);
+
+        if (workspaceId.IsFailure)
+            return workspaceId.ConvertFailure<(Folder folder, int workspaceId)>().MapError(x=>x.WithLocation(this));
 
         var folder = new Folder { Name = folderName };
 
@@ -69,15 +75,16 @@ public sealed class
             folder.ParentFolder = new FolderRef(parentFolderId.Value);
         }
 
-        return (folder, workspaceId);
+        return (folder, workspaceId.Value);
     }
 
     /// <summary>
-    /// The Artifact ID of the workspace where you want to create the folder.
+    /// The Workspace where you want to create the folder.
+    /// You can provide either the Artifact Id or the name
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<int> WorkspaceArtifactId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The name of the Folder DTO that you want to create.

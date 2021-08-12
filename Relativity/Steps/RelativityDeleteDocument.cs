@@ -32,7 +32,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(DeleteResult serviceOutput)
     {
-        return TryConvertToEntity(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
     }
 
     /// <inheritdoc />

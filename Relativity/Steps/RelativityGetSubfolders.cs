@@ -49,7 +49,7 @@ public sealed class
     /// <inheritdoc />
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(List<Folder> serviceOutput)
     {
-        var r = TryConvertToEntityArray(serviceOutput);
+        var r = APIRequestHelpers.TryConvertToEntityArray(serviceOutput);
 
         return r;
     }

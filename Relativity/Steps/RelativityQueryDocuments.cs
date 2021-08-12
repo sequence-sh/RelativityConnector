@@ -9,11 +9,8 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Internal.Logging;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Shared.Models;
-using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 using ObjectTypeRef = Relativity.Services.Objects.DataContracts.ObjectTypeRef;
@@ -38,7 +35,7 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
     /// <inheritdoc />
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(QueryResult serviceOutput)
     {
-        return TryConvertToEntityArray(serviceOutput.Objects);
+        return APIRequestHelpers.TryConvertToEntityArray(serviceOutput.Objects);
     }
 
     /// <inheritdoc />

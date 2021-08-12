@@ -37,7 +37,7 @@ public sealed class
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceSummary serviceOutput)
     {
-        return TryConvertToEntity(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
     }
 
     /// <inheritdoc />

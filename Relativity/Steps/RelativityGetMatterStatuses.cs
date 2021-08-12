@@ -32,7 +32,7 @@ public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterMan
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(
         List<DisplayableObjectIdentifier> serviceOutput)
     {
-        return TryConvertToEntityArray(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntityArray(serviceOutput);
     }
 
     /// <inheritdoc />

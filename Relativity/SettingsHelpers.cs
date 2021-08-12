@@ -73,7 +73,7 @@ public static class SettingsHelpers
         }
         catch (Exception)
         {
-            return ErrorCode.MissingContext.ToErrorBuilder(nameof(TService));
+            return ErrorCode.MissingContext.ToErrorBuilder(typeof(TService).Name);
         }
 
         return service;

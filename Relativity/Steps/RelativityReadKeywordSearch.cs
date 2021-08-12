@@ -27,7 +27,7 @@ public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(KeywordSearch serviceOutput)
     {
-        return TryConvertToEntity(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
     }
 
     /// <inheritdoc />

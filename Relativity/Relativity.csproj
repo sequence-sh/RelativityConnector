@@ -29,9 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
-    <PackageReference Include="Reductech.EDR.Core" Version="0.11.0-a.master.2108101507">
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </PackageReference>
+    <PackageReference Include="Reductech.EDR.Core" Version="0.11.0-a.master.2108111457" />
     <PackageReference Include="Relativity.API" Version="17.0.4" />
     <PackageReference Include="Relativity.DataExchange.Client.SDK" Version="1.14.13" />
     <PackageReference Include="Relativity.Environment.SDK" Version="2.0.2" />

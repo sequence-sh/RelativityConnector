@@ -73,6 +73,19 @@ public class TemplateObjectManager1 : ManagerBase, IObjectManager1
 	}
 	
 	
+	public Task<QueryResultSlim> QuerySlimAsync(Int32 workspaceID, QueryRequest request, Int32 start, Int32 length, CancellationToken cancel)
+	{
+		var cancellationToken = cancel;
+		var route = $"/~/workspace/{workspaceID}/object/queryslim";
+		var jsonObject = new {
+			request,
+			start,
+			length,
+		};
+		return PostJsonAsync<QueryResultSlim>(route, jsonObject, cancellationToken);
+	}
+	
+	
 	public Task<RelativityObjectSlim[]> RetrieveNextResultsBlockFromExportAsync(Int32 workspaceID, Guid runID, Int32 batchSize)
 	{
 		var cancellationToken = CancellationToken.None;

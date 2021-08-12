@@ -33,7 +33,7 @@ public sealed class RelativityMoveFolder : RelativityApiRequest<(int workspaceId
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(FolderMoveResultSet serviceOutput)
     {
-        return TryConvertToEntity(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
     }
 
     /// <inheritdoc />

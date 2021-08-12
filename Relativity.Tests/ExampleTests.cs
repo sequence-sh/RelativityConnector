@@ -27,6 +27,15 @@ public partial class ExampleTests
     {
         get
         {
+            yield return new RelativityCreateFolder()
+            {
+                FolderName = Constant("MyNewFolder"),
+                Workspace = new OneOfStep<int, StringStream>(Constant("Integration Test Workspace 1"))
+            };
+
+            yield break;
+
+
             //yield return new RelativityQueryDocuments()
             //{
             //    ArtifactTypeId = Constant(10),
@@ -87,8 +96,11 @@ public partial class ExampleTests
                         Variable = new VariableName("FolderId"),
                         Value = new RelativityCreateFolder()
                         {
-                            FolderName          = Constant("MyFolder"),
-                            WorkspaceArtifactId = GetVariable<int>("WorkspaceId"),
+                            FolderName = Constant("MyFolder"),
+                            Workspace =
+                                new OneOfStep<int, StringStream>(
+                                    GetVariable<int>("WorkspaceId")
+                                ),
                         }
                     },
                     new SetVariable<Array<int>>()
@@ -138,8 +150,8 @@ public partial class ExampleTests
     public static IEnumerable<object[]> IntegrationTestCaseArgs =>
         IntegrationTestCases.Select(x => new[] { x.Serialize() });
 
-    [Theory(Skip = "Manual")]
-    //[Theory]
+    //[Theory(Skip = "Manual")]
+    [Theory]
     [Trait("Category", "Integration")]
     [MemberData(nameof(IntegrationTestCaseArgs))]
     public async Task RunSCLSequence(string scl)

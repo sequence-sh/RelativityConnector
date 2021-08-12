@@ -29,7 +29,7 @@ public partial class
                             SearchText  = Constant("Search Text"),
                             SortByRank  = Constant(true),
                             FieldArtifactIds =
-                                new OneOfStep<Array<int>, Array<string>>(Array(22, 33, 44)),
+                                new OneOfStep<Array<int>, Array<StringStream>>(Array(22, 33, 44)),
                             Notes                   = Constant("My Notes"),
                             Keywords                = Constant("My Keywords"),
                             Scope                   = Constant(SearchScope.EntireCase),
