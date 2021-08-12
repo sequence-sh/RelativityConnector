@@ -55,8 +55,8 @@ public partial class ExampleTests
                     {
                         Value = new RelativityCreateMatter()
                         {
-                            ClientId   = Constant(1018410),
-                            StatusId   = Constant(671),
+                            Client     = new OneOfStep<int, StringStream>(Constant(1018410)) ,
+                            Status     = new OneOfStep<int, MatterStatus>(Constant(671)),
                             MatterName = Constant("Test Matter"),
                             Number     = Constant("Ten"),
                             Keywords   = Constant("Test Keywords"),
@@ -150,8 +150,8 @@ public partial class ExampleTests
     public static IEnumerable<object[]> IntegrationTestCaseArgs =>
         IntegrationTestCases.Select(x => new[] { x.Serialize() });
 
-    //[Theory(Skip = "Manual")]
-    [Theory]
+    [Theory(Skip = "Manual")]
+    //[Theory]
     [Trait("Category", "Integration")]
     [MemberData(nameof(IntegrationTestCaseArgs))]
     public async Task RunSCLSequence(string scl)
