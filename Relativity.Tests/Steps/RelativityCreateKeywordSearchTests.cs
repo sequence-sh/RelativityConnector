@@ -24,10 +24,10 @@ public partial class
                         "Create Keyword",
                         new RelativityCreateKeywordSearch
                         {
-                            WorkspaceId = Constant(10),
-                            SearchName  = Constant("My Search"),
-                            SearchText  = Constant("Search Text"),
-                            SortByRank  = Constant(true),
+                            Workspace  = new OneOfStep<int, StringStream>(Constant(10)),
+                            SearchName = Constant("My Search"),
+                            SearchText = Constant("Search Text"),
+                            SortByRank = Constant(true),
                             FieldArtifactIds =
                                 new OneOfStep<Array<int>, Array<StringStream>>(Array(22, 33, 44)),
                             Notes                   = Constant("My Notes"),

@@ -64,7 +64,7 @@ public partial class
                     new RelativityCreateDynamicObjects()
                     {
                         ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(10)) ,
-                        WorkspaceArtifactId = Constant(42),
+                        Workspace = new OneOfStep<int, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),
@@ -89,7 +89,7 @@ public partial class
                     new RelativityCreateDynamicObjects()
                     {
                         ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document)) ,
-                        WorkspaceArtifactId = Constant(42),
+                        Workspace = new OneOfStep<int, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),
@@ -113,8 +113,8 @@ public partial class
                     "Create Dynamic objects with mock http",
                     new RelativityCreateDynamicObjects()
                     {
-                        ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(10)),
-                        WorkspaceArtifactId = Constant(42),
+                        ArtifactType = new OneOfStep<ArtifactType, int>(Constant(10)),
+                        Workspace    = new OneOfStep<int, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),
@@ -142,8 +142,8 @@ public partial class
                     "Not Success",
                     new RelativityCreateDynamicObjects()
                     {
-                        ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(10)),
-                        WorkspaceArtifactId = Constant(42),
+                        ArtifactType = new OneOfStep<ArtifactType, int>(Constant(10)),
+                        Workspace    = new OneOfStep<int, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),

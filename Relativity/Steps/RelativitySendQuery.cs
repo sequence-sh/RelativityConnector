@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -24,13 +25,13 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// <summary>
 /// Query for Workspaces, Documents, RDOs and System Types
 /// </summary>
-public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspaceId, QueryRequest
+public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId, QueryRequest
     request, int
     indexOfFirst, int lengthOfResults), IObjectManager1, QueryResult, Array<Entity>>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory { get; } =
-        new SimpleStepFactory<RelativityQueryDocuments, Array<Entity>>();
+        new SimpleStepFactory<RelativitySendQuery, Array<Entity>>();
 
     /// <inheritdoc />
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(QueryResult serviceOutput)
@@ -48,8 +49,15 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
     {
         var progress = new ProgressReportProgress(stateMonad, this);
         var (workspaceId, request, indexOfFirst, lengthOfResults) = requestObject;
-        return service.QueryAsync(workspaceId, request, indexOfFirst, lengthOfResults
-        , cancellationToken, progress );// TODO these
+
+        return service.QueryAsync(
+            workspaceId,
+            request,
+            indexOfFirst,
+            lengthOfResults,
+            cancellationToken,
+            progress
+        ); // TODO these
     }
 
     /// <inheritdoc />
@@ -61,12 +69,12 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
         var artifactIdsStep = FieldArtifactIds ?? ArrayNew<int>.CreateArray(new List<IStep<int>>());
 
         var data = await stateMonad.RunStepsAsync(
-            WorkspaceArtifactId,
+            Workspace.WrapWorkspace(stateMonad, TextLocation),
             Condition.WrapStringStream(),
             artifactIdsStep.WrapArray(),
             Start,
             Length,
-            ArtifactTypeId,
+            ArtifactType.WrapArtifactId(TextLocation),
             SortArtifactId.WrapNullable(),
             SortDirection,
             cancellation
@@ -96,9 +104,9 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
 
         var queryRequest = new QueryRequest
         {
-            ObjectType      = new ObjectTypeRef { ArtifactTypeID = artifactTypeId },
+            ObjectType      = new ObjectTypeRef { ArtifactTypeID = (int) artifactTypeId },
             Condition       = condition,
-            Fields          = artifactIds.Select(x => new FieldRef() { ArtifactID = x }).ToList(),
+            Fields          = artifactIds.Select(x => new FieldRef { ArtifactID = x }).ToList(),
             IncludeIDWindow = false,
             RelationalField =
                 null, //name of relational field to expand query results to related objects
@@ -111,7 +119,13 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
         return (workspaceArtifactId, queryRequest, start, length);
     }
 
-    [StepProperty(1)][Required] public IStep<int> WorkspaceArtifactId { get; set; } = null!;
+    /// <summary>
+    /// The Workspace to query.
+    /// You can provide either the Artifact Id or the name
+    /// </summary>
+    [StepProperty(1)]
+    [Required]
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The query condition
@@ -158,9 +172,15 @@ public sealed class RelativityQueryDocuments : RelativityApiRequest<(int workspa
     public IStep<SortEnum> SortDirection { get; set; } =
         new EnumConstant<SortEnum>(SortEnum.Ascending);
 
+    /// <summary>
+    /// The Artifact type to query
+    /// </summary>
     [StepProperty]
-    [DefaultValueExplanation("10 - Document")]
-    public IStep<int> ArtifactTypeId { get; set; } = new IntConstant(10);
+    [DefaultValueExplanation("Document (10)")]
+    public IStep<OneOf<ArtifactType, int>> ArtifactType { get; set; } =
+        new OneOfStep<ArtifactType, int>(
+            new EnumConstant<ArtifactType>(Relativity.ArtifactType.Document)
+        );
 }
 
 }

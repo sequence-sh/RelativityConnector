@@ -52,7 +52,7 @@ public sealed class
         CancellationToken cancellation)
     {
         var results = await stateMonad.RunStepsAsync(
-            Workspace.WrapOneOf(StepMaps.DoNothing<int>(), StepMaps.String()),
+            Workspace.WrapWorkspace(stateMonad, TextLocation),
             FolderName.WrapStringStream(),
             ParentFolderId.WrapNullable(),
             cancellation
@@ -63,11 +63,6 @@ public sealed class
 
         var (workspace, folderName, parentFolderId) = results.Value;
 
-        var workspaceId = await APIRequestHelpers.TryGetWorkspaceId(workspace, stateMonad, cancellation);
-
-        if (workspaceId.IsFailure)
-            return workspaceId.ConvertFailure<(Folder folder, int workspaceId)>().MapError(x=>x.WithLocation(this));
-
         var folder = new Folder { Name = folderName };
 
         if (parentFolderId.HasValue)
@@ -75,7 +70,7 @@ public sealed class
             folder.ParentFolder = new FolderRef(parentFolderId.Value);
         }
 
-        return (folder, workspaceId.Value);
+        return (folder, workspace);
     }
 
     /// <summary>

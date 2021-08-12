@@ -31,10 +31,10 @@ public abstract class
         using var service = serviceResult.Value;
 
         var output = await
-            APIRequestHelpers.TrySendRequest(
-                    () => SendRequest(
+            service.TrySendRequest(
+                    (manager) => SendRequest(
                         stateMonad,
-                        serviceResult.Value,
+                        manager,
                         requestObjectResult.Value,
                         cancellationToken
                     )

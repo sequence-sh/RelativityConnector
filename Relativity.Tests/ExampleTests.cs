@@ -109,7 +109,7 @@ public partial class ExampleTests
                         Value = new RelativityCreateDynamicObjects()
                         {
                             ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(10)),
-                            WorkspaceArtifactId = GetVariable<int>("WorkspaceId"),
+                            Workspace = new OneOfStep<int, StringStream>(GetVariable<int>("WorkspaceId")) ,
                             Entities = Array(
                                 Entity.Create(
                                     ("Title", "Thing 1"),

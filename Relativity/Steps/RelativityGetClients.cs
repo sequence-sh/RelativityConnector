@@ -10,7 +10,6 @@ using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
 using Relativity.Shared.V1.Models;
 using Entity = Reductech.EDR.Core.Entity;
-using IMatterManager = Relativity.Environment.V1.Matter.IMatterManager;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {

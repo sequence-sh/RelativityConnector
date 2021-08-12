@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -45,15 +46,16 @@ public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(WorkspaceId, SearchId, cancellation);
+        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, TextLocation), SearchId, cancellation);
     }
 
     /// <summary>
-    /// The Id of the workspace
+    /// The Workspace containing the search.
+    /// You can provide either the Artifact Id or the name
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<int> WorkspaceId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The Id of the search to read

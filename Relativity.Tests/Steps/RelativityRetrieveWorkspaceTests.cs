@@ -2,10 +2,10 @@
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
@@ -28,7 +28,7 @@ public partial class
                     {
                         Value = new RelativityRetrieveWorkspace()
                         {
-                            WorkspaceId     = Constant(11),
+                            Workspace       = new OneOfStep<int, StringStream>(Constant(11)),
                             IncludeActions  = Constant(true),
                             IncludeMetadata = Constant(true),
                         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
@@ -13,8 +12,6 @@ using Reductech.EDR.Core.Util;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Field;
-using Relativity.Services.Interfaces.Document;
-using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using FieldRef = Relativity.Services.Objects.DataContracts.FieldRef;
@@ -38,10 +35,10 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                     {
                         Array = new RelativityExport()
                         {
-                            WorkspaceId = Constant(12345),
-                            Condition   = Constant("'Extracted Text' ISSET "),
-                            FieldNames  = Array("ShortField", "LongField"),
-                            BatchSize   = Constant(10)
+                            Workspace  = new OneOfStep<int, StringStream>(Constant(12345)),
+                            Condition  = Constant("'Extracted Text' ISSET "),
+                            FieldNames = Array("ShortField", "LongField"),
+                            BatchSize  = Constant(10)
                         },
                         Action = new LambdaFunction<Entity, Unit>(
                             null,

@@ -12,13 +12,125 @@ using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
+using Reductech.EDR.Core.Util;
 using Relativity.Services;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
+
+public static class RelativityStepMaps
+{
+    public static IRunnableStep<int> WrapWorkspace(
+        this IStep<OneOf<int, StringStream>> step,
+        IStateMonad stateMonad,
+        TextLocation? errorLocation)
+    {
+        return step.WrapStep(new WorkspaceMap(stateMonad, errorLocation));
+    }
+
+    public static IRunnableStep<ArtifactType> WrapArtifactId(this IStep<OneOf<ArtifactType, int>> step, TextLocation? errorLocation)
+    {
+        return step.WrapStep(new ArtifactIdMap(errorLocation));
+    }
+
+    private class ArtifactIdMap : IStepValueMap<OneOf<ArtifactType, int>, ArtifactType>
+    {
+        public ArtifactIdMap(TextLocation? errorLocation) {
+            ErrorLocation = errorLocation;
+        }
+        public TextLocation? ErrorLocation { get; }
+
+        /// <inheritdoc />
+        public async Task<Result<ArtifactType, IError>> Map(OneOf<ArtifactType, int> t, CancellationToken cancellationToken)
+        {
+            await Task.CompletedTask;
+            if (t.TryPickT0(out var at, out var i))
+                return at;
+
+            if (Enum.IsDefined(typeof(ArtifactType), i))
+                return (ArtifactType)i;
+
+            return ErrorCode.InvalidCast.ToErrorBuilder(nameof(ArtifactType), i).WithLocationSingle(ErrorLocation!);
+        }
+    }
+
+    private class WorkspaceMap : IStepValueMap<OneOf<int, StringStream>, int>
+    {
+        public WorkspaceMap(IStateMonad stateMonad, TextLocation? errorLocation)
+        {
+            StateMonad    = stateMonad;
+            ErrorLocation = errorLocation;
+        }
+
+        public IStateMonad StateMonad { get; }
+        public TextLocation? ErrorLocation { get; }
+
+        /// <inheritdoc />
+        public async Task<Result<int, IError>> Map(
+            OneOf<int, StringStream> t,
+            CancellationToken cancellationToken)
+        {
+            if (t.TryPickT0(out var workspaceId, out var workspaceNameStringStream))
+                return workspaceId;
+
+            var workspaceName = await workspaceNameStringStream.GetStringAsync();
+
+            var workspaceIdResult = await TryGetWorkspaceId(
+                    workspaceName,
+                    StateMonad,
+                    cancellationToken
+                )
+                .MapError(x => x.WithLocation(ErrorLocation!));
+
+            return workspaceIdResult;
+        }
+
+        private static async Task<Result<int, IErrorBuilder>> TryGetWorkspaceId(
+            string workspaceName,
+            IStateMonad stateMonad,
+            CancellationToken cancellationToken)
+        {
+            var serviceResult = stateMonad.TryGetService<IObjectManager1>();
+
+            if (serviceResult.IsFailure)
+                return serviceResult.ConvertFailure<int>();
+
+            using var service = serviceResult.Value;
+
+            var request = new QueryRequest
+            {
+                Condition =
+                    new TextCondition("Name", TextConditionEnum.Like, workspaceName)
+                        .ToQueryString(),
+                ObjectType = new ObjectTypeRef { ArtifactTypeID = (int)ArtifactType.Case }
+            };
+
+            var queryResult = await service.TrySendRequest(
+                    manager =>
+                        manager.QuerySlimAsync(
+                            -1,
+                            request,
+                            0,
+                            100,
+                            cancellationToken
+                        )
+                )
+                .Ensure(
+                    x => x.Objects.Any(),
+                    ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Workspace", workspaceName)
+                );
+
+            if (queryResult.IsFailure)
+                return queryResult.ConvertFailure<int>();
+
+            return queryResult.Value.Objects.First().ArtifactID;
+        }
+    }
+}
 
 /// <summary>
 /// Contains methods to help with API requests
@@ -59,13 +171,16 @@ public static class APIRequestHelpers
         return responseEntity;
     }
 
-    public static async Task<Result<T, IErrorBuilder>> TrySendRequest<T>(Func<Task<T>> sendRequest)
+    public static async Task<Result<TResult, IErrorBuilder>> TrySendRequest<TManager, TResult>(
+        this TManager manager,
+        Func<TManager, Task<TResult>> sendRequest)
+        where TManager : IManager
     {
-        T result;
+        TResult result;
 
         try
         {
-            result = await sendRequest();
+            result = await sendRequest(manager);
         }
         catch (FlurlHttpException flurlHttpException)
         {
@@ -88,52 +203,6 @@ public static class APIRequestHelpers
         }
 
         return result;
-    }
-
-    public static async Task<Result<int, IErrorBuilder>> TryGetWorkspaceId(
-        OneOf<int, string> workspaceOneOf,
-        IStateMonad stateMonad,
-        CancellationToken cancellationToken)
-    {
-        if (workspaceOneOf.TryPickT0(out var workspaceId, out var workspaceName))
-        {
-            return workspaceId;
-        }
-
-        var serviceResult = stateMonad.TryGetService<IObjectManager1>();
-
-        if (serviceResult.IsFailure)
-            return serviceResult.ConvertFailure<int>();
-
-        using var service = serviceResult.Value;
-
-        var request = new QueryRequest
-        {
-            Condition =
-                new TextCondition("Name", TextConditionEnum.Like, workspaceName)
-                    .ToQueryString(),
-            ObjectType = new ObjectTypeRef { ArtifactTypeID = (int)ArtifactType.Case }
-        };
-
-        var queryResult = await TrySendRequest(
-                () =>
-                    service.QuerySlimAsync(
-                        -1,
-                        request,
-                        0,
-                        100,
-                        cancellationToken
-                    )
-            )
-            .Ensure(
-                x => x.Objects.Any(),
-                ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Workspace", workspaceName)
-            );
-
-        if (queryResult.IsFailure)
-            return queryResult.ConvertFailure<int>();
-
-        return queryResult.Value.Objects.First().ArtifactID;
     }
 }
 

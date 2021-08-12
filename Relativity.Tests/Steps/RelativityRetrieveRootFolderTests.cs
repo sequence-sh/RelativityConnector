@@ -2,6 +2,7 @@
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
@@ -25,7 +26,7 @@ public partial class
                     {
                         Value = new RelativityRetrieveRootFolder()
                         {
-                            WorkspaceArtifactId = Constant(42)
+                            Workspace = new OneOfStep<int, StringStream>(Constant(42)),
                         }
                     },
                     Unit.Default,

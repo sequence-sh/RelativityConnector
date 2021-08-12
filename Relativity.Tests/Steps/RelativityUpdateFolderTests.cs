@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using Flurl.Http.Testing;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Reductech.EDR.Core.Util;
@@ -23,9 +24,9 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
                     "Update Folder with service mock",
                     new RelativityUpdateFolder()
                     {
-                        FolderName          = Constant("NewName"),
-                        FolderId            = Constant(22),
-                        WorkspaceArtifactId = Constant(11)
+                        FolderName = Constant("NewName"),
+                        FolderId   = Constant(22),
+                        Workspace  = new OneOfStep<int, StringStream>(Constant(11)),
                     },
                     Unit.Default
                 ).WithTestRelativitySettings()
@@ -43,9 +44,9 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
                     "Update Folder with http mock",
                     new RelativityUpdateFolder()
                     {
-                        FolderName          = Constant("NewName"),
-                        FolderId            = Constant(22),
-                        WorkspaceArtifactId = Constant(11)
+                        FolderName = Constant("NewName"),
+                        FolderId   = Constant(22),
+                        Workspace  = new OneOfStep<int, StringStream>(Constant(11)),
                     },
                     Unit.Default
                 ).WithTestRelativitySettings()

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -19,7 +20,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// Gets all children of a folder
 /// </summary>
 [SCLExample(
-    "RelativityGetSubfolders WorkspaceArtifactId: 11 FolderArtifactId: 22",
+    "RelativityGetSubfolders Workspace: 11 FolderArtifactId: 22",
     "[(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 101 Name: \"SubFolder 1\"),(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 102 Name: \"SubFolder 2\") ]",
     ExecuteInTests = false
 )]
@@ -32,19 +33,7 @@ public sealed class
     public override IStepFactory StepFactory =>
         new SimpleStepFactory<RelativityGetSubfolders, Array<Entity>>();
 
-    /// <summary>
-    /// The Id of the workspace.
-    /// </summary>
-    [StepProperty(1)]
-    [Required]
-    public IStep<int> WorkspaceArtifactId { get; set; } = null!;
-
-    /// <summary>
-    /// The Id of the folder.
-    /// </summary>
-    [StepProperty(2)]
-    [Required]
-    public IStep<int> FolderArtifactId { get; set; } = null!;
+    
 
     /// <inheritdoc />
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(List<Folder> serviceOutput)
@@ -74,8 +63,23 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(WorkspaceArtifactId, FolderArtifactId, cancellation);
+        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, TextLocation), FolderArtifactId, cancellation);
     }
+
+    /// <summary>
+    /// The Workspace containing the folder
+    /// You can provide either the Artifact Id or the name
+    /// </summary>
+    [StepProperty(1)]
+    [Required]
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+
+    /// <summary>
+    /// The Id of the folder.
+    /// </summary>
+    [StepProperty(2)]
+    [Required]
+    public IStep<int> FolderArtifactId { get; set; } = null!;
 }
 
 }

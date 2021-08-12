@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -17,7 +18,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// Update a Relativity folder
 /// </summary>
 [SCLExample(
-    "RelativityUpdateFolder WorkspaceArtifactId: 11 FolderId: 22 FolderName: \"NewName\"",
+    "RelativityUpdateFolder Workspace: 11 FolderId: 22 FolderName: \"NewName\"",
     ExecuteInTests = false
 )]
 public sealed class
@@ -51,7 +52,7 @@ public sealed class
         CancellationToken cancellation)
     {
         var r = await stateMonad.RunStepsAsync(
-            WorkspaceArtifactId,
+            Workspace.WrapWorkspace(stateMonad, TextLocation),
             FolderId,
             FolderName.WrapStringStream(),
             cancellation
@@ -68,11 +69,12 @@ public sealed class
     }
 
     /// <summary>
-    /// The workspace ID of the folder.
+    /// The Workspace containing the folder.
+    /// You can provide either the Artifact Id or the name
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<int> WorkspaceArtifactId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The Id of the folder you want to update

@@ -51,7 +51,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
         CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
-                WorkspaceId,
+                Workspace.WrapWorkspace(stateMonad, TextLocation),
                 SearchName.WrapStringStream(),
                 SearchText.WrapStringStream(),
                 SortByRank,
@@ -94,7 +94,13 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
             );
     }
 
-    [StepProperty(1)][Required] public IStep<int> WorkspaceId { get; set; } = null!;
+    /// <summary>
+    /// The Workspace to search.
+    /// You can provide either the Artifact Id or the name
+    /// </summary>
+    [StepProperty(1)]
+    [Required]
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The name of the new search

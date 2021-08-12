@@ -2,7 +2,9 @@
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
+using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Reductech.EDR.Core.Util;
 using Relativity.Services.Search;
 
@@ -22,8 +24,8 @@ public partial class
                     TestHelpers.LogEntity(
                         new RelativityReadKeywordSearch()
                         {
-                            WorkspaceId = StaticHelpers.Constant(11),
-                            SearchId    = StaticHelpers.Constant(12)
+                            Workspace = new OneOfStep<int, StringStream>(Constant(11)),
+                            SearchId  = Constant(12)
                         }
                     ),
                     Unit.Default,

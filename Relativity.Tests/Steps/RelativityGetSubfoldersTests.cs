@@ -29,8 +29,8 @@ public partial class
                         {
                             Array = new RelativityGetSubfolders()
                             {
-                                WorkspaceArtifactId = Constant(11),
-                                FolderArtifactId    = Constant(22)
+                                Workspace        = new OneOfStep<int, StringStream>(Constant(11)),
+                                FolderArtifactId = Constant(22)
                             },
                             Action = new LambdaFunction<Entity, Unit>(
                                 null,

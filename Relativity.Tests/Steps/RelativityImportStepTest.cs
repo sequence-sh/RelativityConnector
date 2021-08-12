@@ -5,6 +5,7 @@ using Moq;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.ExternalProcesses;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
@@ -24,7 +25,7 @@ public partial class RelativityImportTests : StepTestBase<RelativityImport, Unit
                         new RelativityImport()
                         {
                             FilePath             = Constant("C:/Data"),
-                            WorkspaceId          = Constant(1234),
+                            Workspace            = new OneOfStep<int, StringStream>(Constant(1234)),
                             SettingsFilePath     = Constant("C:/Settings"),
                             FileImportType       = Constant(FileImportType.Object),
                             LoadFileEncoding     = Constant(456),
