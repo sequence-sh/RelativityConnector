@@ -52,7 +52,7 @@ public sealed class
         CancellationToken cancellation)
     {
         var r = await stateMonad.RunStepsAsync(
-            Workspace.WrapWorkspace(stateMonad, TextLocation),
+            Workspace.WrapWorkspace(stateMonad, this),
             FolderId,
             FolderName.WrapStringStream(),
             cancellation

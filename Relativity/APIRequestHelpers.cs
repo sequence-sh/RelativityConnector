@@ -27,22 +27,23 @@ public static class RelativityStepMaps
     public static IRunnableStep<int> WrapWorkspace(
         this IStep<OneOf<int, StringStream>> step,
         IStateMonad stateMonad,
-        TextLocation? errorLocation)
+        IStep parentStep)
     {
-        return step.WrapStep(new WorkspaceMap(stateMonad, errorLocation));
+        return step.WrapStep(new WorkspaceMap(stateMonad, parentStep));
     }
 
-    public static IRunnableStep<ArtifactType> WrapArtifactId(this IStep<OneOf<ArtifactType, int>> step, TextLocation? errorLocation)
+    public static IRunnableStep<ArtifactType> WrapArtifactId(this IStep<OneOf<ArtifactType, int>> step, IStep parentStep)
     {
-        return step.WrapStep(new ArtifactIdMap(errorLocation));
+        return step.WrapStep(new ArtifactIdMap(parentStep));
     }
 
     private class ArtifactIdMap : IStepValueMap<OneOf<ArtifactType, int>, ArtifactType>
     {
-        public ArtifactIdMap(TextLocation? errorLocation) {
-            ErrorLocation = errorLocation;
+        private readonly IStep _parentStep;
+
+        public ArtifactIdMap(IStep parentStep) {
+            _parentStep = parentStep;
         }
-        public TextLocation? ErrorLocation { get; }
 
         /// <inheritdoc />
         public async Task<Result<ArtifactType, IError>> Map(OneOf<ArtifactType, int> t, CancellationToken cancellationToken)
@@ -54,20 +55,23 @@ public static class RelativityStepMaps
             if (Enum.IsDefined(typeof(ArtifactType), i))
                 return (ArtifactType)i;
 
-            return ErrorCode.InvalidCast.ToErrorBuilder(nameof(ArtifactType), i).WithLocationSingle(ErrorLocation!);
+            return Result.Failure<ArtifactType, IError>(
+                    ErrorCode.InvalidCast.ToErrorBuilder(nameof(ArtifactType), i).WithLocation(_parentStep)
+                    );
         }
     }
 
     private class WorkspaceMap : IStepValueMap<OneOf<int, StringStream>, int>
     {
-        public WorkspaceMap(IStateMonad stateMonad, TextLocation? errorLocation)
-        {
-            StateMonad    = stateMonad;
-            ErrorLocation = errorLocation;
-        }
 
-        public IStateMonad StateMonad { get; }
-        public TextLocation? ErrorLocation { get; }
+        private readonly IStateMonad _stateMonad;
+        private readonly IStep _parentStep;
+
+        public WorkspaceMap(IStateMonad stateMonad, IStep parentStep)
+        {
+            _stateMonad = stateMonad;
+            _parentStep = parentStep;
+        }
 
         /// <inheritdoc />
         public async Task<Result<int, IError>> Map(
@@ -81,10 +85,10 @@ public static class RelativityStepMaps
 
             var workspaceIdResult = await TryGetWorkspaceId(
                     workspaceName,
-                    StateMonad,
+                    _stateMonad,
                     cancellationToken
                 )
-                .MapError(x => x.WithLocation(ErrorLocation!));
+                .MapError(x => x.WithLocation(_parentStep));
 
             return workspaceIdResult;
         }
@@ -115,7 +119,7 @@ public static class RelativityStepMaps
                             -1,
                             request,
                             0,
-                            100,
+                            1,
                             cancellationToken
                         )
                 )

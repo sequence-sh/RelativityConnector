@@ -61,7 +61,7 @@ public sealed class RelativityMoveFolder : RelativityApiRequest<(int workspaceId
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
-            Workspace.WrapWorkspace(stateMonad, TextLocation),
+            Workspace.WrapWorkspace(stateMonad, this),
             FolderArtifactId,
             DestinationFolderArtifactId,
             cancellation

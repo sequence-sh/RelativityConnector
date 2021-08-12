@@ -53,7 +53,7 @@ public sealed class
         CancellationToken cancellation)
     {
         return await Workspace
-            .WrapWorkspace(stateMonad, TextLocation)
+            .WrapWorkspace(stateMonad, this)
             .Run(stateMonad, cancellation);
     }
 

@@ -52,7 +52,7 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return await Workspace.WrapWorkspace(stateMonad, TextLocation).Run(stateMonad, cancellation);
+        return await Workspace.WrapWorkspace(stateMonad, this).Run(stateMonad, cancellation);
     }
 
     /// <summary>

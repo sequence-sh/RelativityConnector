@@ -53,7 +53,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     public override Task<Result<(int workspaceId, DeleteRequest deleteRequest), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, TextLocation), ObjectArtifactId, cancellation)
+        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, this), ObjectArtifactId, cancellation)
             .Map(
                 x => (x.Item1,
                       new DeleteRequest()

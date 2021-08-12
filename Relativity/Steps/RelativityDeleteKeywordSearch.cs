@@ -46,7 +46,7 @@ public class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, TextLocation), SearchId, cancellation);
+        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, this), SearchId, cancellation);
     }
 
     /// <summary>

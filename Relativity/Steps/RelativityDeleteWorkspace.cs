@@ -50,7 +50,9 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        var workspaceId = await Workspace.WrapWorkspace(stateMonad, TextLocation).Run(stateMonad, cancellation);
+        var workspaceId = await Workspace
+            .WrapWorkspace(stateMonad, this)
+            .Run(stateMonad, cancellation);
         return workspaceId;
     }
 

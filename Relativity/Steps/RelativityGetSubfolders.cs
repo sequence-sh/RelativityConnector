@@ -63,7 +63,7 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, TextLocation), FolderArtifactId, cancellation);
+        return stateMonad.RunStepsAsync(Workspace.WrapWorkspace(stateMonad, this), FolderArtifactId, cancellation);
     }
 
     /// <summary>

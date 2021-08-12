@@ -134,7 +134,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
                 cancellation
             ),
             await TryMakeArgument(
-                Workspace.WrapWorkspace(stateMonad, TextLocation),
+                Workspace.WrapWorkspace(stateMonad, this),
                 true,
                 stateMonad,
                 "c",
