@@ -8,7 +8,6 @@ using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Matter;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {

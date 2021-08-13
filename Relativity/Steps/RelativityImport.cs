@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
+using OneOf;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.ExternalProcesses;
@@ -74,7 +75,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
 
     private static async Task<Result<Maybe<KeyValuePair<string, string>>, IError>>
         TryMakeArgument<T>(
-            IStep<T>? step,
+            IRunnableStep<T>? step,
             bool required,
             IStateMonad stateMonad,
             string flag,
@@ -133,11 +134,11 @@ public sealed class RelativityImport : CompoundStep<Unit>
                 cancellation
             ),
             await TryMakeArgument(
-                WorkspaceId,
+                Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
                 true,
                 stateMonad,
                 "c",
-                nameof(WorkspaceId),
+                nameof(Workspace),
                 x => x.ToString(),
                 callingStep,
                 cancellation
@@ -220,12 +221,12 @@ public sealed class RelativityImport : CompoundStep<Unit>
     public IStep<StringStream> FilePath { get; set; } = null!; //flag -f
 
     /// <summary>
-    /// The id of the workspace to import into
+    /// The Workspace to import into.
+    /// You can provide either the Artifact Id or the name
     /// </summary>
-    [StepProperty]
+    [StepProperty(1)]
     [Required]
-    [Example("1234567")]
-    public IStep<int> WorkspaceId { get; set; } = null!; //flag -c
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!; //flag -c
 
     /// <summary>
     /// The file import type

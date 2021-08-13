@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using FluentAssertions;
 using Moq;
 using Moq.Language.Flow;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
@@ -14,7 +16,6 @@ using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Reductech.EDR.Core.Util;
 using Relativity.Services.DataContracts.DTOs;
-using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 
@@ -22,27 +23,42 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
 
 public partial class
-    RelativityQueryDocumentsTests : StepTestBase<RelativityQueryDocuments, Array<Entity>>
+    RelativityQueryDocumentsTests : StepTestBase<RelativitySendQuery, Array<Entity>>
 {
+    static bool MatchQueryRequest(QueryRequest qr)
+    {
+        qr.Condition.Should().Be("Test Condition");
+        qr.ObjectType.ArtifactTypeID.Should().Be((int)ArtifactType.View);
+        qr.Fields.Select(x => x.ArtifactID).Should().BeEquivalentTo(100, 101);
+        qr.Sorts.Should().HaveCount(1);
+
+        qr.Sorts.Single().Direction.Should().Be(SortEnum.Descending);
+        qr.Sorts.Single().FieldIdentifier.ArtifactID.Should().Be(13);
+
+        return true;
+    }
+
     /// <inheritdoc />
     protected override IEnumerable<StepCase> StepCases
     {
         get
         {
+            
+
             yield return new StepCase(
                     "Query Documents",
                     new ForEach<Entity>()
                     {
-                        Array = new RelativityQueryDocuments()
+                        Array = new RelativitySendQuery()
                         {
-                            WorkspaceArtifactId = Constant(11),
-                            Condition           = Constant("Test Condition"),
-                            ArtifactTypeId      = Constant(12),
-                            FieldArtifactIds    = Array(100, 101),
-                            Length              = Constant(50),
-                            SortArtifactId      = Constant(13),
-                            SortDirection       = Constant(SortEnum.Descending),
-                            Start               = Constant(10)
+                            Workspace        = new OneOfStep<int, StringStream>(Constant(11)),
+                            Condition        = Constant("Test Condition"),
+                            ArtifactType     =  new OneOfStep<ArtifactType, int>(Constant(ArtifactType.View)),
+                            FieldArtifactIds = Array(100, 101),
+                            Length           = Constant(50),
+                            SortArtifactId   = Constant(13),
+                            SortDirection    = Constant(SortEnum.Descending),
+                            Start            = Constant(10)
                         },
                         Action = new LambdaFunction<Entity, Unit>(
                             null,
@@ -59,7 +75,7 @@ public partial class
                         x =>
                             x.QueryAsync(
                                 11,
-                                It.Is<QueryRequest>(qr => true),
+                                It.Is<QueryRequest>(q=> MatchQueryRequest(q)),
                                 10,
                                 50,
                                 It.IsAny<CancellationToken>(),

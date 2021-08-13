@@ -3,8 +3,11 @@ using System.Linq;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 using Relativity.Services.Search;
+using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
 {
@@ -19,17 +22,18 @@ public partial class
         {
             yield return new StepCase(
                         "Create Keyword",
-                        new RelativityCreateKeywordSearch()
+                        new RelativityCreateKeywordSearch
                         {
-                            WorkspaceId = StaticHelpers.Constant(10),
-                            SearchName = StaticHelpers.Constant("My Search"),
-                            SearchText = StaticHelpers.Constant("Search Text"),
-                            SortByRank = StaticHelpers.Constant(true),
-                            FieldArtifactIds = StaticHelpers.Array(22, 33, 44),
-                            Notes = StaticHelpers.Constant("My Notes"),
-                            Keywords = StaticHelpers.Constant("My Keywords"),
-                            Scope = StaticHelpers.Constant(SearchScope.EntireCase),
-                            SearchFolderArtifactIds = StaticHelpers.Array(55, 66)
+                            Workspace  = new OneOfStep<int, StringStream>(Constant(10)),
+                            SearchName = Constant("My Search"),
+                            SearchText = Constant("Search Text"),
+                            SortByRank = Constant(true),
+                            FieldArtifactIds =
+                                new OneOfStep<Array<int>, Array<StringStream>>(Array(22, 33, 44)),
+                            Notes                   = Constant("My Notes"),
+                            Keywords                = Constant("My Keywords"),
+                            Scope                   = Constant(SearchScope.EntireCase),
+                            SearchFolderArtifactIds = Array(55, 66)
                         },
                         42
                     ).WithTestRelativitySettings()

@@ -4,6 +4,7 @@ using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
@@ -26,7 +27,7 @@ public partial class RelativityMoveFoldersTests : StepTestBase<RelativityMoveFol
                     {
                         Value = new RelativityMoveFolder()
                         {
-                            WorkspaceArtifactId         = Constant(11),
+                            Workspace = new OneOfStep<int, StringStream>(Constant(11)),
                             DestinationFolderArtifactId = Constant(22),
                             FolderArtifactId            = Constant(33)
                         }

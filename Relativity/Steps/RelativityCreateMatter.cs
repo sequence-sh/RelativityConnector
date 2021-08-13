@@ -2,13 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Shared.V1.Models;
 
@@ -43,12 +43,12 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
         CancellationToken cancellation)
     {
         var result = stateMonad.RunStepsAsync(
-                ClientId,
-                StatusId,
+                Client.WrapClient(stateMonad, this),
+                Status.WrapMatterStatus(stateMonad, this),
                 MatterName.WrapStringStream(),
                 Number.WrapStringStream(),
-                Keywords.WrapNullable(x => x.WrapStringStream()),
-                Notes.WrapNullable(x => x.WrapStringStream()),
+                Keywords.WrapNullable(StepMaps.String()),
+                Notes.WrapNullable(StepMaps.String()),
                 cancellation
             )
             .Map(
@@ -82,17 +82,34 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
         return result;
     }
 
-    [StepProperty(1)][Required] public IStep<int> ClientId { get; set; } = null!;
+    [StepProperty(1)][Required] public IStep<OneOf<int, StringStream>> Client { get; set; } = null!;
 
-    [StepProperty(2)][Required] public IStep<int> StatusId { get; set; } = null!;
+    [StepProperty(2)][Required] public IStep<OneOf<int, MatterStatus>> Status { get; set; } = null!;
 
+    /// <summary>
+    /// The name of the matter to create
+    /// </summary>
     [StepProperty(3)][Required] public IStep<StringStream> MatterName { get; set; } = null!;
 
+    /// <summary>
+    /// The number field
+    /// </summary>
     [StepProperty(4)][Required] public IStep<StringStream> Number { get; set; } = null!;
 
+    /// <summary>
+    /// The keywords
+    /// </summary>
     [StepProperty(5)][Required] public IStep<StringStream>? Keywords { get; set; } = null!;
 
+    /// <summary>
+    /// The notes
+    /// </summary>
     [StepProperty(6)][Required] public IStep<StringStream>? Notes { get; set; } = null!;
+}
+
+public enum MatterStatus
+{
+    Active, Inactive
 }
 
 }

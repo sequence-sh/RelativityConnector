@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
@@ -17,7 +18,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// <summary>
 /// Deletes unused folders in a relativity workspace
 /// </summary>
-[SCLExample("RelativityDeleteUnusedFolders WorkspaceArtifactId: 42", ExecuteInTests = false)]
+[SCLExample("RelativityDeleteUnusedFolders Workspace: 42", ExecuteInTests = false)]
 public sealed class
     RelativityDeleteUnusedFolders : RelativityApiRequest<int, IFolderManager1, FolderResultSet, Unit>
 {
@@ -51,15 +52,16 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return await WorkspaceArtifactId.Run(stateMonad, cancellation);
+        return await Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this).Run(stateMonad, cancellation);
     }
 
     /// <summary>
-    /// The Id of the workspace to delete unused folders from.
+    /// The Workspace to delete unused folders from
+    /// You can provide either the Artifact Id or the name
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<int> WorkspaceArtifactId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 }
 
 }

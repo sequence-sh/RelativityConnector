@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -14,7 +15,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 {
 
 [SCLExample(
-    "RelativityExport WorkspaceId: 12345 Condition: \"'Extracted Text' ISSET \" FieldNames: [\"Field1\", \"Field2\"] BatchSize: 10",
+    "RelativityExport Workspace: 12345 Condition: \"'Extracted Text' ISSET \" FieldNames: [\"Field1\", \"Field2\"] BatchSize: 10",
     ExpectedOutput = "[(Field1: \"Hello\" Field2: \"World\" NativeFile: \"Native File Text\")]",
     ExecuteInTests = false
 )]
@@ -32,7 +33,7 @@ public sealed class RelativityExport : CompoundStep<Array<Entity>>
                 .ConvertFailure<Array<Entity>>();
 
         var stepsResult = await stateMonad.RunStepsAsync(
-            WorkspaceId,
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
             FieldNames.WrapStringStreamArray(),
             Condition.WrapStringStream(),
             BatchSize,
@@ -77,12 +78,12 @@ public sealed class RelativityExport : CompoundStep<Array<Entity>>
     }
 
     /// <summary>
-    /// The id of the workspace to export from
+    /// The Workspace to export from.
+    /// You can provide either the Artifact Id or the name
     /// </summary>
-    [StepProperty]
+    [StepProperty(1)]
     [Required]
-    [Example("12345")]
-    public IStep<int> WorkspaceId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The condition that documents must meet to be exported

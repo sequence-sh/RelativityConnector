@@ -2,13 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Workspace;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
@@ -24,13 +24,6 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 public sealed class
     RelativityDeleteWorkspace : RelativityApiRequest<int, IWorkspaceManager1, Unit, Unit>
 {
-    /// <summary>
-    /// The id of the workspace to delete
-    /// </summary>
-    [StepProperty(1)]
-    [Required]
-    public IStep<int> WorkspaceId { get; set; } = null!;
-
     public override IStepFactory StepFactory { get; } =
         new SimpleStepFactory<RelativityDeleteWorkspace, Unit>();
 
@@ -57,9 +50,19 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        var workspaceId = await WorkspaceId.Run(stateMonad, cancellation);
+        var workspaceId = await Workspace
+            .WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this)
+            .Run(stateMonad, cancellation);
         return workspaceId;
     }
+
+    /// <summary>
+    /// The Workspace to delete.
+    /// You can provide either the Artifact Id or the name
+    /// </summary>
+    [StepProperty(1)]
+    [Required]
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 }
 
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -50,15 +51,15 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
         CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
-                WorkspaceId,
+                Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
                 SearchName.WrapStringStream(),
                 SearchText.WrapStringStream(),
                 SortByRank,
-                FieldArtifactIds.WrapArray(),
-                Notes.WrapNullable(x => x.WrapStringStream()),
-                Keywords.WrapNullable(x => x.WrapStringStream()),
+                FieldArtifactIds.WrapOneOf(StepMaps.Array<int>(), StepMaps.Array(StepMaps.String())),
+                Notes.WrapNullable(StepMaps.String()),
+                Keywords.WrapNullable(StepMaps.String()),
                 Scope,
-                SearchFolderArtifactIds.WrapNullable(x => x.WrapArray()),
+                SearchFolderArtifactIds.WrapNullable(StepMaps.Array<int>()),
                 cancellation
             )
             .Map(
@@ -74,7 +75,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
                         ArtifactTypeID = 10,
                         SearchText     = searchText,
                         SortByRank     = sortByRank,
-                        Fields         = fieldArtifactIds.Select(x => new FieldRef(x)).ToList(),
+                        Fields         = fieldArtifactIds.Match(l=> l.Select(x=> new FieldRef(x)),l=> l.Select(x=> new FieldRef(x)) ).ToList(),
                         Scope          = MapSearchScope(scope),
                     };
 
@@ -93,7 +94,13 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
             );
     }
 
-    [StepProperty(1)][Required] public IStep<int> WorkspaceId { get; set; } = null!;
+    /// <summary>
+    /// The Workspace to search.
+    /// You can provide either the Artifact Id or the name
+    /// </summary>
+    [StepProperty(1)]
+    [Required]
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The name of the new search
@@ -116,7 +123,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
     [Required]
     public IStep<bool> SortByRank { get; set; } = null!;
 
-    [StepProperty(5)][Required] public IStep<Array<int>> FieldArtifactIds { get; set; } = null!;
+    [StepProperty(5)][Required] public IStep<OneOf<Array<int>, Array<StringStream>>> FieldArtifactIds { get; set; } = null!;
 
     [StepProperty(6)]
     [DefaultValueExplanation("")]

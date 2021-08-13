@@ -120,6 +120,9 @@
   <data name="MissingField" xml:space="preserve">
     <value>Missing Field: {0}</value>
   </data>
+  <data name="ObjectNotFound" xml:space="preserve">
+    <value>Could not find a {0} with name {1}</value>
+  </data>
   <data name="RequestFailed" xml:space="preserve">
     <value>Request Failed withstatus code {0} . {1} {2}</value>
   </data>

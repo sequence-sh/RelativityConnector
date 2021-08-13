@@ -10,7 +10,6 @@ using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
 using Relativity.Shared.V1.Models;
 using Entity = Reductech.EDR.Core.Entity;
-using IMatterManager = Relativity.Environment.V1.Matter.IMatterManager;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
@@ -36,7 +35,7 @@ public class RelativityGetClients : RelativityApiRequest<Unit, IMatterManager1,
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(
         List<DisplayableObjectIdentifier> serviceOutput)
     {
-        return TryConvertToEntityArray(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntityArray(serviceOutput);
     }
 
     /// <inheritdoc />

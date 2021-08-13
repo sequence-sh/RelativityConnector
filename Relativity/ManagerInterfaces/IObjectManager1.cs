@@ -75,6 +75,28 @@ public interface IObjectManager1 : IManager //Relativity.Services.Objects.IObjec
         IProgress<ProgressReport> progress);
 
 
+    /// <summary>
+    /// Query for Workspaces, Documents, RDOs, and system types. This returns a slimmer payload aimed towards display of the query results in a grid.
+    /// </summary>
+    /// <param name="workspaceID">Workspace ID of the workspace containing the artifacts to query for. Pass -1 for admin artifacts.</param>
+    /// <param name="request">A <see cref="T:Relativity.Services.Objects.DataContracts.QueryRequest" /> object containing conditions, sorting order, fields and other information for the query.</param>
+    /// <param name="start">Index of the first artifact in the returned <see cref="T:Relativity.Services.Objects.DataContracts.QueryResult" /> object.</param>
+    /// <param name="length">Number of items to return in the query result, starting with index in the start parameter.</param>
+    /// <param name="cancel">A request to cancel the execution of a create job for an object.</param>
+    /// <returns>Returns the results of the executed query.</returns>
+    [HttpPost]
+    [Route("~/workspace/{workspaceID:int}/object/queryslim")]
+    Task<QueryResultSlim> QuerySlimAsync(
+        int workspaceID,
+        [JsonParameter]
+        QueryRequest request,
+        [JsonParameter]
+        int start,
+        [JsonParameter]
+        int length,
+        CancellationToken cancel);
+
+
     /// <summary>Retrieves a results block from a given export set.</summary>
     /// <param name="workspaceID">Workspace ID of the workspace containing the data to export.</param>
     /// <param name="runID">The run ID of the export generated from initialization.</param>

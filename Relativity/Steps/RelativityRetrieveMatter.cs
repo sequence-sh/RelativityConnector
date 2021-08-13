@@ -24,7 +24,7 @@ public class
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(MatterResponse serviceOutput)
     {
-        return TryConvertToEntity(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
     }
 
     /// <inheritdoc />

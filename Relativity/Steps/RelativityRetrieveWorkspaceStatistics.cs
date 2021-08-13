@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
@@ -15,7 +16,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 {
 
 [SCLExample(
-    "RelativityRetrieveWorkspaceStatistics WorkspaceId: 42",
+    "RelativityRetrieveWorkspaceStatistics Workspace: 42",
     expectedOutput: "(DocumentCount: 1234 FileSize: 5678)",
     ExecuteInTests = false
 )]
@@ -23,12 +24,7 @@ public sealed class
     RelativityRetrieveWorkspaceStatistics : RelativityApiRequest<int, IWorkspaceManager1,
         WorkspaceSummary, Entity>
 {
-    /// <summary>
-    /// The id of the workspace to retrieve
-    /// </summary>
-    [StepProperty(1)]
-    [Required]
-    public IStep<int> WorkspaceId { get; set; } = null!;
+    
 
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -37,7 +33,7 @@ public sealed class
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceSummary serviceOutput)
     {
-        return TryConvertToEntity(serviceOutput);
+        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
     }
 
     /// <inheritdoc />
@@ -55,8 +51,16 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return WorkspaceId.Run(stateMonad, cancellation);
+        return Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this).Run(stateMonad, cancellation);
     }
+
+    /// <summary>
+    /// The Workspace to retrieve.
+    /// You can provide either the Artifact Id or the name
+    /// </summary>
+    [StepProperty(1)]
+    [Required]
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 }
 
 }

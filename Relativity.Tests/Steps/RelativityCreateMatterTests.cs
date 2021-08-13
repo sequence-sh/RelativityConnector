@@ -3,6 +3,8 @@ using System.Net.Http;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Relativity.Environment.V1.Matter.Models;
@@ -22,11 +24,11 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
                     new RelativityCreateMatter()
                     {
                         MatterName = Constant("My Matter"),
-                        ClientId   = Constant(123),
+                        Client     = new OneOfStep<int, StringStream>(Constant(123)) ,
                         Keywords   = Constant("My Keywords"),
                         Notes      = Constant("My Notes"),
                         Number     = Constant("My Number"),
-                        StatusId   = Constant(456)
+                        Status     = new OneOfStep<int, MatterStatus>(Constant(456)) 
                     },
                     42
                 ).WithTestRelativitySettings()
@@ -51,11 +53,11 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
                     new RelativityCreateMatter()
                     {
                         MatterName = Constant("My Matter"),
-                        ClientId   = Constant(123),
+                        Client     = new OneOfStep<int, StringStream>(Constant(123)),
                         Keywords   = Constant("My Keywords"),
                         Notes      = Constant("My Notes"),
                         Number     = Constant("My Number"),
-                        StatusId   = Constant(456)
+                        Status     = new OneOfStep<int, MatterStatus>(Constant(456))
                     },
                     42
                 ).WithTestRelativitySettings()

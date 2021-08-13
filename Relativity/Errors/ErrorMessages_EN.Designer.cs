@@ -70,6 +70,15 @@ namespace Reductech.EDR.Connectors.Relativity.Errors {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not find a {0} with name {1}.
+        /// </summary>
+        internal static string ObjectNotFound {
+            get {
+                return ResourceManager.GetString("ObjectNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Request Failed withstatus code {0} . {1} {2}.
         /// </summary>
         internal static string RequestFailed {

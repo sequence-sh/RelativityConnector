@@ -13,6 +13,7 @@ using Reductech.EDR.Core.Internal.Serialization;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
+using Relativity.Services;
 using Xunit;
 using Xunit.Abstractions;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
@@ -27,16 +28,49 @@ public partial class ExampleTests
     {
         get
         {
-            //yield return new RelativityQueryDocuments()
-            //{
-            //    ArtifactTypeId = Constant(10),
-            //    Condition = Constant("'Title' LIKE 'Bond'"),
-            //    WorkspaceArtifactId = Constant(1019032),
-            //    Start = Constant(0),
-            //    Length = Constant(100)
-            //};
+                yield return new ForEach<Entity>
+                {
+                    Array = new RelativitySendQuery
+                    {
+                        Condition = Constant(
+                            new TextCondition("Name", TextConditionEnum.EqualTo, "Integration Test Workspace 2")
+                                .ToQueryString()),
+                        Workspace = new OneOfStep<int, StringStream>(Constant(-1)),
+                        ArtifactType = new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Case))
+                    },
+                    Action = new LambdaFunction<Entity, Unit>(
+                        null,
+                        new RelativityDeleteWorkspace()
+                        {
+                            Workspace = new OneOfStep<int, StringStream>(
+                                new EntityGetValue<int>()
+                                {
+                                    Entity = new GetAutomaticVariable<Entity>(),
+                                    Property = Constant("ArtifactId")
+                                }
+                            )
+                        }
+                    )
+                };
 
-            //yield break;
+                //yield return new RelativityCreateFolder()
+                //{
+                //    FolderName = Constant("MyNewFolder"),
+                //    Workspace = new OneOfStep<int, StringStream>(Constant("Integration Test Workspace 1"))
+                //};
+
+                //yield break;
+
+                //yield return new RelativityQueryDocuments()
+                //{
+                //    ArtifactTypeId = Constant(10),
+                //    Condition = Constant("'Title' LIKE 'Bond'"),
+                //    WorkspaceArtifactId = Constant(1019032),
+                //    Start = Constant(0),
+                //    Length = Constant(100)
+                //};
+
+                yield break;
 
             yield return new Sequence<Unit>()
             {
@@ -46,8 +80,8 @@ public partial class ExampleTests
                     {
                         Value = new RelativityCreateMatter()
                         {
-                            ClientId   = Constant(1018410),
-                            StatusId   = Constant(671),
+                            Client     = new OneOfStep<int, StringStream>(Constant(1018410)),
+                            Status     = new OneOfStep<int, MatterStatus>(Constant(671)),
                             MatterName = Constant("Test Matter"),
                             Number     = Constant("Ten"),
                             Keywords   = Constant("Test Keywords"),
@@ -60,11 +94,17 @@ public partial class ExampleTests
                         Variable = new VariableName("Workspace"),
                         Value = new RelativityCreateWorkspace()
                         {
-                            WorkspaceName           = Constant("Integration Test Workspace"),
-                            MatterId                = GetVariable<int>("MatterId"),
-                            TemplateId              = Constant(1015024),
-                            StatusId                = Constant(675),
-                            ResourcePoolId          = Constant(1015040),
+                            WorkspaceName = Constant("Integration Test Workspace"),
+                            Matter = new OneOfStep<int, StringStream>(GetVariable<int>("MatterId")),
+                            TemplateId =
+                                new OneOfStep<int, StringStream>(
+                                    Constant("Relativity Starter Template")
+                                ), // = Constant(1015024),
+                            StatusId = Constant(675),
+                            ResourcePoolId =
+                                new OneOfStep<int, StringStream>(
+                                    Constant("Default")
+                                ), // Constant(1015040),
                             SqlServerId             = Constant(1015096),
                             DefaultFileRepositoryId = Constant(1014887),
                             DefaultCacheLocationId  = Constant(1015534)
@@ -87,8 +127,9 @@ public partial class ExampleTests
                         Variable = new VariableName("FolderId"),
                         Value = new RelativityCreateFolder()
                         {
-                            FolderName          = Constant("MyFolder"),
-                            WorkspaceArtifactId = GetVariable<int>("WorkspaceId"),
+                            FolderName = Constant("MyFolder"),
+                            Workspace =
+                                new OneOfStep<int, StringStream>(GetVariable<int>("WorkspaceId")),
                         }
                     },
                     new SetVariable<Array<int>>()
@@ -96,8 +137,9 @@ public partial class ExampleTests
                         Variable = new VariableName("DynamicObjectIds"),
                         Value = new RelativityCreateDynamicObjects()
                         {
-                            ArtifactTypeId      = Constant(10),
-                            WorkspaceArtifactId = GetVariable<int>("WorkspaceId"),
+                            ArtifactType = new OneOfStep<ArtifactType, int>(Constant(10)),
+                            Workspace =
+                                new OneOfStep<int, StringStream>(GetVariable<int>("WorkspaceId")),
                             Entities = Array(
                                 Entity.Create(
                                     ("Title", "Thing 1"),

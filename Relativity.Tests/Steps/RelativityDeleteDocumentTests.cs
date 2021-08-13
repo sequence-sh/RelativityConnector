@@ -5,10 +5,11 @@ using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
+using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Reductech.EDR.Core.Util;
-using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
@@ -27,8 +28,8 @@ public partial class RelativityDeleteDocumentTests : StepTestBase<RelativityDele
                     {
                         Value = new RelativityDeleteDocument()
                         {
-                            WorkspaceArtifactId = StaticHelpers.Constant(11),
-                            ObjectArtifactId    = StaticHelpers.Constant(22)
+                            Workspace        = new OneOfStep<int, StringStream>(Constant(11)),
+                            ObjectArtifactId = Constant(22)
                         }
                     },
                     Unit.Default,

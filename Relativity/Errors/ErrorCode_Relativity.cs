@@ -28,6 +28,11 @@ public sealed record ErrorCode_Relativity : ErrorCodeBase
     /// </summary>
     public static readonly ErrorCode_Relativity MissingField = new(nameof(MissingField));
 
+    /// <summary>
+    /// Could not find a {0} with name {1}
+    /// </summary>
+    public static readonly ErrorCode_Relativity ObjectNotFound = new(nameof(ObjectNotFound));
+
     /// <inheritdoc />
     public override string GetFormatString()
     {

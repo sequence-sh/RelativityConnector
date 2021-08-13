@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
@@ -12,7 +13,6 @@ using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 
@@ -60,9 +60,9 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         var stepsResult = await stateMonad.RunStepsAsync(
-            WorkspaceArtifactId,
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this),
             Entities.WrapArray(),
-            ArtifactTypeId,
+            ArtifactType.WrapArtifactId(this),
             ParentArtifactId.WrapNullable(),
             cancellation
         );
@@ -70,9 +70,9 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
         if (stepsResult.IsFailure)
             return stepsResult.ConvertFailure<(int workspaceId, MassCreateRequest createRequest)>();
 
-        var (workspaceId, entities, artifactTypeId, parentArtifactId) = stepsResult.Value;
+        var (workspaceId, entities, artifactType, parentArtifactId) = stepsResult.Value;
 
-        var request = ToCreateRequest(entities, artifactTypeId, parentArtifactId);
+        var request = ToCreateRequest(entities, artifactType, parentArtifactId);
 
         if (request.IsFailure)
             return request.MapError(x => x.WithLocation(this))
@@ -86,12 +86,12 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     /// </summary>
     public static Result<MassCreateRequest, IErrorBuilder> ToCreateRequest(
         IReadOnlyList<Entity> entities,
-        int artifactTypeId,
+        ArtifactType artifactType,
         Maybe<int> parentArtifactId)
     {
         var createRequest = new MassCreateRequest
         {
-            ObjectType = new ObjectTypeRef() { ArtifactTypeID = artifactTypeId }
+            ObjectType = new ObjectTypeRef() { ArtifactTypeID = (int) artifactType }
         };
 
         if (parentArtifactId.HasValue)
@@ -136,11 +136,12 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     }
 
     /// <summary>
-    /// The artifact Id of the workspace to import into
+    /// The Workspace where you want to create the objects.
+    /// You can provide either the Artifact Id or the name
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<int> WorkspaceArtifactId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The entities to import
@@ -154,7 +155,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     /// </summary>
     [StepProperty(3)]
     [Required]
-    public IStep<int> ArtifactTypeId { get; set; } = null!;
+    public IStep<OneOf<ArtifactType, int>> ArtifactType { get; set; } = null!;
 
     /// <summary>
     /// The artifact Id of the parent object

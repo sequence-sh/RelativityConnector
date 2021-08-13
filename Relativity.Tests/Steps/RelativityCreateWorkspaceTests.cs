@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Workspace.Models;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
@@ -35,11 +34,11 @@ public partial class
                                 WorkspaceName           = Constant("MyNewWorkspace"),
                                 DefaultCacheLocationId  = Constant(1),
                                 DefaultFileRepositoryId = Constant(2),
-                                MatterId                = Constant(3),
-                                ResourcePoolId          = Constant(4),
+                                Matter                  = new OneOfStep<int, StringStream>(Constant(3)),
+                                ResourcePoolId          = new OneOfStep<int, StringStream>(Constant(4)) ,
                                 SqlServerId             = Constant(5),
                                 StatusId                = Constant(6),
-                                TemplateId              = Constant(7)
+                                TemplateId              = new OneOfStep<int, StringStream>(Constant(7)) 
                             }
                         },
                         Unit.Default,

@@ -2,6 +2,8 @@
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Core;
+using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.TestHarness;
 using Relativity.Services.Folder;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
@@ -20,9 +22,9 @@ public partial class RelativityCreateFolderTests : StepTestBase<RelativityCreate
                     "Create a folder with a parent folder",
                     new RelativityCreateFolder()
                     {
-                        FolderName          = Constant("MyNewFolder"),
-                        ParentFolderId      = Constant(14),
-                        WorkspaceArtifactId = Constant(13)
+                        FolderName     = Constant("MyNewFolder"),
+                        ParentFolderId = Constant(14),
+                        Workspace      = new OneOfStep<int, StringStream>(Constant(13))
                     },
                     42
                 ).WithTestRelativitySettings()
