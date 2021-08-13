@@ -10,7 +10,6 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.Util;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
@@ -36,7 +35,34 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
     /// <inheritdoc />
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(QueryResult serviceOutput)
     {
-        return APIRequestHelpers.TryConvertToEntityArray(serviceOutput.Objects);
+        var entities = new List<Entity>(serviceOutput.Objects.Count);
+
+        foreach (var relativityObject in serviceOutput.Objects)
+        {
+            var entity = Entity.Create(GetEntityValues(relativityObject));
+            entities.Add(entity);
+        }
+
+        return entities.ToSCLArray();
+
+        static IEnumerable<(EntityPropertyKey key, object? value)> GetEntityValues(
+            RelativityObject relativityObject)
+        {
+            yield return (new EntityPropertyKey(nameof(RelativityObject.Name)),
+                          relativityObject.Name);
+
+            yield return (new EntityPropertyKey(nameof(RelativityObject.ArtifactID)),
+                          relativityObject.ArtifactID);
+
+            if (relativityObject.ParentObject is not null)
+                yield return (new EntityPropertyKey(nameof(relativityObject.ParentObject)),
+                              relativityObject.ParentObject.ArtifactID);
+
+            foreach (var f in relativityObject.FieldValues)
+            {
+                yield return (new EntityPropertyKey(f.Field.Name), f.Value);
+            }
+        }
     }
 
     /// <inheritdoc />
@@ -66,12 +92,12 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
             IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
-        var artifactIdsStep = FieldArtifactIds ?? ArrayNew<int>.CreateArray(new List<IStep<int>>());
-
         var data = await stateMonad.RunStepsAsync(
             Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
             Condition.WrapStringStream(),
-            artifactIdsStep.WrapArray(),
+            Fields.WrapNullable(
+                StepMaps.OneOf(StepMaps.Array<int>(), StepMaps.Array(StepMaps.String()))
+            ),
             Start,
             Length,
             ArtifactType.WrapArtifactId(this),
@@ -85,7 +111,7 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
                 .ConvertFailure<(int workspaceId, QueryRequest request, int indexOfFirst, int
                     lengthOfResults)>();
 
-        var (workspaceArtifactId, condition, artifactIds, start, length, artifactTypeId,
+        var (workspaceArtifactId, condition, fields, start, length, artifactTypeId,
             sortArtifactId,
             sortDirection) = data.Value;
 
@@ -104,9 +130,8 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
 
         var queryRequest = new QueryRequest
         {
-            ObjectType      = new ObjectTypeRef { ArtifactTypeID = (int) artifactTypeId },
+            ObjectType      = new ObjectTypeRef { ArtifactTypeID = (int)artifactTypeId },
             Condition       = condition,
-            Fields          = artifactIds.Select(x => new FieldRef { ArtifactID = x }).ToList(),
             IncludeIDWindow = false,
             RelationalField =
                 null, //name of relational field to expand query results to related objects
@@ -115,6 +140,19 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
             Sorts                   = sorts, //an array of Fields with sorting order
             //QueryHint = "waitfor:5" //TODO this
         };
+
+        if (fields.HasValue)
+        {
+            queryRequest.Fields =
+                fields.Value.Match(
+                    l => l.Select(x => new FieldRef() { ArtifactID = x }),
+                    l => l.Select(x => new FieldRef() { Name       = x })
+                );
+        }
+        else
+        {
+            queryRequest.Fields = new List<FieldRef>(0);
+        }
 
         return (workspaceArtifactId, queryRequest, start, length);
     }
@@ -137,11 +175,13 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
     public IStep<StringStream> Condition { get; set; } = null!;
 
     /// <summary>
-    /// Artifact Ids of fields to return. The ArtifactId field is always returned
+    /// The fields to return.
+    /// The ArtifactId field is always returned.
+    /// You can provide either the ArtifactId or the name
     /// </summary>
     [StepProperty(3)]
     [DefaultValueExplanation("Just ArtifactId")]
-    public IStep<Array<int>>? FieldArtifactIds { get; set; }
+    public IStep<OneOf<Array<int>, Array<StringStream>>>? Fields { get; set; } = null!;
 
     /// <summary>
     /// 1-based index of first document in query results to retrieve

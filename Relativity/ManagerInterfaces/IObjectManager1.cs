@@ -149,6 +149,23 @@ public interface IObjectManager1 : IManager //Relativity.Services.Objects.IObjec
         QueryRequest queryRequest,
         [JsonParameter]
         int start);
+
+
+    /// <summary>
+    /// Modifies all fields or a specified subset of fields on a Document or Relativity Dynamic Object (RDO), and uses any specified update options.
+    /// </summary>
+    /// <param name="workspaceID">Workspace ID of the workspace containing the artifact to be updated.</param>
+    /// <param name="request">A request to update a Document or Relativity Dynamic Object (RDO).</param>
+    /// <param name="operationOptions">An options object containing a calling context property providing information used to populate data for event handlers.</param>
+    /// <returns>An <see cref="T:Relativity.Services.Objects.DataContracts.UpdateResult" /> with event handler statuses.</returns>
+    [HttpPost]
+    [Route("~/workspace/{workspaceID:int}/object/update")]
+    Task<UpdateResult> UpdateAsync(
+        int workspaceID,
+        [JsonParameter]
+        UpdateRequest request,
+        [JsonParameter]
+        UpdateOptions operationOptions);
 }
 
 }
