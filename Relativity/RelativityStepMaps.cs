@@ -21,15 +21,17 @@ namespace Reductech.EDR.Connectors.Relativity
 
 public static class RelativityStepMaps
 {
-    public static IRunnableStep<int> WrapWorkspace(
+    public static IRunnableStep<int> WrapArtifact(
         this IRunnableStep<OneOf<int, StringStream>> step,
+        ArtifactType artifactType,
         IStateMonad stateMonad,
         IStep parentStep)
     {
         return step
             .WrapStep(StepMaps.OneOf(StepMaps.DoNothing<int>(), StepMaps.String()))
-            .WrapStep(new WorkspaceMap(stateMonad, parentStep));
+            .WrapStep(new RelativityQueryMap (artifactType, stateMonad, parentStep));
     }
+    
 
     public static IRunnableStep<int> WrapClient(
         this IRunnableStep<OneOf<int, StringStream>> step,
@@ -130,7 +132,7 @@ public static class RelativityStepMaps
             return client.ArtifactID;
         }
     }
-
+        
     private class MatterStatusMap : RelativityArtifactIdMap<MatterStatus, IMatterManager1,
         List<DisplayableObjectIdentifier>>
     {
@@ -191,11 +193,16 @@ public static class RelativityStepMaps
         }
     }
 
-    private class WorkspaceMap : RelativityArtifactIdMap<string, IObjectManager1, QueryResultSlim>
+
+    private class RelativityQueryMap : RelativityArtifactIdMap<string, IObjectManager1, QueryResultSlim>
     {
+        private readonly ArtifactType _artifactType;
+
         /// <inheritdoc />
-        public WorkspaceMap(IStateMonad stateMonad, IStep parentStep) :
-            base(stateMonad, parentStep) { }
+        public RelativityQueryMap(ArtifactType artifactType, IStateMonad stateMonad, IStep parentStep) : base(stateMonad, parentStep)
+        {
+            _artifactType = artifactType;
+        }
 
         /// <inheritdoc />
         protected override async Task<QueryResultSlim> GetResult(
@@ -208,7 +215,7 @@ public static class RelativityStepMaps
                 Condition =
                     new TextCondition("Name", TextConditionEnum.Like, key)
                         .ToQueryString(),
-                ObjectType = new ObjectTypeRef { ArtifactTypeID = (int)ArtifactType.Case }
+                ObjectType = new ObjectTypeRef { ArtifactTypeID = (int)_artifactType }
             };
 
             var result = await service.QuerySlimAsync(
@@ -228,7 +235,7 @@ public static class RelativityStepMaps
             string key)
         {
             if (!result.Objects.Any())
-                return ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Workspace", key);
+                return ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder(_artifactType.ToString(), key);
 
             return result.Objects.First().ArtifactID;
         }

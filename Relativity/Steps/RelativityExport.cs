@@ -33,7 +33,7 @@ public sealed class RelativityExport : CompoundStep<Array<Entity>>
                 .ConvertFailure<Array<Entity>>();
 
         var stepsResult = await stateMonad.RunStepsAsync(
-            Workspace.WrapWorkspace(stateMonad, this),
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
             FieldNames.WrapStringStreamArray(),
             Condition.WrapStringStream(),
             BatchSize,

@@ -60,7 +60,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         var stepsResult = await stateMonad.RunStepsAsync(
-            Workspace.WrapWorkspace(stateMonad, this),
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this),
             Entities.WrapArray(),
             ArtifactType.WrapArtifactId(this),
             ParentArtifactId.WrapNullable(),

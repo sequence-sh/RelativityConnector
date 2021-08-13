@@ -51,7 +51,7 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return Workspace.WrapWorkspace(stateMonad, this).Run(stateMonad, cancellation);
+        return Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this).Run(stateMonad, cancellation);
     }
 
     /// <summary>

@@ -79,7 +79,7 @@ public sealed class
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return await stateMonad.RunStepsAsync(
-            Workspace.WrapWorkspace(stateMonad, this),
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
             IncludeMetadata,
             IncludeActions,
             cancellation

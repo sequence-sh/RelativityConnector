@@ -97,7 +97,7 @@ public partial class
                     {
                         Workspace = new OneOfStep<int, StringStream>(Constant("Test Workspace")),
                     },
-                    ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Workspace", "Test Workspace")
+                    ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Case", "Test Workspace")
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(x => x.RespondWith(status: 400));
 
@@ -107,7 +107,7 @@ public partial class
                         {
                             Workspace = new OneOfStep<int, StringStream>(Constant("Test Workspace")),
                         },
-                        ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Workspace", "Test Workspace")
+                        ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Case", "Test Workspace")
                     ).WithTestRelativitySettings()
                     .WithFlurlMocks(
                         x => x.RespondWithJson(

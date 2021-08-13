@@ -69,7 +69,7 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
         var artifactIdsStep = FieldArtifactIds ?? ArrayNew<int>.CreateArray(new List<IStep<int>>());
 
         var data = await stateMonad.RunStepsAsync(
-            Workspace.WrapWorkspace(stateMonad, this),
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
             Condition.WrapStringStream(),
             artifactIdsStep.WrapArray(),
             Start,

@@ -51,7 +51,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
         CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
-                Workspace.WrapWorkspace(stateMonad, this),
+                Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
                 SearchName.WrapStringStream(),
                 SearchText.WrapStringStream(),
                 SortByRank,

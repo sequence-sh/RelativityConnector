@@ -27,13 +27,13 @@ public partial class ExampleTests
     {
         get
         {
-            yield return new RelativityCreateFolder()
-            {
-                FolderName = Constant("MyNewFolder"),
-                Workspace = new OneOfStep<int, StringStream>(Constant("Integration Test Workspace 1"))
-            };
+            //yield return new RelativityCreateFolder()
+            //{
+            //    FolderName = Constant("MyNewFolder"),
+            //    Workspace = new OneOfStep<int, StringStream>(Constant("Integration Test Workspace 1"))
+            //};
 
-            yield break;
+            //yield break;
 
 
             //yield return new RelativityQueryDocuments()
@@ -69,11 +69,11 @@ public partial class ExampleTests
                         Variable = new VariableName("Workspace"),
                         Value = new RelativityCreateWorkspace()
                         {
-                            WorkspaceName           = Constant("Integration Test Workspace"),
-                            MatterId                = GetVariable<int>("MatterId"),
-                            TemplateId              = Constant(1015024),
+                            WorkspaceName           = Constant("Integration Test Workspace 2"),
+                            Matter                  = new OneOfStep<int, StringStream>(GetVariable<int>("MatterId")) ,
+                            TemplateId              = new OneOfStep<int, StringStream>(Constant("Relativity Starter Template")), // = Constant(1015024),
                             StatusId                = Constant(675),
-                            ResourcePoolId          = Constant(1015040),
+                            ResourcePoolId          = new OneOfStep<int, StringStream>(Constant("Default")),// Constant(1015040),
                             SqlServerId             = Constant(1015096),
                             DefaultFileRepositoryId = Constant(1014887),
                             DefaultCacheLocationId  = Constant(1015534)
@@ -150,8 +150,8 @@ public partial class ExampleTests
     public static IEnumerable<object[]> IntegrationTestCaseArgs =>
         IntegrationTestCases.Select(x => new[] { x.Serialize() });
 
-    [Theory(Skip = "Manual")]
-    //[Theory]
+    //[Theory(Skip = "Manual")]
+    [Theory]
     [Trait("Category", "Integration")]
     [MemberData(nameof(IntegrationTestCaseArgs))]
     public async Task RunSCLSequence(string scl)

@@ -53,7 +53,7 @@ public sealed class
         CancellationToken cancellation)
     {
         return await Workspace
-            .WrapWorkspace(stateMonad, this)
+            .WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this)
             .Run(stateMonad, cancellation);
     }
 

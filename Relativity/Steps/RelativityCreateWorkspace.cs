@@ -2,13 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
 using Entity = Reductech.EDR.Core.Entity;
@@ -51,10 +51,10 @@ public sealed class
     {
         var stepResult = await stateMonad.RunStepsAsync(
             WorkspaceName.WrapStringStream(),
-            MatterId,
-            TemplateId,
+            Matter.WrapArtifact(ArtifactType.Matter, stateMonad, this),
+            TemplateId.WrapArtifact(ArtifactType.Case, stateMonad, this),
             StatusId,
-            ResourcePoolId,
+            ResourcePoolId.WrapArtifact(ArtifactType.ResourcePool, stateMonad, this),
             SqlServerId,
             DefaultFileRepositoryId,
             DefaultCacheLocationId,
@@ -105,12 +105,12 @@ public sealed class
     public IStep<StringStream> WorkspaceName { get; set; } = null!;
 
     /// <summary>
-    /// The matter Artifact Id.
+    /// The matter.
     /// A matter is the case or legal action associated with the workspace.
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<int> MatterId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> Matter { get; set; } = null!;
 
     /// <summary>
     /// The Template Artifact Id.
@@ -118,7 +118,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<int> TemplateId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> TemplateId { get; set; } = null!;
 
     /// <summary>
     /// The status Artifact Id.
@@ -134,7 +134,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<int> ResourcePoolId { get; set; } = null!;
+    public IStep<OneOf<int, StringStream>> ResourcePoolId { get; set; } = null!;
 
     /// <summary>
     /// The Sql Server Artifact Id
