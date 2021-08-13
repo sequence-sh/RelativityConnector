@@ -213,7 +213,7 @@ public static class RelativityStepMaps
             var request = new QueryRequest
             {
                 Condition =
-                    new TextCondition("Name", TextConditionEnum.Like, key)
+                    new TextCondition("Name", TextConditionEnum.EqualTo, key)
                         .ToQueryString(),
                 ObjectType = new ObjectTypeRef { ArtifactTypeID = (int)_artifactType }
             };

@@ -147,7 +147,7 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
     /// 1-based index of first document in query results to retrieve
     /// </summary>
     [StepProperty]
-    [DefaultValueExplanation("1")]
+    [DefaultValueExplanation("0")]
     public IStep<int> Start { get; set; } = new IntConstant(0);
 
     /// <summary>
