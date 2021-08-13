@@ -50,7 +50,7 @@ public partial class
                     new MockSetup<IObjectManager1, QueryResultSlim>(
                         x => x.QuerySlimAsync(
                             -1,
-                            It.Is<QueryRequest>(x => x.Condition == "'Name' LIKE 'My Workspace'"),
+                            It.Is<QueryRequest>(queryRequest => queryRequest.Condition == "'Name' == 'My Workspace'"),
                             0,
                             1,
                             It.IsAny<CancellationToken>()
@@ -111,7 +111,7 @@ public partial class
                     ).WithTestRelativitySettings()
                     .WithFlurlMocks(
                         x => x.RespondWithJson(
-                            new QueryResultSlim() { Objects = new List<RelativityObjectSlim>() { } }
+                            new QueryResultSlim { Objects = new List<RelativityObjectSlim> { } }
                         )
                     )
                 ;
