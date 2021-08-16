@@ -55,7 +55,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
                 SearchName.WrapStringStream(),
                 SearchText.WrapStringStream(),
                 SortByRank,
-                FieldArtifactIds.WrapOneOf(StepMaps.Array<int>(), StepMaps.Array(StepMaps.String())),
+                Fields.WrapOneOf(StepMaps.Array<int>(), StepMaps.Array(StepMaps.String())),
                 Notes.WrapNullable(StepMaps.String()),
                 Keywords.WrapNullable(StepMaps.String()),
                 Scope,
@@ -123,7 +123,13 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
     [Required]
     public IStep<bool> SortByRank { get; set; } = null!;
 
-    [StepProperty(5)][Required] public IStep<OneOf<Array<int>, Array<StringStream>>> FieldArtifactIds { get; set; } = null!;
+    /// <summary>
+    /// The fields of the search
+    /// You can provide either the ArtifactId or the name
+    /// </summary>
+    [StepProperty(5)]
+    [Required] 
+    public IStep<OneOf<Array<int>, Array<StringStream>>> Fields { get; set; } = null!;
 
     [StepProperty(6)]
     [DefaultValueExplanation("")]

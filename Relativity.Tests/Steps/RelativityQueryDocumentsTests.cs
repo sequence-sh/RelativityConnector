@@ -43,22 +43,22 @@ public partial class
     {
         get
         {
-            
-
             yield return new StepCase(
                     "Query Documents",
                     new ForEach<Entity>()
                     {
                         Array = new RelativitySendQuery()
                         {
-                            Workspace        = new OneOfStep<int, StringStream>(Constant(11)),
-                            Condition        = Constant("Test Condition"),
-                            ArtifactType     =  new OneOfStep<ArtifactType, int>(Constant(ArtifactType.View)),
-                            FieldArtifactIds = Array(100, 101),
-                            Length           = Constant(50),
-                            SortArtifactId   = Constant(13),
-                            SortDirection    = Constant(SortEnum.Descending),
-                            Start            = Constant(10)
+                            Workspace = new OneOfStep<int, StringStream>(Constant(11)),
+                            Condition = Constant("Test Condition"),
+                            ArtifactType =
+                                new OneOfStep<ArtifactType, int>(Constant(ArtifactType.View)),
+                            Fields =
+                                new OneOfStep<Array<int>, Array<StringStream>>(Array(100, 101)),
+                            Length         = Constant(50),
+                            SortArtifactId = Constant(13),
+                            SortDirection  = Constant(SortEnum.Descending),
+                            Start          = Constant(10)
                         },
                         Action = new LambdaFunction<Entity, Unit>(
                             null,
@@ -67,15 +67,15 @@ public partial class
                     },
                     Unit.Default,
                     "Progress Message 1",
-                    "(ParentObject: \"\" Name: \"Result 1\" FieldValues: [(Value: \"Test Value 1a\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field a\")), (Value: \"Test Value 1b\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 101 Guids: \"\" Name: \"Field b\"))] ArtifactID: 11111 Guids: \"\")",
-                    "(ParentObject: \"\" Name: \"Result 2\" FieldValues: [(Value: \"Test Value 2a\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field a\")), (Value: \"Test Value 2b\" Field: (FieldCategory: 0 FieldType: 0 ViewFieldID: 0 ArtifactID: 100 Guids: \"\" Name: \"Field b\"))] ArtifactID: 22222 Guids: \"\")"
+                    @"(Name: ""Result 1"" ArtifactID: 11111 Field a: ""Test Value 1a"" Field b: ""Test Value 1b"")",
+                    @"(Name: ""Result 2"" ArtifactID: 22222 Field a: ""Test Value 2a"" Field b: ""Test Value 2b"")"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IObjectManager1, QueryResult>(
                         x =>
                             x.QueryAsync(
                                 11,
-                                It.Is<QueryRequest>(q=> MatchQueryRequest(q)),
+                                It.Is<QueryRequest>(q => MatchQueryRequest(q)),
                                 10,
                                 50,
                                 It.IsAny<CancellationToken>(),
