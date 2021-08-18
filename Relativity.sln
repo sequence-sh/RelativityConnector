@@ -19,9 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Import", "Import\Import.csproj", "{FFC9AE42-E187-486A-ACEB-999A454ADD3A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportClient", "ImportClient\ImportClient.csproj", "{7A8D77B6-20E1-4288-A6A2-779C3305E25A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Import", "Import\Import.csproj", "{FFC9AE42-E187-486A-ACEB-999A454ADD3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,18 +67,6 @@ Global
 		{FFC9AE42-E187-486A-ACEB-999A454ADD3A}.Release|x64.Build.0 = Release|Any CPU
 		{FFC9AE42-E187-486A-ACEB-999A454ADD3A}.Release|x86.ActiveCfg = Release|Any CPU
 		{FFC9AE42-E187-486A-ACEB-999A454ADD3A}.Release|x86.Build.0 = Release|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Debug|x64.Build.0 = Debug|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Debug|x86.Build.0 = Debug|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Release|x64.ActiveCfg = Release|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Release|x64.Build.0 = Release|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Release|x86.ActiveCfg = Release|Any CPU
-		{7A8D77B6-20E1-4288-A6A2-779C3305E25A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

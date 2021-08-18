@@ -1,18 +1,18 @@
 ﻿using System;
 using kCura.Relativity.DataReaderClient;
-using ReductechImport;
+using ReductechRelativityImport;
 
 namespace ImportClient
 {
 
 public static class JobHelpers
 {
-    public static void SetSettings(Settings settings, ImportRequest request)
+    public static void SetSettings(Settings settings, StartImportCommand command)
     {
         settings.ApplicationName = "Reductech Import";
-        settings.CaseArtifactId  = request.WorkspaceArtifactId; // = 1003663;
+        settings.CaseArtifactId  = command.WorkspaceArtifactId; // = 1003663;
 
-        settings.SelectedIdentifierFieldName = "control number";
+        settings.SelectedIdentifierFieldName = command.ControlNumberField;
         settings.ArtifactTypeId              = 10;
         //job.Settings.Billable = ;
 
@@ -27,8 +27,8 @@ public static class JobHelpers
         settings.ExtractedTextFieldContainsFilePath = false;
         settings.FileSizeMapped                     = false;
 
-        settings.NativeFilePathSourceFieldName = "File Path";
-        settings.FolderPathSourceFieldName     = "Folder Path";
+        settings.NativeFilePathSourceFieldName = command.FilePathField;
+        settings.FolderPathSourceFieldName     = command.FolderPathField;
         settings.StartRecordNumber             = 0;
     }
 

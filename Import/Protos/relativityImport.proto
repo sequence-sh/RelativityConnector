@@ -16,31 +16,56 @@ syntax = "proto3";
 
 option objc_class_prefix = "Reductech";
 
-package reductechImport;
+package reductechRelativityImport;
 
-service Reductech_Import {
+service Reductech_Relativity_Import {
 
-    rpc Import (ImportRequest) returns (ImportReply) {}
+    rpc StartImport (StartImportCommand) returns (StartImportReply) {}
+
+    rpc ImportData(stream ImportObject) returns (ImportDataReply){}
 }
 
-message ImportRequest {
+message StartImportCommand {
 
-    string RelativityUsername = 1;
-    string RelativityPassword = 2;
-    string RelativityWebAPIUrl = 3;
-    int32 WorkspaceArtifactId =  4;
+    repeated DataField DataFields = 1;
 
-    repeated string FieldNames = 5;
+    string RelativityUsername = 2;
+    string RelativityPassword = 3;
+    string RelativityWebAPIUrl = 4;
+    int32 WorkspaceArtifactId =  5;
 
-    repeated ImportObject Data = 6;
+    string ControlNumberField = 6;
+    string FilePathField = 7;
+    string FolderPathField = 8;
 
-    message ImportObject{
-        repeated string Values =1;
+    message DataField
+    {
+        string Name = 1;
+        DataType dataType = 2;
+
+        enum DataType {
+            string = 0;
+            int = 1;
+            double = 2;
+            bool = 3;
+            date = 4;
+        }
     }
+    
+}
+
+message ImportObject{
+    repeated string Values =1;
 }
 
 
 
-message ImportReply {
-    string message = 1;
+message StartImportReply {
+    bool Success = 1;
+    string Message = 2;
+}
+
+message ImportDataReply {
+    bool Success = 1;
+    string Message = 2;
 }

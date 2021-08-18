@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
-    <PackageReference Include="Reductech.EDR.Core" Version="0.11.0-a.master.2108131219" />
+    <PackageReference Include="Reductech.EDR.Core" Version="0.11.0-a.master.2108180849" />
     <PackageReference Include="Relativity.API" Version="17.0.4" />
     <PackageReference Include="Relativity.DataExchange.Client.SDK" Version="1.14.13" />
     <PackageReference Include="Relativity.Environment.SDK" Version="2.0.2" />
@@ -39,6 +39,10 @@
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Runtime.Caching" Version="5.0.0" />
     <PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Import\Import.csproj" />
   </ItemGroup>
 
   <ItemGroup>

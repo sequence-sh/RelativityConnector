@@ -8,6 +8,7 @@ using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Abstractions;
+using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Serialization;
 using Reductech.EDR.Core.Steps;
@@ -28,6 +29,39 @@ public partial class ExampleTests
     {
         get
         {
+
+            yield return ("Import Entities",
+                          new RelativityImportEntities()
+                          {
+                              Workspace = new OneOfStep<int, StringStream>(Constant("Integration Test Workspace")),
+                              Entities = Array(
+                                  Entity.Create(
+                                      ("Control Number", "12345"), 
+                                      ("Title", ("Test Document")), 
+                                      ("File Path", (@"C:\Users\wainw\Documents\Half of my Heart.pdf")),
+                                      ("Folder Path", (@"songs"))
+                                      
+                                      )
+                                  ),
+                              Schema = Constant(new Schema()
+                              {
+                                  Name = "Test Schema",
+                                  Properties = new Dictionary<string, SchemaProperty>()
+                                  {
+                                      {"Control Number", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
+                                      {"Title", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
+                                      {"File Path", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
+                                      {"Folder Path", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
+                                  }
+                              }.ConvertToEntity()),
+                              ControlNumberField = Constant("Control Number"),
+                              FilePathField = Constant("File Path"),
+                              FolderPathField = Constant("Folder Path")
+                          }
+                );
+
+            yield break;
+
             yield return ("Delete 'Integration Test Workspace'",
                           new ForEach<Entity>
                           {
@@ -297,7 +331,7 @@ public partial class ExampleTests
 
     [Theory(Skip = "Manual")]
     //[Theory]
-    [Trait("Category", "Integration")]
+    //[Trait("Category", "Integration")]
     [MemberData(nameof(IntegrationTestCaseArgs))]
     public async Task RunSCLSequence(string name, string scl)
     {
