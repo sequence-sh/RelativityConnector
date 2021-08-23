@@ -42,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Import\Import.csproj" />
     <ProjectReference Include="..\ReductechImportClient\Import\Import.csproj" />
   </ItemGroup>
 
