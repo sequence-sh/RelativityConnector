@@ -53,21 +53,22 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         var (workspaceId, entities, schema, controlNumberField, filePathField, folderPathField) =
             data.Value;
 
-        var startResult = stateMonad.ExternalContext.ExternalProcessRunner.StartExternalProcess(
-                @"C:\Users\wainw\source\repos\Reductech\relativity\ImportClient\bin\Debug\ImportClient.exe",
-                new List<string>(),
-                new Dictionary<string, string>(),
-                Encoding.Default,
-                stateMonad,
-                this
-            )
-            .MapError(x => x.WithLocation(this));
+            
+        //var startResult = stateMonad.ExternalContext.ExternalProcessRunner.StartExternalProcess(
+        //        @"C:\Users\wainw\source\repos\Reductech\relativity\ImportClient\bin\Debug\ImportClient.exe",
+        //        new List<string>(),
+        //        new Dictionary<string, string>(),
+        //        Encoding.Default,
+        //        stateMonad,
+        //        this
+        //    )
+        //    .MapError(x => x.WithLocation(this));
 
 
-        if (startResult.IsFailure)
-            return startResult.ConvertFailure<Unit>();
+        //if (startResult.IsFailure)
+        //    return startResult.ConvertFailure<Unit>();
 
-        using var _ = startResult.Value;
+        //using var _ = startResult.Value;
 
         Channel channel = new("127.0.0.1:30051", ChannelCredentials.Insecure);
 
@@ -114,19 +115,51 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         async ValueTask<Result<Unit, IError>> WriteEntity(Entity e, CancellationToken _1)
         {
             var importObject = Create(e);
-            await call.RequestStream.WriteAsync(importObject);
+
+            if (importObject.IsFailure)
+                return importObject.ConvertFailure<Unit>().MapError(x=> x.WithLocation(this));
+
+            await call.RequestStream.WriteAsync(importObject.Value);
             return Unit.Default;
 
-            ImportObject Create(Entity entity)
+            Result<ImportObject, IErrorBuilder> Create(Entity entity)
             {
                 var io = new ImportObject();
 
                 foreach (var schemaProperty in schema.Properties)
                 {
-                    var v = entity.TryGetValue(schemaProperty.Key)
-                        .Unwrap(x => x.GetPrimitiveString(), "");
+                    var value = entity.TryGetValue(schemaProperty.Key);
 
-                    io.Values.Add(v);
+                    ImportObject.Types.FieldValue fieldValue;
+
+                    if (value.HasValue)
+                    {
+                        var fieldValueResult = GetFieldValue(
+                            value.Value,
+                            schemaProperty.Value.Type
+                        );
+
+                        if (fieldValueResult.IsFailure)
+                            return fieldValueResult.ConvertFailure<ImportObject>();
+
+                        fieldValue = fieldValueResult.Value;
+                    }
+                    else
+                    {
+                        fieldValue = new ImportObject.Types.FieldValue();
+                    }
+
+                    if (fieldValue.TestOneofCase
+                     == ImportObject.Types.FieldValue.TestOneofOneofCase.None
+                     && schemaProperty.Value.Multiplicity == Multiplicity.ExactlyOne)
+                    {
+                        return ErrorCode.SchemaViolationUnexpectedNull.ToErrorBuilder(
+                            schemaProperty.Key,
+                            e
+                        );
+                    }
+
+                    io.Values.Add(fieldValue);
                 }
 
                 return io;
@@ -175,6 +208,26 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
     [StepProperty(6)]
     [DefaultValueExplanation("No folder path")]
     public IStep<StringStream> FolderPathField { get; set; } = new StringConstant("");
+
+    private static Result<ImportObject.Types.FieldValue, IErrorBuilder> GetFieldValue(
+        EntityValue entityValue,
+        SCLType sclType)
+    {
+        switch (sclType)
+        {
+            case SCLType.Enum:
+            case SCLType.String:  return new ImportObject.Types.FieldValue(){StringValue = entityValue.GetPrimitiveString()};
+            case SCLType.Integer: return entityValue.TryGetValue<int>().Map(x=> new ImportObject.Types.FieldValue(){IntValue = x});
+            case SCLType.Double:  return entityValue.TryGetValue<double>().Map(x=> new ImportObject.Types.FieldValue(){DoubleValue = x});
+            case SCLType.Bool:    return entityValue.TryGetValue<bool>().Map(x=> new ImportObject.Types.FieldValue(){BoolValue = x});
+            case SCLType.Date:    return entityValue.TryGetValue<DateTime>().Map(x=> new ImportObject.Types.FieldValue(){DateValue = x.ToShortDateString()});
+            case SCLType.Entity:
+                return ErrorCode.CannotConvertNestedEntity.ToErrorBuilder(
+                    nameof(ImportObject.Types.FieldValue)
+                );
+            default:              throw new ArgumentOutOfRangeException(nameof(sclType), sclType, null);
+        }
+    }
 
     static Result<StartImportCommand.Types.DataField.Types.DataType, IErrorBuilder>
         GetDataType(SCLType sclType)

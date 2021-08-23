@@ -55,7 +55,21 @@ message StartImportCommand {
 }
 
 message ImportObject{
-    repeated string Values =1;
+    repeated FieldValue Values = 1;
+
+    message FieldValue
+    {
+        oneof test_oneof {
+            string stringValue = 1;
+            int32 intValue = 2;
+            double doubleValue = 3;
+            bool boolValue = 4;
+            string dateValue = 5;
+        }
+    }
+
+    
+
 }
 
 
