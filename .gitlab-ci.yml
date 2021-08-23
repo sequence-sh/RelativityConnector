@@ -3,6 +3,7 @@ include:
     file: .gitlab-ci.linux.yml
 
 variables:
+  GIT_SUBMODULE_STRATEGY: recursive
   PACKAGE_NAME_NUGET: Reductech.EDR.Connectors.Relativity
   PACKAGE_NAME_DLL: Reductech.EDR.Connectors.Relativity
   PUBLISH_CONNECTOR: 1
