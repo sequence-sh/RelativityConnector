@@ -53,24 +53,24 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         var (workspaceId, entities, schema, controlNumberField, filePathField, folderPathField) =
             data.Value;
 
-            
-        //var startResult = stateMonad.ExternalContext.ExternalProcessRunner.StartExternalProcess(
-        //        @"C:\Users\wainw\source\repos\Reductech\relativity\ImportClient\bin\Debug\ImportClient.exe",
-        //        new List<string>(),
-        //        new Dictionary<string, string>(),
-        //        Encoding.Default,
-        //        stateMonad,
-        //        this
-        //    )
-        //    .MapError(x => x.WithLocation(this));
+
+            var startResult = stateMonad.ExternalContext.ExternalProcessRunner.StartExternalProcess(
+                    @"C:\Users\wainw\source\repos\Reductech\relativity\ReductechImportClient\ImportClient\bin\Debug\ImportClient.exe",
+                    new List<string>(),
+                    new Dictionary<string, string>(),
+                    Encoding.Default,
+                    stateMonad,
+                    this
+                )
+                .MapError(x => x.WithLocation(this));
 
 
-        //if (startResult.IsFailure)
-        //    return startResult.ConvertFailure<Unit>();
+            if (startResult.IsFailure)
+                return startResult.ConvertFailure<Unit>();
 
-        //using var _ = startResult.Value;
+            using var _ = startResult.Value;
 
-        Channel channel = new("127.0.0.1:30051", ChannelCredentials.Insecure);
+            Channel channel = new("127.0.0.1:30051", ChannelCredentials.Insecure);
 
         var client = new Reductech_Relativity_Import.Reductech_Relativity_ImportClient(channel);
 
