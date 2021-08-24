@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReductechImportClient\Import\Import.csproj" />
+    <ProjectReference Include="..\EntityImportClient\Import\Import.csproj" />
     <ProjectReference Include="..\Relativity\Relativity.csproj" />
   </ItemGroup>
 
