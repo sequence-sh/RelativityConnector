@@ -31,7 +31,7 @@ public partial class
                             }
                         },
                         Unit.Default,
-                        "(DocumentCount: 1234 FileSize: 5678)"
+                        "('DocumentCount': 1234 'FileSize': 5678)"
                     ).WithTestRelativitySettings()
                     .WithService(
                         new MockSetup<IWorkspaceManager1, WorkspaceSummary>(

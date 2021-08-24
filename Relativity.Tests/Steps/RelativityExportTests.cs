@@ -49,7 +49,7 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                         )
                     },
                     Unit.Default,
-                    "(ShortField: \"Hello\" LongField: \"Streamed Long Text\" NativeFile: \"My Native Text\")"
+                    "('ShortField': \"Hello\" 'LongField': \"Streamed Long Text\" 'NativeFile': \"My Native Text\")"
                 )
                 .WithTestRelativitySettings()
                 .WithService(

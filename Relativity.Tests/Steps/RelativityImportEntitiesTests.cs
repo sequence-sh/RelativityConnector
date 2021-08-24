@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Reductech.EDR.Connectors.Relativity.Steps;
+using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.TestHarness;
 using Reductech.EDR.Core.Util;
 
@@ -19,6 +20,23 @@ public partial class RelativityImportEntitiesTests : StepTestBase<RelativityImpo
         }
     }
 
+    /// <inheritdoc />
+    protected override IEnumerable<ErrorCase> ErrorCases
+    {
+        get
+        {
+            foreach (var errorCase in base.ErrorCases)
+            {
+                yield return new ErrorCase(
+                    errorCase.Name,
+                    errorCase.Step,
+                    ErrorCode.MissingStepSettings.ToErrorBuilder(
+                        "Reductech.EDR.Connectors.Relativity"
+                    )
+                );
+            }
+        }
+    }
 }
 
 }

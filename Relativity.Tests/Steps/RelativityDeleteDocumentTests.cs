@@ -33,7 +33,7 @@ public partial class RelativityDeleteDocumentTests : StepTestBase<RelativityDele
                         }
                     },
                     Unit.Default,
-                    "(Report: (DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")]))"
+                    "('Report': ('DeletedItems': [('ObjectTypeName': \"document\" 'Action': \"delete\" 'Count': 1 'Connection': \"object\")]))"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IObjectManager1, DeleteResult>(

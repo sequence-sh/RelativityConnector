@@ -67,8 +67,8 @@ public partial class
                     },
                     Unit.Default,
                     "Progress Message 1",
-                    @"(Name: ""Result 1"" ArtifactID: 11111 Field a: ""Test Value 1a"" Field b: ""Test Value 1b"")",
-                    @"(Name: ""Result 2"" ArtifactID: 22222 Field a: ""Test Value 2a"" Field b: ""Test Value 2b"")"
+                    @"('Name': ""Result 1"" 'ArtifactID': 11111 'Field a': ""Test Value 1a"" 'Field b': ""Test Value 1b"")",
+                    @"('Name': ""Result 2"" 'ArtifactID': 22222 'Field a': ""Test Value 2a"" 'Field b': ""Test Value 2b"")"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IObjectManager1, QueryResult>(

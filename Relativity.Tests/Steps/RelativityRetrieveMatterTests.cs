@@ -26,7 +26,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-                    "(Client: \"\" Number: \"My Number\" Status: \"\" Keywords: \"\" Notes: \"\" Meta: \"\" Actions: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Name: \"\" ArtifactID: 1234 Guids: \"\")"
+                    "('Client': \"\" 'Number': \"My Number\" 'Status': \"\" 'Keywords': \"\" 'Notes': \"\" 'Meta': \"\" 'Actions': \"\" 'CreatedOn': 0001-01-01T00:00:00.0000000 'CreatedBy': \"\" 'LastModifiedBy': \"\" 'LastModifiedOn': 0001-01-01T00:00:00.0000000 'Name': \"\" 'ArtifactID': 1234 'Guids': \"\")"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IMatterManager1, MatterResponse>(
@@ -44,7 +44,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-                    "(Client: \"\" Number: \"My Number\" Status: \"\" Keywords: \"\" Notes: \"\" Meta: \"\" Actions: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Name: \"\" ArtifactID: 1234 Guids: \"\")"
+                    "('Client': \"\" 'Number': \"My Number\" 'Status': \"\" 'Keywords': \"\" 'Notes': \"\" 'Meta': \"\" 'Actions': \"\" 'CreatedOn': 0001-01-01T00:00:00.0000000 'CreatedBy': \"\" 'LastModifiedBy': \"\" 'LastModifiedOn': 0001-01-01T00:00:00.0000000 'Name': \"\" 'ArtifactID': 1234 'Guids': \"\")"
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(
                     x => x.ForCallsTo(

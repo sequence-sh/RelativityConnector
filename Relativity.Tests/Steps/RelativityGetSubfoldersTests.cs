@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Castle.Components.DictionaryAdapter;
-using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
@@ -38,8 +36,8 @@ public partial class
                             )
                         },
                         Unit.Default,
-                        "(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 101 Name: \"SubFolder 1\")",
-                        "(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 102 Name: \"SubFolder 2\")"
+                        "('ParentFolder': ('ArtifactID': 22 'Name': \"MyFolder\") 'AccessControlListIsInherited': False 'SystemCreatedBy': \"\" 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedBy': \"\" 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Permissions': ('add': False 'delete': False 'edit': False 'secure': False) 'Children': \"\" 'Selected': False 'HasChildren': False 'ArtifactID': 101 'Name': \"SubFolder 1\")",
+                        "('ParentFolder': ('ArtifactID': 22 'Name': \"MyFolder\") 'AccessControlListIsInherited': False 'SystemCreatedBy': \"\" 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedBy': \"\" 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Permissions': ('add': False 'delete': False 'edit': False 'secure': False) 'Children': \"\" 'Selected': False 'HasChildren': False 'ArtifactID': 102 'Name': \"SubFolder 2\")"
                     ).WithTestRelativitySettings()
                     .WithService(
                         new MockSetup<IFolderManager1, List<Folder>>(

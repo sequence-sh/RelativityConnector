@@ -21,8 +21,8 @@ public partial class RelativityGetClientsTests : StepTestBase<RelativityGetClien
                     "Get Clients",
                     TestHelpers.LogAllEntities(new RelativityGetClients()),
                     Unit.Default,
-                    "(Name: \"Client 1\" ArtifactID: 1 Guids: \"\")",
-                    "(Name: \"Client 2\" ArtifactID: 2 Guids: \"\")"
+                    "('Name': \"Client 1\" 'ArtifactID': 1 'Guids': \"\")",
+                    "('Name': \"Client 2\" 'ArtifactID': 2 'Guids': \"\")"
                 )
                 .WithTestRelativitySettings()
                 .WithService(

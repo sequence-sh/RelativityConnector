@@ -30,7 +30,7 @@ public partial class
                         }
                     },
                     Unit.Default,
-                    "(ParentFolder: (ArtifactID: 0 Name: \"\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 12345 Name: \"MyFolder\")"
+                    "('ParentFolder': ('ArtifactID': 0 'Name': \"\") 'AccessControlListIsInherited': False 'SystemCreatedBy': \"\" 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedBy': \"\" 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Permissions': ('add': False 'delete': False 'edit': False 'secure': False) 'Children': \"\" 'Selected': False 'HasChildren': False 'ArtifactID': 12345 'Name': \"MyFolder\")"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IFolderManager1, Folder>(

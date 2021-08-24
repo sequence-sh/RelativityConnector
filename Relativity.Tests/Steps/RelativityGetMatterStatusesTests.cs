@@ -22,8 +22,8 @@ public partial class
                         "Get Matter Statuses",
                         TestHelpers.LogAllEntities(new RelativityGetMatterStatuses()),
                         Unit.Default,
-                        "(Name: \"Status 1\" ArtifactID: 1 Guids: \"\")",
-                        "(Name: \"Status 2\" ArtifactID: 2 Guids: \"\")"
+                        "('Name': \"Status 1\" 'ArtifactID': 1 'Guids': \"\")",
+                        "('Name': \"Status 2\" 'ArtifactID': 2 'Guids': \"\")"
                     )
                     .WithTestRelativitySettings()
                     .WithService(
