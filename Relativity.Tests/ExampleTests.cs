@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,50 @@ public partial class ExampleTests
         get
         {
 
+                yield return ("Search and Tag", //Note that the 'Tags' field must exist in your workspace for this to work
+                    
+                          new ForEach<Entity>()
+                          {
+                              Array = new RelativitySendQuery()
+                              {
+                                  ArtifactType =
+                                      new OneOfStep<ArtifactType, int>(
+                                          Constant(ArtifactType.Document)
+                                      ),
+                                  Condition = Constant("'Title' LIKE 'Bond'"),
+                                  Workspace =
+                                      new OneOfStep<int, StringStream>(
+                                          Constant("Integration Test Workspace")
+                                      ),
+                                  Start  = Constant(0),
+                                  Length = Constant(100),
+                                  Fields = new OneOfStep<Array<int>, Array<StringStream>>(
+                                      Array("Title", "Control Number")
+                                  )
+                              },
+                              Action = new LambdaFunction<Entity, Unit>(
+                                  null,
+                                  new RelativityUpdateObject()
+                                  {
+                                      ObjectArtifactId = new EntityGetValue<int>()
+                                      {
+                                          Entity = new GetAutomaticVariable<Entity>(),
+                                          Property = Constant("ArtifactId")
+                                      },
+                                      Workspace =
+                                          new OneOfStep<int, StringStream>(
+                                              Constant("Integration Test Workspace")
+                                          ),
+                                      FieldValues = Constant(Entity.Create(("Tags","My Tag")))
+                                  }
+                              )
+                          }
+                          
+                          );
+
+            yield break;
+
+
             yield return ("Import Entities",
                           new RelativityImportEntities()
                           {
@@ -52,7 +97,7 @@ public partial class ExampleTests
                                       {"Title", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
                                       {"File Path", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
                                       {"Folder Path", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
-                                  }
+                                  }.ToImmutableSortedDictionary()
                               }.ConvertToEntity()),
                               ControlNumberField = Constant("Control Number"),
                               FilePathField = Constant("File Path"),
@@ -128,45 +173,7 @@ public partial class ExampleTests
                           }
                 );
 
-            yield return ("Update an entity",
-                          new ForEach<Entity>()
-                          {
-                              Array = new RelativitySendQuery()
-                              {
-                                  ArtifactType =
-                                      new OneOfStep<ArtifactType, int>(
-                                          Constant(ArtifactType.Document)
-                                      ),
-                                  Condition = Constant("'Title' LIKE 'Bond'"),
-                                  Workspace =
-                                      new OneOfStep<int, StringStream>(
-                                          Constant("Integration Test Workspace")
-                                      ),
-                                  Start  = Constant(0),
-                                  Length = Constant(100),
-                                  Fields = new OneOfStep<Array<int>, Array<StringStream>>(
-                                      Array("Title", "Control Number")
-                                  )
-                              },
-                              Action = new LambdaFunction<Entity, Unit>(
-                                  null,
-                                  new RelativityUpdateObject()
-                                  {
-                                      ObjectArtifactId = new EntityGetValue<int>()
-                                      {
-                                          Entity = new GetAutomaticVariable<Entity>(),
-                                          Property = Constant("ArtifactId")
-                                      },
-                                      Workspace =
-                                          new OneOfStep<int, StringStream>(
-                                              Constant("Integration Test Workspace")
-                                          ),
-                                      FieldValues = Constant(Entity.Create(("Tags","My Tag")))
-                                  }
-                              )
-                          }
-                          
-                          );
+            
 
             yield return ("Create a folder",
                           new RelativityCreateFolder()
@@ -329,8 +336,8 @@ public partial class ExampleTests
     public static IEnumerable<object[]> IntegrationTestCaseArgs =>
         Examples.Select(x => new object[] { x.name, x.step.Serialize() });
 
-    [Theory(Skip = "Manual")]
-    //[Theory]
+    //[Theory(Skip = "Manual")]
+    [Theory]
     //[Trait("Category", "Integration")]
     [MemberData(nameof(IntegrationTestCaseArgs))]
     public async Task RunSCLSequence(string name, string scl)
