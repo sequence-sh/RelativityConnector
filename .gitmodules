@@ -1,0 +1,3 @@
+[submodule "EntityImportClient"]
+	path = EntityImportClient
+	url = ../relativityimportclient.git

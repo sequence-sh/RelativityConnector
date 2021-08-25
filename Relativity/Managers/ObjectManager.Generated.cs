@@ -121,6 +121,18 @@ public class TemplateObjectManager1 : ManagerBase, IObjectManager1
 		return PostJsonAsync<ExportInitializationResults>(route, jsonObject, cancellationToken);
 	}
 	
+	
+	public Task<UpdateResult> UpdateAsync(Int32 workspaceID, UpdateRequest request, UpdateOptions operationOptions)
+	{
+		var cancellationToken = CancellationToken.None;
+		var route = $"/~/workspace/{workspaceID}/object/update";
+		var jsonObject = new {
+			request,
+			operationOptions,
+		};
+		return PostJsonAsync<UpdateResult>(route, jsonObject, cancellationToken);
+	}
+	
 }
 
 

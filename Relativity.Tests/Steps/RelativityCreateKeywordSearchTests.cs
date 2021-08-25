@@ -28,7 +28,7 @@ public partial class
                             SearchName = Constant("My Search"),
                             SearchText = Constant("Search Text"),
                             SortByRank = Constant(true),
-                            FieldArtifactIds =
+                            Fields =
                                 new OneOfStep<Array<int>, Array<StringStream>>(Array(22, 33, 44)),
                             Notes                   = Constant("My Notes"),
                             Keywords                = Constant("My Keywords"),

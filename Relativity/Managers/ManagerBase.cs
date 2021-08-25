@@ -85,7 +85,7 @@ public abstract class ManagerBase : IDisposable
     {
         var splitRoute = SplitRoute(route);
 
-        var index = route.IndexOf("~", StringComparison.OrdinalIgnoreCase);
+        var index = splitRoute.ToList().IndexOf("~");
 
         if (index >= 0)
         {

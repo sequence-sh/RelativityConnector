@@ -23,7 +23,7 @@ public partial class
         get
         {
             var expectedEntityString =
-                "(Client: \"\" ClientNumber: \"\" DownloadHandlerUrl: \"TestURL\" EnableDataGrid: False Matter: \"\" MatterNumber: \"\" ProductionRestrictions: \"\" ResourcePool: \"\" DefaultFileRepository: \"\" DataGridFileRepository: \"\" DefaultCacheLocation: \"\" SqlServer: \"\" AzureCredentials: \"\" AzureFileSystemCredentials: \"\" SqlFullTextLanguage: \"\" Status: \"\" WorkspaceAdminGroup: \"\" Keywords: \"\" Notes: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Meta: \"\" Actions: \"\" Name: \"MyNewWorkspace\" ArtifactID: 0 Guids: \"\")";
+                "('Client': \"\" 'ClientNumber': \"\" 'DownloadHandlerUrl': \"TestURL\" 'EnableDataGrid': False 'Matter': \"\" 'MatterNumber': \"\" 'ProductionRestrictions': \"\" 'ResourcePool': \"\" 'DefaultFileRepository': \"\" 'DataGridFileRepository': \"\" 'DefaultCacheLocation': \"\" 'SqlServer': \"\" 'AzureCredentials': \"\" 'AzureFileSystemCredentials': \"\" 'SqlFullTextLanguage': \"\" 'Status': \"\" 'WorkspaceAdminGroup': \"\" 'Keywords': \"\" 'Notes': \"\" 'CreatedOn': 0001-01-01T00:00:00.0000000 'CreatedBy': \"\" 'LastModifiedBy': \"\" 'LastModifiedOn': 0001-01-01T00:00:00.0000000 'Meta': \"\" 'Actions': \"\" 'Name': \"MyNewWorkspace\" 'ArtifactID': 0 'Guids': \"\")";
 
             yield return new StepCase(
                         "Export with condition",
