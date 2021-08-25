@@ -18,11 +18,52 @@ Documentation is available here: https://docs.reductech.io
 
 ## E-discovery Reduct
 
-The SQL Connector is part of a group of projects called
-[E-discovery Reduct](https://gitlab.com/reductech/edr)
-which consists of a collection of [Connectors](https://gitlab.com/reductech/edr/connectors)
-and a command-line application for running Sequences, called
-[EDR](https://gitlab.com/reductech/edr/edr/-/releases).
+# EDR Relativity Connector
+
+The EDR Relativity Connector allows users to automate forensic workflows using
+[Relativity](https://www.relativity.com/).
+
+This connector has [Steps](https://docs.reductech.io/edr/steps/Relativity.html) to:
+
+- Create new matters and workspaces
+- Ingest data from CSV/Concordance or as entities
+- Search and tag items
+- Export Data as entities
+
+[Relativity SCL examples available here](https://docs.reductech.io/edr/examples/relativity.html).
+
+Source code available on [GitLab](https://gitlab.com/reductech/edr/connectors/relativity).
+
+## Relativity Connector Settings
+
+The Relativity Connector requires additional configuration which can be
+provided using the `settings` key in `connectors.json`.
+
+### Supported Settings
+
+| Name                  | Required |    Type    |Description                                                                                                                        |
+| :- | :-: | :-: | :- |
+| RelativityUsername        |    ✔     |  `string`  | The Username to use for authentication |
+| RelativityPassword        |    ✔     |  `string`  | The Password to use for authentication |
+| Url        |    ✔     |  `string`  | The URL of the Relativity Server |
+| DesktopClientPath        |         |  `string`  | The Path to the Relativity Desktop client. Required for the `RelativityImport` step. |
+| APIVersionNumber        |         |  `int`  | The version of the API to use. Defaults to `1`. You probably don't need to change this. |
+
+### Example Settings
+
+```json
+"Reductech.EDR.Connectors.Nuix": {
+  "id": "Reductech.EDR.Connectors.Relativity",
+  "enable": true,
+  "version": "0.11.0",
+  "settings": {
+    "RelativityUsername": "YourUsername",
+    "RelativityPassword": "YourPassword",
+    "Url": "http://relativitydevvm/",
+    "DesktopClientPath": "C:\\Program Files\\kCura Corporation\\Relativity Desktop Client\\Relativity.Desktop.Client.exe",
+  }
+}
+```
 
 # Releases
 
