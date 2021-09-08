@@ -18,6 +18,8 @@ public sealed class RelativitySettings : IEntityConvertible
 
     [DataMember] public string DesktopClientPath { get; set; } = null!;
 
+    [DataMember] public string? ImportClientPath { get; set; }
+
     /// <summary>
     /// The version of the API
     /// </summary>
@@ -44,6 +46,7 @@ public sealed class RelativitySettings : IEntityConvertible
             { nameof(RelativityPassword), RelativityPassword },
             { nameof(Url), Url },
             { nameof(DesktopClientPath), DesktopClientPath },
+            { nameof(ImportClientPath), ImportClientPath??"" },
             { nameof(APIVersionNumber), APIVersionNumber },
         };
     }
