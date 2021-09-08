@@ -1,0 +1,37 @@
+# v0.11.0 (2021-09-08)
+
+## Issues Closed in this Release
+
+### New Features
+
+- Create a new Import Client to support a new ImportEntities step #30
+- Allow strings to optionally be used instead of ArtifactIds for parameters in Relativity steps to make the Relativity connector easier to use for Technicians #27
+- Create Integration tests so that we can be confident the relativity steps work #14
+- Create an ImportEntities step so technicians can import entities directly #22
+- Create steps that use the KeywordSearchManager so technicians can manipulate searches #23
+- Add steps that interact with Relativity Matter Manager so technicians can manipulate matter #21
+- Add steps that interact with the relativity Document manager so technicians can manipulate documents #11
+- Add a RelativityCreateFolder step, so that a technicians can create new folders #8
+- Add a RelativityDeleteWorkspace step, so that a technicians can delete workspaces #13
+- Add a RelativityCreateWorkspace step, so that a technicians can create new workspaces #7
+- RelativityExport should return Array<Entity> instead of Array<StringStream> #20
+- Relativity Export should also optionally export natives #16
+- Create a step to export concordance, so that technicians can use sequences with relativity #6
+- Create step to import concordance, so that technicians can use sequences with relativity #4
+- Rename Template #2
+
+### Maintenance
+
+- Create a fix for missing or wrong HTTP routes in Relativity manager interfaces #26
+- Exclude the Core packages to make sure Relativity works as a Connector #25
+- Add support for publishing as a connector #24
+- Update Core to latest version #19
+- Use template ci config, so that it's easier to maintain #17
+- Add Release issue template #18
+- Update project readme with any dev programme licensing requirements #5
+- Remove epic from issue template #3
+
+### Documentation
+
+- Update the Readme to contain information for the new Steps and Settings #31
+
