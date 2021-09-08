@@ -192,15 +192,11 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
         var assembly = typeof(RelativityImportEntities).Assembly;
 
+        const string importClientName = "ImportClient.exe";
+
         var clientPath = Path.Combine(
             assembly.Location,
-            "..",
-            "..",
-            "..",
-            "..",
-            "..",
-            "..",
-            "EntityImportClient\\ImportClient\\bin\\Debug\\ImportClient.exe"
+            "..",importClientName
         );
 
         return clientPath;
