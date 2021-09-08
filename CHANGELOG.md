@@ -1,5 +1,7 @@
 # v0.11.0 (2021-09-08)
 
+Initial release. Version numbers are aligned with [Core](https://gitlab.com/reductech/edr/core).
+
 ## Issues Closed in this Release
 
 ### New Features
@@ -34,4 +36,3 @@
 ### Documentation
 
 - Update the Readme to contain information for the new Steps and Settings #31
-
