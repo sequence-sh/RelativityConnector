@@ -219,7 +219,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.Integration
 [AutoTheory.UseTestOutputHelper]
 public partial class IntegrationTests
 {
-    public const string SkipAll = "skip";
+    public const string SkipAll = "";
 
     //[Fact(Skip = SkipAll)]
     //[Trait("Category", "Integration")]
