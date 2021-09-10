@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Divergic.Logging.Xunit;
@@ -92,13 +94,21 @@ internal static class TestSteps
         )
     };
 
-    //public static IStep<Unit> AssertDocumentCount(int count) = new
-    //    AssertEqual<int>
-    //{
+    public static IStep<Unit> AssertDocumentCount(int count) => new
+        AssertEqual<int>()
+        {
+            Left = Constant(count),
+            Right = new EntityGetValue<int>()
+            {
+                Entity = new RelativityRetrieveWorkspaceStatistics()
+                {
+                    Workspace = IntegrationTestWorkspace
+                },
+                Property = Constant("documentCount")
+            }
+        };
 
-    //};
-
-public static IStep<Unit> LogWorkspaceStatistics = new Log<Entity>()
+    public static IStep<Unit> LogWorkspaceStatistics = new Log<Entity>()
     {
         Value = new RelativityRetrieveWorkspaceStatistics()
         {
@@ -154,6 +164,39 @@ public static IStep<Unit> LogWorkspaceStatistics = new Log<Entity>()
                 }
             }
         }
+    };
+
+    public static IStep<Unit> DeleteDocuments(string title) => new ForEach<Entity>
+    {
+        Array = new RelativitySendQuery
+        {
+            Condition = Constant(
+                new TextCondition(
+                        "Title",
+                        TextConditionEnum.EqualTo,
+                        "Test Document"
+                    )
+                    .ToQueryString()
+            ),
+            Workspace = IntegrationTestWorkspace,
+            ArtifactType =
+                new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document))
+        },
+        Action = new LambdaFunction<Entity, Unit>(
+            null,
+            new RunStep<Entity>()
+            {
+                Step = new RelativityDeleteDocument()
+                {
+                    ObjectArtifactId = new EntityGetValue<int>()
+                    {
+                        Entity   = new GetAutomaticVariable<Entity>(),
+                        Property = Constant("ArtifactId")
+                    },
+                    Workspace = IntegrationTestWorkspace
+                }
+            }
+        )
     };
 
     public static IStep<Unit> MaybeCreateIntegrationTestWorkspace = new If()
@@ -229,15 +272,13 @@ public partial class IntegrationTests
     //    await TestSCLSequence(step);
     //}
 
-    [Fact(Skip = SkipAll)]
-    [Trait("Category", "Integration")]
+    [Fact(Skip = "Manual")]
     public async void TestDeleteAllIntegrationTestWorkspace()
     {
         await TestSCLSequence(TestSteps.DeleteAllIntegrationTestWorkspace);
     }
 
-    [Fact(Skip = SkipAll)]
-    [Trait("Category", "Integration")]
+    [Fact(Skip = "Manual")]
     public async void TestDeleteAllTestMatter()
     {
         await TestSCLSequence(TestSteps.DeleteAllTestMatter);
@@ -245,8 +286,15 @@ public partial class IntegrationTests
 
     [Fact(Skip = SkipAll)]
     [Trait("Category", "Integration")]
-    public async void TestCreateWorkspaceImportDeleteWorkspace()
+    public async void ShortIntegrationTest()
     {
+        string filePath = Path.Combine(
+            Assembly.GetAssembly(typeof(IntegrationTests))!.Location,
+            "..",
+            "Data",
+            "TestDocument.pdf"
+        );
+
         var step = new Sequence<Unit>()
         {
             InitialSteps = new List<IStep<Unit>>()
@@ -254,6 +302,7 @@ public partial class IntegrationTests
                 TestSteps.DeleteAllIntegrationTestWorkspace,
                 TestSteps.MaybeCreateTestMatter,
                 TestSteps.MaybeCreateIntegrationTestWorkspace,
+                TestSteps.AssertDocumentCount(0),
                 new RunStep<int>()
                 {
                     Step = new RelativityCreateFolder()
@@ -269,8 +318,8 @@ public partial class IntegrationTests
                         Entity.Create(
                             ("Control Number", "12345"),
                             ("Title", ("Test Document")),
-                            ("File Path", (@"C:\Users\wainw\Documents\Half of my Heart.pdf")),
-                            ("Folder Path", (@"songs"))
+                            ("File Path", filePath),
+                            ("Folder Path", (@"TestFolder"))
                         )
                     ),
                     Schema = Constant(
@@ -318,7 +367,11 @@ public partial class IntegrationTests
                     FilePathField      = Constant("File Path"),
                     FolderPathField    = Constant("Folder Path")
                 },
+                TestSteps.AssertDocumentCount(1),
                 TestSteps.LogWorkspaceStatistics,
+                TestSteps.DeleteDocuments("Test Document"),
+                TestSteps.AssertDocumentCount(0),
+
                 new RelativityDeleteUnusedFolders()
                 {
                     Workspace = TestSteps.IntegrationTestWorkspace
@@ -330,8 +383,7 @@ public partial class IntegrationTests
         await TestSCLSequence(step);
     }
 
-    [Fact(Skip = SkipAll)]
-    [Trait("Category", "Integration")]
+    [Fact(Skip = "Manual")]
     public async void TestSearchAndTag()
     {
         var step = new ForEach<Entity>()
