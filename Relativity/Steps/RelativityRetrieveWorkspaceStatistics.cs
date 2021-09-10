@@ -8,7 +8,6 @@ using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
-using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Workspace.Models;
 using Entity = Reductech.EDR.Core.Entity;
 

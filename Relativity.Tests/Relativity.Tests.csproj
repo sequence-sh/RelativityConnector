@@ -42,4 +42,10 @@
     <ProjectReference Include="..\Relativity\Relativity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\TestDocument.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
