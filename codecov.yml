@@ -4,4 +4,3 @@ codecov:
 ignore:
   - '**/*.Designer.cs'
   - '**/*.Generated.cs'
-  - '**/*.cs'
