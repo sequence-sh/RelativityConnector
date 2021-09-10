@@ -199,6 +199,24 @@ internal static class TestSteps
         )
     };
 
+    public static IStep<Unit> AssertFolderCount(int expectedCount) =>
+        new AssertEqual<int>() 
+        { 
+            Left = Constant(expectedCount), 
+            Right =new ArrayLength<Entity>()
+            {
+                Array = new RelativitySendQuery()
+                {
+                    Condition = Constant(""
+                    ),
+                    Workspace = IntegrationTestWorkspace,
+                    ArtifactType =
+                        new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Folder))
+                }
+            }
+
+        };
+
     public static IStep<Unit> MaybeCreateIntegrationTestWorkspace = new If()
     {
         Condition = new ArrayIsEmpty<Entity>()
@@ -303,15 +321,19 @@ public partial class IntegrationTests
                 TestSteps.MaybeCreateTestMatter,
                 TestSteps.MaybeCreateIntegrationTestWorkspace,
                 TestSteps.AssertDocumentCount(0),
-                new RunStep<int>()
+                //TestSteps.AssertFolderCount(0),
+
+                new RunStep<int>
                 {
-                    Step = new RelativityCreateFolder()
+                    Step = new RelativityCreateFolder
                     {
                         FolderName = Constant("MyFolder"),
                         Workspace  = TestSteps.IntegrationTestWorkspace,
                     }
                 },
-                new RelativityImportEntities()
+                //TestSteps.AssertFolderCount(1),
+
+                new RelativityImportEntities
                 {
                     Workspace = TestSteps.IntegrationTestWorkspace,
                     Entities = Array(
@@ -367,6 +389,8 @@ public partial class IntegrationTests
                     FilePathField      = Constant("File Path"),
                     FolderPathField    = Constant("Folder Path")
                 },
+                //TestSteps.AssertFolderCount(2),
+
                 TestSteps.AssertDocumentCount(1),
                 TestSteps.LogWorkspaceStatistics,
                 TestSteps.DeleteDocuments("Test Document"),
@@ -376,6 +400,7 @@ public partial class IntegrationTests
                 {
                     Workspace = TestSteps.IntegrationTestWorkspace
                 },
+                //TestSteps.AssertFolderCount(0),
                 TestSteps.DeleteAllIntegrationTestWorkspace,
             }
         };
