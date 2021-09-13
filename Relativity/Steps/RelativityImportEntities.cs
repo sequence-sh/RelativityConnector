@@ -15,7 +15,7 @@ using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using ReductechRelativityImport;
+using ReductechEntityImport;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps
@@ -72,7 +72,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
         Channel channel = new("127.0.0.1:30051", ChannelCredentials.Insecure);
 
-        var client = new Reductech_Relativity_Import.Reductech_Relativity_ImportClient(channel);
+        var client = new Reductech_Entity_Import.Reductech_Entity_ImportClient(channel);
 
         var importRequest = new StartImportCommand()
         {

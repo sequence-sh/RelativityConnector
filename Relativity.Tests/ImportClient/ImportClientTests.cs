@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Grpc.Core;
 using Moq;
-using ReductechRelativityImport;
+using ReductechEntityImport;
 using Xunit;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.ImportClient
@@ -43,8 +43,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.ImportClient
                               ;
 
             var client =
-                new Reductech_Relativity_Import.
-                    Reductech_Relativity_ImportClient(mockInvoker.Object);
+                new Reductech_Entity_Import.Reductech_Entity_ImportClient(mockInvoker.Object);
 
             var response = client.StartImport(startCommand);
 
@@ -90,8 +89,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.ImportClient
                               ;
 
             var client =
-                new Reductech_Relativity_Import.
-                    Reductech_Relativity_ImportClient(mockInvoker.Object);
+                new Reductech_Entity_Import.Reductech_Entity_ImportClient(mockInvoker.Object);
 
             var response = await client.StartImportAsync(startCommand).ResponseAsync;
 
@@ -114,8 +112,7 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.ImportClient
 
             mockInvoker.Setup(x => x.AsyncClientStreamingCall(
                                       It.Is<Method<ImportObject, ImportDataReply>>(
-                                          c => c.Name == nameof(Reductech_Relativity_Import.
-                                                                    Reductech_Relativity_ImportClient.ImportData)
+                                          c => c.Name == nameof(Reductech_Entity_Import.Reductech_Entity_ImportClient.ImportData)
                                       ),
                                       It.IsAny<string>(),
                                       It.IsAny<CallOptions>()
@@ -128,13 +125,10 @@ namespace Reductech.EDR.Connectors.Relativity.Tests.ImportClient
                              ()=>new Status(StatusCode.OK, "TestDetail"),
                              ()=> new Metadata(),
                              ()=>{}
-                         ))
-                                  
-                ;
+                         ));
 
             var client =
-                new Reductech_Relativity_Import.
-                    Reductech_Relativity_ImportClient(mockInvoker.Object);
+                new Reductech_Entity_Import.Reductech_Entity_ImportClient(mockInvoker.Object);
 
 
             var call     = client.ImportData(new CallOptions());
