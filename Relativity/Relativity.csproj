@@ -85,7 +85,6 @@
 
   <ItemGroup Condition="$(PackConnector) != ''">
     <Content Include="..\EDR.EntityImportClient\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Pack>true</Pack>
       <PackagePath>contentFiles\any\any\EDR.EntityImportClient</PackagePath>
     </Content>
