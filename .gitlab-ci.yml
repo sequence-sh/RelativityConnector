@@ -9,11 +9,24 @@ variables:
   PUBLISH_CONNECTOR: 1
 
 build dev:
+  needs:
+    - project: reductech/edr/connectors/entityimportclient
+      job: package exe dev
+      ref: main
+      artifacts: true
   artifacts:
     paths:
+      - EDR.EntityImportClient/
       - '**/bin'
       - '**/obj'
     expire_in: 2 hours
+
+build release:
+  needs:
+    - project: reductech/edr/connectors/entityimportclient
+      job: sign exe release
+      ref: v0.1.0
+      artifacts: true
 
 test dev:
   script:
@@ -25,3 +38,14 @@ test dev:
       $fixPaths = $report -replace "filename=`".+?${env:CI_PROJECT_NAME}(/|\\)", "filename=`"" ;
       [System.IO.File]::WriteAllText("./coverage.$($env:CI_JOB_NAME -replace "[^\w]+", "-").xml", $fixPaths)'
 
+package connector dev:
+  needs:
+    - build dev
+    - test dev
+    - version check dev
+
+package connector release:
+  needs:
+    - build release
+    - test release
+    - version check release

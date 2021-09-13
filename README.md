@@ -41,13 +41,13 @@ provided using the `settings` key in `connectors.json`.
 
 ### Supported Settings
 
-| Name                  | Required |    Type    |Description                                                                                                                        |
-| :- | :-: | :-: | :- |
-| RelativityUsername        |    ✔     |  `string`  | The Username to use for authentication |
-| RelativityPassword        |    ✔     |  `string`  | The Password to use for authentication |
-| Url        |    ✔     |  `string`  | The URL of the Relativity Server |
-| DesktopClientPath        |         |  `string`  | The Path to the Relativity Desktop client. Required for the `RelativityImport` step. |
-| APIVersionNumber        |         |  `int`  | The version of the API to use. Defaults to `1`. You probably don't need to change this. |
+| Name               | Required |   Type   | Description                                                                             |
+| :----------------- | :------: | :------: | :-------------------------------------------------------------------------------------- |
+| RelativityUsername |    ✔     | `string` | The Username to use for authentication                                                  |
+| RelativityPassword |    ✔     | `string` | The Password to use for authentication                                                  |
+| Url                |    ✔     | `string` | The URL of the Relativity Server                                                        |
+| DesktopClientPath  |          | `string` | The Path to the Relativity Desktop client. Required for the `RelativityImport` step.    |
+| APIVersionNumber   |          |  `int`   | The version of the API to use. Defaults to `1`. You probably don't need to change this. |
 
 ### Example Settings
 
@@ -64,6 +64,19 @@ provided using the `settings` key in `connectors.json`.
   }
 }
 ```
+
+## Developing
+
+To successfully run integration tests, a copy of the [EntityImportClient](https://gitlab.com/reductech/edr/connectors/entityimportclient)
+needs to be in the `EDR.EntityImportClient` directory in the solution root.
+
+Download the latest:
+
+- [Release](https://gitlab.com/reductech/edr/connectors/entityimportclient/-/releases)
+- [Main branch build](https://gitlab.com/reductech/edr/connectors/entityimportclient/-/jobs/artifacts/main/download?job=package+exe+dev)
+
+The EntityImportClient is automatically downloaded and included in the connector
+package when building using the CI.
 
 # Releases
 

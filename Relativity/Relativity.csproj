@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
+    <PackageReference Include="Reductech.EDR.Connectors.EntityImportClient.Proto" Version="0.1.0-a.main.2109132347" GeneratePathProperty="true" />
     <PackageReference Include="Reductech.EDR.Core" Version="0.11.0-a.master.2108201116">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
@@ -44,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EntityImportClient\Import\Import.csproj" />
+    <Protobuf Include="$(PkgReductech_EDR_Connectors_EntityImportClient_Proto)/content/Proto/*.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,5 +82,12 @@
       <_PackageFiles Include="$(OutputPath)$(AssemblyName).deps.json" PackagePath="$(BuildOutputTargetFolder)/$(TargetFramework)/$(AssemblyName).deps.json" />
     </ItemGroup>
   </Target>
+
+  <ItemGroup Condition="$(PackConnector) != ''">
+    <Content Include="..\EDR.EntityImportClient\**">
+      <Pack>true</Pack>
+      <PackagePath>$(BuildOutputTargetFolder)\$(TargetFramework)\EDR.EntityImportClient</PackagePath>
+    </Content>
+  </ItemGroup>
 
 </Project>
