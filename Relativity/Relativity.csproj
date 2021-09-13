@@ -86,7 +86,7 @@
   <ItemGroup Condition="$(PackConnector) != ''">
     <Content Include="..\EDR.EntityImportClient\**">
       <Pack>true</Pack>
-      <PackagePath>contentFiles\any\any\EDR.EntityImportClient</PackagePath>
+      <PackagePath>$(BuildOutputTargetFolder)\$(TargetFramework)\EDR.EntityImportClient</PackagePath>
     </Content>
   </ItemGroup>
 
