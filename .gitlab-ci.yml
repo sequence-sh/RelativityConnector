@@ -10,7 +10,7 @@ variables:
 
 build dev:
   needs:
-    - project: entityimportclient
+    - project: reductech/edr/connectors/entityimportclient
       job: package exe dev
       ref: main
       artifacts: true
@@ -23,7 +23,7 @@ build dev:
 
 build release:
   needs:
-    - project: entityimportclient
+    - project: reductech/edr/connectors/entityimportclient
       job: sign exe release
       ref: v0.1.0
       artifacts: true
