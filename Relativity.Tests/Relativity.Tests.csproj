@@ -21,7 +21,7 @@
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="MicrosoftExtensions.Logging.Xunit" Version="1.0.0" />
-    <PackageReference Include="Reductech.EDR.Connectors.EntityImportClient.Proto" Version="0.1.0-a.dev.2109131526" GeneratePathProperty="true" />
+    <PackageReference Include="Reductech.EDR.Connectors.EntityImportClient.Proto" Version="0.1.0-a.main.2109132347" GeneratePathProperty="true" />
     <PackageReference Include="Reductech.EDR.Core.TestHarness" Version="0.11.0-a.master.2108201116" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
