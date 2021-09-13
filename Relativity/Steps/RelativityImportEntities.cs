@@ -192,11 +192,12 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
         var assembly = typeof(RelativityImportEntities).Assembly;
 
-        const string importClientName = "ImportClient.exe";
+        const string importClientName = "EntityImportClient.exe";
 
         var clientPath = Path.Combine(
-            assembly.Location,
-            "..",importClientName
+            Path.GetDirectoryName(assembly.Location) ?? string.Empty,
+            "EDR.EntityImportClient",
+            importClientName
         );
 
         return clientPath;
