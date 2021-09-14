@@ -29,7 +29,7 @@ public partial class
     {
         qr.Condition.Should().Be("Test Condition");
         qr.ObjectType.ArtifactTypeID.Should().Be((int)ArtifactType.View);
-        qr.Fields.Select(x => x.ArtifactID).Should().BeEquivalentTo(new []{100, 101});
+        qr.Fields.Select(x => x.ArtifactID).Should().BeEquivalentTo(100, 101);
         qr.Sorts.Should().HaveCount(1);
 
         qr.Sorts.Single().Direction.Should().Be(SortEnum.Descending);
