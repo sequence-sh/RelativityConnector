@@ -8,6 +8,8 @@ using Flurl.Http;
 namespace Reductech.EDR.Connectors.Relativity.Managers
 {
 
+
+
 public abstract class ManagerBase : IDisposable
 {
     protected ManagerBase(RelativitySettings relativitySettings, IFlurlClient flurlClient)
@@ -56,6 +58,14 @@ public abstract class ManagerBase : IDisposable
 
         return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
             .GetJsonAsync<T>(cancellationToken);
+    }
+    
+    public Task<string> DownloadAsync(string route, CancellationToken cancellationToken)
+    {
+        var completeRoute = CreateCompleteRoute(route);
+
+        return FlurlClient.SetupRelativityRequest(RelativitySettings, completeRoute)
+            .GetStringAsync(cancellationToken);
     }
 
     public Task<T> PostJsonAsync<T>(string route, object thing, CancellationToken cancellation)

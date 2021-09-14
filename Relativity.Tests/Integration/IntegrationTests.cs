@@ -199,23 +199,81 @@ internal static class TestSteps
         )
     };
 
-    public static IStep<Unit> AssertFolderCount(int expectedCount) =>
-        new AssertEqual<int>() 
-        { 
-            Left = Constant(expectedCount), 
-            Right =new ArrayLength<Entity>()
+    public static IStep<Unit> AssertFolderCount(int expectedCount) => new AssertEqual<int>()
+    {
+        Left = Constant(expectedCount),
+        Right = new ArrayLength<Entity>()
+        {
+            Array = new RelativitySendQuery()
             {
-                Array = new RelativitySendQuery()
-                {
-                    Condition = Constant(""
-                    ),
-                    Workspace = IntegrationTestWorkspace,
-                    ArtifactType =
-                        new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Folder))
-                }
+                Condition = Constant(""),
+                Workspace = IntegrationTestWorkspace,
+                ArtifactType =
+                    new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Folder))
             }
+        }
+    };
 
-        };
+    public static IStep<Unit> ImportEntities(string filePath)
+    {
+        return
+            new RelativityImportEntities
+            {
+                Workspace = TestSteps.IntegrationTestWorkspace,
+                Entities = Array(
+                    Entity.Create(
+                        ("Control Number", "12345"),
+                        ("Title", ("Test Document")),
+                        ("File Path", filePath),
+                        ("Folder Path", (@"TestFolder"))
+                    )
+                ),
+                Schema = Constant(
+                    new Schema()
+                    {
+                        Name = "Test Schema",
+                        Properties = new Dictionary<string, SchemaProperty>()
+                        {
+                            {
+                                "Control Number",
+                                new SchemaProperty()
+                                {
+                                    Type         = SCLType.String,
+                                    Multiplicity = Multiplicity.ExactlyOne
+                                }
+                            },
+                            {
+                                "Title",
+                                new SchemaProperty()
+                                {
+                                    Type         = SCLType.String,
+                                    Multiplicity = Multiplicity.ExactlyOne
+                                }
+                            },
+                            {
+                                "File Path",
+                                new SchemaProperty()
+                                {
+                                    Type         = SCLType.String,
+                                    Multiplicity = Multiplicity.ExactlyOne
+                                }
+                            },
+                            {
+                                "Folder Path",
+                                new SchemaProperty()
+                                {
+                                    Type         = SCLType.String,
+                                    Multiplicity = Multiplicity.ExactlyOne
+                                }
+                            },
+                        }.ToImmutableSortedDictionary()
+                    }.ConvertToEntity()
+                ),
+                ControlNumberField = Constant("Control Number"),
+                FilePathField      = Constant("File Path"),
+                FolderPathField    = Constant("Folder Path")
+            };
+    }
 
     public static IStep<Unit> MaybeCreateIntegrationTestWorkspace = new If()
     {
@@ -302,6 +360,43 @@ public partial class IntegrationTests
         await TestSCLSequence(TestSteps.DeleteAllTestMatter);
     }
 
+    [Fact(Skip = "Manual")]
+    //[Fact]
+    public async void TestImportEntities()
+    {
+        string filePath = Path.Combine(
+            Assembly.GetAssembly(typeof(IntegrationTests))!.Location,
+            "..",
+            "Data",
+            "TestDocument.pdf"
+        );
+
+        await TestSCLSequence(TestSteps.ImportEntities(filePath));
+    }
+
+    //[Fact(Skip = "Manual")]
+    [Fact]
+    public async void TestExportEntities()
+    {
+        var exportStep = new RelativityExport()
+        {
+            Workspace  = TestSteps.IntegrationTestWorkspace,
+            Condition  = Constant("'Title' LIKE 'Bond'"),
+            FieldNames = Array("Title")
+        };
+
+        var step = new ForEach<Entity>()
+        {
+            Array = exportStep,
+            Action = new LambdaFunction<Entity, Unit>(
+                null,
+                new Log<Entity>() { Value = GetEntityVariable }
+            )
+        };
+
+        await TestSCLSequence(step);
+    }
+
     [Fact(Skip = SkipAll)]
     [Trait("Category", "Integration")]
     public async void ShortIntegrationTest()
@@ -333,69 +428,12 @@ public partial class IntegrationTests
                 },
                 //TestSteps.AssertFolderCount(1),
 
-                new RelativityImportEntities
-                {
-                    Workspace = TestSteps.IntegrationTestWorkspace,
-                    Entities = Array(
-                        Entity.Create(
-                            ("Control Number", "12345"),
-                            ("Title", ("Test Document")),
-                            ("File Path", filePath),
-                            ("Folder Path", (@"TestFolder"))
-                        )
-                    ),
-                    Schema = Constant(
-                        new Schema()
-                        {
-                            Name = "Test Schema",
-                            Properties = new Dictionary<string, SchemaProperty>()
-                            {
-                                {
-                                    "Control Number",
-                                    new SchemaProperty()
-                                    {
-                                        Type         = SCLType.String,
-                                        Multiplicity = Multiplicity.ExactlyOne
-                                    }
-                                },
-                                {
-                                    "Title",
-                                    new SchemaProperty()
-                                    {
-                                        Type         = SCLType.String,
-                                        Multiplicity = Multiplicity.ExactlyOne
-                                    }
-                                },
-                                {
-                                    "File Path",
-                                    new SchemaProperty()
-                                    {
-                                        Type         = SCLType.String,
-                                        Multiplicity = Multiplicity.ExactlyOne
-                                    }
-                                },
-                                {
-                                    "Folder Path",
-                                    new SchemaProperty()
-                                    {
-                                        Type         = SCLType.String,
-                                        Multiplicity = Multiplicity.ExactlyOne
-                                    }
-                                },
-                            }.ToImmutableSortedDictionary()
-                        }.ConvertToEntity()
-                    ),
-                    ControlNumberField = Constant("Control Number"),
-                    FilePathField      = Constant("File Path"),
-                    FolderPathField    = Constant("Folder Path")
-                },
-                //TestSteps.AssertFolderCount(2),
-
+                TestSteps.ImportEntities(filePath),
+                TestSteps.AssertFolderCount(2),
                 TestSteps.AssertDocumentCount(1),
                 TestSteps.LogWorkspaceStatistics,
                 TestSteps.DeleteDocuments("Test Document"),
                 TestSteps.AssertDocumentCount(0),
-
                 new RelativityDeleteUnusedFolders()
                 {
                     Workspace = TestSteps.IntegrationTestWorkspace
@@ -466,7 +504,7 @@ public partial class IntegrationTests
                         Url                = "http://relativitydevvm/",
                         APIVersionNumber   = 1,
                         ImportClientPath =
-                            "C:\\Users\\wainw\\source\\repos\\Reductech\\relativity\\EntityImportClient\\ImportClient\\bin\\Release\\ImportClient.exe",
+                            "C:\\Users\\wainw\\source\\repos\\Reductech\\entityimportclient\\EntityImportClient\\bin\\Debug\\EntityImportClient.exe",
                         DesktopClientPath =
                             @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
                     }.ToDictionary()
