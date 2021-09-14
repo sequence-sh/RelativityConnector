@@ -188,26 +188,7 @@ public static class TestHelpers
                     {
                         Enable = true,
                         Id     = RelativityAssembly.GetName().Name!,
-                        Settings = new Dictionary<string, object>()
-                        {
-                            {
-                                nameof(RelativitySettings.RelativityUsername),
-                                relativitySettings.RelativityUsername
-                            },
-                            {
-                                nameof(RelativitySettings.RelativityPassword),
-                                relativitySettings.RelativityPassword
-                            },
-                            {
-                                nameof(RelativitySettings.AuthParameters),
-                                relativitySettings.AuthParameters
-                            },
-                            {
-                                nameof(RelativitySettings.DesktopClientPath),
-                                relativitySettings.DesktopClientPath
-                            },
-                            { nameof(RelativitySettings.Url), relativitySettings.Url },
-                        }
+                        Settings = relativitySettings.ToDictionary()
                     },
                     RelativityAssembly
                 )
