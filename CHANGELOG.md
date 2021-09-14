@@ -24,6 +24,7 @@ Initial release. Version numbers are aligned with [Core](https://gitlab.com/redu
 
 ### Maintenance
 
+- Update ImportClient submodule and add to connector package #36
 - Create a fix for missing or wrong HTTP routes in Relativity manager interfaces #26
 - Exclude the Core packages to make sure Relativity works as a Connector #25
 - Add support for publishing as a connector #24
@@ -36,3 +37,7 @@ Initial release. Version numbers are aligned with [Core](https://gitlab.com/redu
 ### Documentation
 
 - Update the Readme to contain information for the new Steps and Settings #31
+
+### Other
+
+- Add more tests to improve code coverage #35
