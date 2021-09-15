@@ -72,6 +72,12 @@ public abstract class ManagerBase : IDisposable
     {
         var completeRoute = CreateCompleteRoute(route);
 
+        return PostJsonAsync<T>(completeRoute, thing, cancellation);
+    }
+    
+    public Task<T> PostJsonAsync<T>(string[] completeRoute, object thing, CancellationToken cancellation)
+    {
+
         return FlurlClient.SetupRelativityRequest(
                 RelativitySettings,
                 completeRoute
