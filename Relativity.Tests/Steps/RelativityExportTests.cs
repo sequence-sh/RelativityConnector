@@ -96,9 +96,9 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                     ),
 
                     //Get Native Text
-                    new MockSetup<IDocumentFileManager1, IKeplerStream>(
-                        d => d.DownloadNativeFileAsync(12345, 111),
-                        MakeKeplerStream("My Native Text")
+                    new MockSetup<IDocumentFileManager1, string>(
+                        d => d.DownloadDataAsync(12345, 111),
+                        "My Native Text"
                     )
                 );
         }

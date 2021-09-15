@@ -13,7 +13,10 @@ using Relativity.Services.ServiceProxy;
 namespace Reductech.EDR.Connectors.Relativity.Managers
 {
 
+public class SkipCodeGenerationAttribute : Attribute
+{
 
+}
 
 public record ManagerGenerator(
     Type Type,
@@ -197,6 +200,9 @@ public class CodeGenerator
 
         foreach (var methodInfo in type.GetMethods())
         {
+            if (methodInfo.GetCustomAttribute<SkipCodeGenerationAttribute>() is not null)
+                continue;
+
             AppendMethod(sb, methodInfo, routePrefix);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Flurl.Http;
@@ -40,13 +41,35 @@ public static class APIRequestHelpers
 
     public static Result<Entity, IErrorBuilder> TryConvertToEntity<T>(T thing)
     {
-        var json = JsonConvert.SerializeObject(thing);
+        //Debugger.Launch();
 
-        var responseEntity = JsonConvert.DeserializeObject<Entity>(
-            json,
-            EntityJsonConverter.Instance,
-            new VersionConverter()
-        );
+        string json;
+
+        try
+        {
+            json = JsonConvert.SerializeObject(thing);
+        }
+        catch (Exception e)
+        {
+            return ErrorCode.Unknown.ToErrorBuilder(e);
+        }
+        
+        Entity? responseEntity;
+
+        try
+        {
+            var converters = new JsonConverter[]
+            {
+                EntityJsonConverter.Instance, new VersionConverter()
+            };
+
+            responseEntity = JsonConvert.DeserializeObject<Entity>(
+                json, converters);
+        }
+        catch (Exception e)
+        {
+            return ErrorCode.CouldNotParse.ToErrorBuilder(json, nameof(Entity));
+        }
 
         if (responseEntity is null)
             return ErrorCode.CouldNotParse.ToErrorBuilder(json, nameof(Entity));

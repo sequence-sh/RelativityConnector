@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Reductech.EDR.Connectors.Relativity.Managers;
 using Relativity.Kepler.Services;
 using Relativity.Kepler.Transport;
 
@@ -22,6 +23,7 @@ public interface IDocumentFileManager1 : IManager //Relativity.Services.Interfac
     [Route("downloadnativefile/{documentID:int}/")]
     Task<IKeplerStream> DownloadNativeFileAsync(int workspaceID, int documentID);
 
+    [SkipCodeGeneration]
     Task<string> DownloadDataAsync(Int32 workspaceID, Int32 documentID);
 
 }
