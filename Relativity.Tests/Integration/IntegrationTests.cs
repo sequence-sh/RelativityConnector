@@ -31,7 +31,7 @@ public partial class IntegrationTests
 
     public ITestOutputHelper TestOutputHelper { get; set; }
         
-    public const string SkipAll = "";
+    public const string SkipAll = "manual";
 
     [Fact(Skip = SkipAll)]
     public async void TestImportConcordance()
