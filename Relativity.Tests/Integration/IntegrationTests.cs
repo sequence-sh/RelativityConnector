@@ -31,7 +31,7 @@ public partial class IntegrationTests
 
     public ITestOutputHelper TestOutputHelper { get; set; }
         
-    public const string SkipAll = "manual";
+    public const string SkipAll = "";
 
     [Fact(Skip = SkipAll)]
     public async void TestImportConcordance()
@@ -96,6 +96,18 @@ public partial class IntegrationTests
             )
         };
 
+        await TestSCLSequence(step);
+    }
+
+    [Fact(Skip = SkipAll)]
+    public async void CreateField()
+    {
+        var step = new RelativityCreateField()
+        {
+            FieldName = Constant("MyTestField"),
+            //ObjectType = new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document)),
+            Workspace = TestSteps.IntegrationTestWorkspace
+        };
         await TestSCLSequence(step);
     }
 

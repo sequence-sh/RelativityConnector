@@ -13,10 +13,7 @@ using Relativity.Services.ServiceProxy;
 namespace Reductech.EDR.Connectors.Relativity.Managers
 {
 
-public class SkipCodeGenerationAttribute : Attribute
-{
-
-}
+public class SkipCodeGenerationAttribute : Attribute { }
 
 public record ManagerGenerator(
     Type Type,
@@ -56,7 +53,7 @@ public class CodeGenerator
 
             yield return new ManagerGenerator(
                 typeof(IObjectManager1),
-                new List<string>(){"Relativity.Objects"},
+                new List<string>() { "Relativity.Objects" },
                 new List<string>()
                 {
                     "Relativity.Services.Objects",
@@ -81,9 +78,7 @@ public class CodeGenerator
                 typeof(IKeywordSearchManager1),
                 new List<string>()
                 {
-                    "Relativity.Services.Search.ISearchModule",
-                    
-                    "Keyword Search Manager"
+                    "Relativity.Services.Search.ISearchModule", "Keyword Search Manager"
                 },
                 new List<string>()
                 {
@@ -92,18 +87,23 @@ public class CodeGenerator
                     "Relativity.Services.Interfaces.Document.Models",
                 }
             );
-            
+
             yield return new ManagerGenerator(
                 typeof(IFolderManager1),
-                new List<string>()
-                {
-                    "Relativity.Services.Folder.IFolderModule",
-                    "Folder Manager"
-                },
+                new List<string>() { "Relativity.Services.Folder.IFolderModule", "Folder Manager" },
                 new List<string>()
                 {
                     "Relativity.Services.Interfaces.Document",
                     "Relativity.Services.Interfaces.Document.Models",
+                }
+            );
+
+            yield return new ManagerGenerator(
+                typeof(IFieldManager1),
+                RelativityObjectModelPrefixes,
+                new List<string>()
+                {
+                    "Relativity.Services.Interfaces.Field.Models"
                 }
             );
         }
@@ -257,7 +257,6 @@ public class CodeGenerator
 
         sb.AppendLine($"var route = $\"{routePrefix}/{FixRouteTemplate(route.Template)}\";");
 
-
         void AppendCreateJsonObject()
         {
             sb.AppendLine("var jsonObject = new {");
@@ -267,12 +266,12 @@ public class CodeGenerator
                 .Where(x => x.GetCustomAttribute<JsonParameterAttribute>() is not null)
                 .ToList();
 
-            if (!jsonParameters.Any())
-            {
-                throw new Exception($"{methodInfo.Name} has no Json Parameters");
-            }
+                if (!jsonParameters.Any())
+                {
+                    throw new Exception($"{methodInfo.Name} has no Json Parameters");
+                }
 
-            foreach (var jsonParameter in jsonParameters)
+                foreach (var jsonParameter in jsonParameters)
             {
                 sb.AppendLine(jsonParameter.Name + ",");
             }
@@ -284,6 +283,7 @@ public class CodeGenerator
         if (methodInfo.GetCustomAttribute<HttpPostAttribute>() is not null)
         {
             AppendCreateJsonObject();
+
             if (methodInfo.ReturnType.IsGenericType)
             {
                 var returnType = ToGenericTypeString(methodInfo.ReturnType.GenericTypeArguments[0]);
@@ -300,6 +300,7 @@ public class CodeGenerator
         else if (methodInfo.GetCustomAttribute<HttpPutAttribute>() is not null)
         {
             AppendCreateJsonObject();
+
             if (methodInfo.ReturnType.IsGenericType)
             {
                 var returnType = ToGenericTypeString(methodInfo.ReturnType.GenericTypeArguments[0]);
@@ -406,7 +407,6 @@ public class TemplateServiceFactoryFactory : IServiceFactoryFactory
         {
             RelativitySettings = relativitySettings;
             FlurlClient        = flurlClient;
-                
 
             var types = typeof(TemplateServiceFactory).Assembly.GetTypes()
                 .Where(x => !x.IsAbstract && x.IsAssignableTo(typeof(ManagerBase)));
