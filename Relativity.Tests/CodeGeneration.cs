@@ -2,13 +2,19 @@
 using System.Linq;
 using Reductech.EDR.Connectors.Relativity.Managers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests
 {
-
-[AutoTheory.UseTestOutputHelper]
-public partial class CodeGeneration
+    
+public class CodeGeneration
 {
+    public CodeGeneration(ITestOutputHelper testOutputHelper)
+    {
+        TestOutputHelper = testOutputHelper;
+    }
+    public ITestOutputHelper TestOutputHelper { get; set; }
+
     public static IEnumerable<object[]> ManagerGenerators =>
         CodeGenerator.ManagerGenerators.Select(x => new object[] { x.Type.Name });
 

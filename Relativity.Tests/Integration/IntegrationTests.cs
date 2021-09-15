@@ -334,11 +334,17 @@ internal static class TestSteps
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Integration
 {
-
-[AutoTheory.UseTestOutputHelper]
-public partial class IntegrationTests
+    
+public class IntegrationTests
 {
-    public const string SkipAll = "";
+
+    public IntegrationTests(ITestOutputHelper testOutputHelper)
+    {
+        TestOutputHelper = testOutputHelper;
+    }
+    public ITestOutputHelper TestOutputHelper { get; set; }
+
+        public const string SkipAll = "";
 
     //[Fact(Skip = SkipAll)]
     //[Trait("Category", "Integration")]
@@ -372,6 +378,27 @@ public partial class IntegrationTests
         );
 
         await TestSCLSequence(TestSteps.ImportEntities(filePath));
+    }
+
+    //[Fact(Skip = "Manual")]
+    [Fact]
+    public async void TestImportConcordance()
+    {
+        var step = new RelativityImport()
+        {
+            Workspace = TestSteps.IntegrationTestWorkspace,
+            FilePath =
+                Constant(
+                    "D:\\Mark\\SampleData\\Concordance\\Carla2\\loadfile.dat"
+                ),
+            SettingsFilePath =
+                Constant(
+                    "D:\\Mark\\SampleData\\Concordance\\CarlaSettings.kwe"
+                ),
+            FileImportType = Constant(FileImportType.Object)
+        };
+
+        await TestSCLSequence(step);
     }
 
     //[Fact(Skip = "Manual")]
@@ -506,7 +533,8 @@ public partial class IntegrationTests
                         ImportClientPath =
                             "C:\\Users\\wainw\\source\\repos\\Reductech\\entityimportclient\\EntityImportClient\\bin\\Debug\\EntityImportClient.exe",
                         DesktopClientPath =
-                            @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
+                            @"D:\Shares\Software\RelativityDesktopClient\Relativity.Desktop.Client.exe"
+                            //@"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
                     }.ToDictionary()
                 },
                 typeof(RelativityGetClients).Assembly
