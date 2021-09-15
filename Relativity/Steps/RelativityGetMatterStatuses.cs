@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
@@ -8,7 +9,6 @@ using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Matter;
 using Relativity.Shared.V1.Models;
 using Entity = Reductech.EDR.Core.Entity;
 
@@ -19,7 +19,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     "RelativityGetMatterStatuses",
     ExecuteInTests = false,
     ExpectedOutput =
-        "[(Name: \"Status 1\" ArtifactID: 1 Guids: \"\"), (Name: \"Status 2\" ArtifactID: 2 Guids: \"\")]"
+        "[(Name: \"Status 1\" ArtifactID: 1), (Name: \"Status 2\" ArtifactID: 2)]"
 )]
 public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterManager1,
     List<DisplayableObjectIdentifier>, Array<Entity>>
@@ -32,7 +32,7 @@ public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterMan
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(
         List<DisplayableObjectIdentifier> serviceOutput)
     {
-        return APIRequestHelpers.TryConvertToEntityArray(serviceOutput);
+        return serviceOutput.Select(RelativityEntityConversionHelpers.ConvertToEntity).ToSCLArray();
     }
 
     /// <inheritdoc />

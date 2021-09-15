@@ -36,8 +36,10 @@ public partial class
                             )
                         },
                         Unit.Default,
-                        "('ParentFolder': ('ArtifactID': 22 'Name': \"MyFolder\") 'AccessControlListIsInherited': False 'SystemCreatedBy': \"\" 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedBy': \"\" 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Permissions': ('add': False 'delete': False 'edit': False 'secure': False) 'Children': \"\" 'Selected': False 'HasChildren': False 'ArtifactID': 101 'Name': \"SubFolder 1\")",
-                        "('ParentFolder': ('ArtifactID': 22 'Name': \"MyFolder\") 'AccessControlListIsInherited': False 'SystemCreatedBy': \"\" 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedBy': \"\" 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Permissions': ('add': False 'delete': False 'edit': False 'secure': False) 'Children': \"\" 'Selected': False 'HasChildren': False 'ArtifactID': 102 'Name': \"SubFolder 2\")"
+                        @"('Name': ""SubFolder 1"" 'ArtifactID': 101 'HasChildren': False 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Selected': False)"
+                       ,
+                        @"('Name': ""SubFolder 2"" 'ArtifactID': 102 'HasChildren': False 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Selected': False)"
+                            
                     ).WithTestRelativitySettings()
                     .WithService(
                         new MockSetup<IFolderManager1, List<Folder>>(

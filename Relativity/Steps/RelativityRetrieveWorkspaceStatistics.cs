@@ -32,7 +32,7 @@ public sealed class
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceSummary serviceOutput)
     {
-        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
+        return serviceOutput.ConvertToEntity();
     }
 
     /// <inheritdoc />
@@ -50,7 +50,7 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this).Run(stateMonad, cancellation);
+        return Workspace.WrapArtifact(ArtifactType.Case,stateMonad, this).Run(stateMonad, cancellation);
     }
 
     /// <summary>

@@ -34,7 +34,7 @@ public partial class
                         }
                     },
                     Unit.Default,
-                    "('Client': \"\" 'ClientNumber': \"\" 'DownloadHandlerUrl': \"\" 'EnableDataGrid': False 'Matter': \"\" 'MatterNumber': \"\" 'ProductionRestrictions': \"\" 'ResourcePool': \"\" 'DefaultFileRepository': \"\" 'DataGridFileRepository': \"\" 'DefaultCacheLocation': \"\" 'SqlServer': \"\" 'AzureCredentials': \"\" 'AzureFileSystemCredentials': \"\" 'SqlFullTextLanguage': \"\" 'Status': \"\" 'WorkspaceAdminGroup': \"\" 'Keywords': \"\" 'Notes': \"\" 'CreatedOn': 0001-01-01T00:00:00.0000000 'CreatedBy': \"\" 'LastModifiedBy': \"\" 'LastModifiedOn': 0001-01-01T00:00:00.0000000 'Meta': ('Unsupported': \"\" 'ReadOnly': [\"Meta\", \"Data\"]) 'Actions': [('Name': \"MyAction\" 'Href': \"\" 'Verb': \"Post\" 'IsAvailable': True 'Reason': \"\")] 'Name': \"\" 'ArtifactID': 11 'Guids': \"\")"
+                    @"('Name': ""My Workspace"" 'ArtifactID': 11 'Notes': ""My Notes"" 'CreatedOn': 0001-01-01T00:00:00.0000000 'DownloadHandlerUrl': """")"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IWorkspaceManager1, WorkspaceResponse>(
@@ -42,6 +42,8 @@ public partial class
                         new WorkspaceResponse()
                         {
                             ArtifactID = 11,
+                            Name = "My Workspace",
+                            Notes = "My Notes",
                             Actions = new List<Action>()
                             {
                                 new()

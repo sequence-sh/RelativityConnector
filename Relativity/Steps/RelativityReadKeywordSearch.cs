@@ -28,7 +28,7 @@ public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(KeywordSearch serviceOutput)
     {
-        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
+        return serviceOutput.ConvertToEntity();
     }
 
     /// <inheritdoc />
@@ -46,7 +46,11 @@ public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this), SearchId, cancellation);
+        return stateMonad.RunStepsAsync(
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
+            SearchId,
+            cancellation
+        );
     }
 
     /// <summary>

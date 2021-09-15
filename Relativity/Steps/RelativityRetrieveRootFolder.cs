@@ -20,7 +20,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 [SCLExample(
     scl: "RelativityRetrieveRootFolder Workspace: 42",
     expectedOutput:
-    "(ParentFolder: (ArtifactID: 0 Name: \"\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 12345 Name: \"MyFolder\")",
+    "(Name: MyRootFolder, ArtifactId: 123, HasChildren: true, Selected: false)",
     ExecuteInTests = false
 )]
 public sealed class
@@ -33,8 +33,7 @@ public sealed class
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(Folder serviceOutput)
     {
-        var r = APIRequestHelpers.TryConvertToEntity(serviceOutput);
-        return r;
+        return serviceOutput.ConvertToEntity();
     }
 
     /// <inheritdoc />
@@ -53,7 +52,7 @@ public sealed class
         CancellationToken cancellation)
     {
         return await Workspace
-            .WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this)
+            .WrapArtifact(ArtifactType.Case, stateMonad, this)
             .Run(stateMonad, cancellation);
     }
 
