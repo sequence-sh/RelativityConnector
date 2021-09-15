@@ -55,8 +55,7 @@ public sealed class
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(WorkspaceResponse serviceOutput)
     {
-        var r = APIRequestHelpers.TryConvertToEntity(serviceOutput);
-        return r;
+        return serviceOutput.ConvertToEntity();
     }
 
     /// <inheritdoc />
@@ -79,7 +78,7 @@ public sealed class
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return await stateMonad.RunStepsAsync(
-            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
+            Workspace.WrapArtifact(ArtifactType.Case, stateMonad, this),
             IncludeMetadata,
             IncludeActions,
             cancellation

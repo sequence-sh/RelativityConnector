@@ -33,7 +33,7 @@ public partial class RelativityMoveFoldersTests : StepTestBase<RelativityMoveFol
                         }
                     },
                     Unit.Default,
-                    "('TotalOperations': 1 'ProcessState': \"Complete\" 'OperationsCompleted': 1)"
+                    @"('TotalOperations': 1 'OperationsCompleted': 1 'ProcessState': ""Complete"")"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IFolderManager1, FolderMoveResultSet>(

@@ -26,12 +26,13 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-                    "('Client': \"\" 'Number': \"My Number\" 'Status': \"\" 'Keywords': \"\" 'Notes': \"\" 'Meta': \"\" 'Actions': \"\" 'CreatedOn': 0001-01-01T00:00:00.0000000 'CreatedBy': \"\" 'LastModifiedBy': \"\" 'LastModifiedOn': 0001-01-01T00:00:00.0000000 'Name': \"\" 'ArtifactID': 1234 'Guids': \"\")"
+@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': """" 'Number': ""My Number"")"
+
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IMatterManager1, MatterResponse>(
                         x => x.ReadAsync(1234),
-                        new MatterResponse() { ArtifactID = 1234, Number = "My Number", }
+                        new MatterResponse() { ArtifactID = 1234, Number = "My Number", Name = "My Response", Keywords = "My Keywords" }
                     )
                 );
 
@@ -44,7 +45,8 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-                    "('Client': \"\" 'Number': \"My Number\" 'Status': \"\" 'Keywords': \"\" 'Notes': \"\" 'Meta': \"\" 'Actions': \"\" 'CreatedOn': 0001-01-01T00:00:00.0000000 'CreatedBy': \"\" 'LastModifiedBy': \"\" 'LastModifiedOn': 0001-01-01T00:00:00.0000000 'Name': \"\" 'ArtifactID': 1234 'Guids': \"\")"
+@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': """" 'Number': ""My Number"")"
+
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(
                     x => x.ForCallsTo(
@@ -52,7 +54,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         )
                         .WithVerb(HttpMethod.Get)
                         .RespondWithJson(
-                            new MatterResponse() { ArtifactID = 1234, Number = "My Number", }
+                            new MatterResponse() { ArtifactID = 1234, Number = "My Number", Name = "My Response", Keywords = "My Keywords"}
                         )
                 );
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
@@ -21,7 +22,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     "RelativityGetClients",
     ExecuteInTests = false,
     ExpectedOutput =
-        "[(Name: \"Client 1\" ArtifactID: 1 Guids: \"\"), (Name: \"Client 2\" ArtifactID: 2 Guids: \"\")]"
+        "[(Name: \"Client 1\" ArtifactID: 1), (Name: \"Client 2\" ArtifactID: 2)]"
 )]
 public class RelativityGetClients : RelativityApiRequest<Unit, IMatterManager1,
     List<DisplayableObjectIdentifier>,
@@ -35,7 +36,7 @@ public class RelativityGetClients : RelativityApiRequest<Unit, IMatterManager1,
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(
         List<DisplayableObjectIdentifier> serviceOutput)
     {
-        return APIRequestHelpers.TryConvertToEntityArray(serviceOutput);
+        return serviceOutput.Select(RelativityEntityConversionHelpers.ConvertToEntity).ToSCLArray();
     }
 
     /// <inheritdoc />

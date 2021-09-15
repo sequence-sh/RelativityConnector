@@ -19,7 +19,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
     "RelativityDeleteDocument Workspace: 11 ObjectArtifactId: 22",
     ExecuteInTests = false,
     ExpectedOutput =
-        "(Report: (DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")]))"
+        "(Count: 1, DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")])"
 )]
 public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspaceId, DeleteRequest
     deleteRequest),
@@ -32,7 +32,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     /// <inheritdoc />
     public override Result<Entity, IErrorBuilder> ConvertOutput(DeleteResult serviceOutput)
     {
-        return APIRequestHelpers.TryConvertToEntity(serviceOutput);
+        return serviceOutput.ConvertToEntity();
     }
 
     /// <inheritdoc />
@@ -53,7 +53,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     public override Task<Result<(int workspaceId, DeleteRequest deleteRequest), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this), ObjectArtifactId, cancellation)
+        return stateMonad.RunStepsAsync(Workspace.WrapArtifact(ArtifactType.Case,stateMonad, this), ObjectArtifactId, cancellation)
             .Map(
                 x => (x.Item1,
                       new DeleteRequest()

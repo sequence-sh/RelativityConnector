@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
@@ -21,7 +22,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps
 /// </summary>
 [SCLExample(
     "RelativityGetSubfolders Workspace: 11 FolderArtifactId: 22",
-    "[(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 101 Name: \"SubFolder 1\"),(ParentFolder: (ArtifactID: 22 Name: \"MyFolder\") AccessControlListIsInherited: False SystemCreatedBy: \"\" SystemCreatedOn: 0001-01-01T00:00:00.0000000 SystemLastModifiedBy: \"\" SystemLastModifiedOn: 0001-01-01T00:00:00.0000000 Permissions: (add: False delete: False edit: False secure: False) Children: \"\" Selected: False HasChildren: False ArtifactID: 102 Name: \"SubFolder 2\") ]",
+    "[(Name: MySubFolder, ArtifactID: 12345, HasChildren: true, Selected: false)]",
     ExecuteInTests = false
 )]
 public sealed class
@@ -33,14 +34,10 @@ public sealed class
     public override IStepFactory StepFactory =>
         new SimpleStepFactory<RelativityGetSubfolders, Array<Entity>>();
 
-    
-
     /// <inheritdoc />
     public override Result<Array<Entity>, IErrorBuilder> ConvertOutput(List<Folder> serviceOutput)
     {
-        var r = APIRequestHelpers.TryConvertToEntityArray(serviceOutput);
-
-        return r;
+        return serviceOutput.Select(RelativityEntityConversionHelpers.ConvertToEntity).ToSCLArray();
     }
 
     /// <inheritdoc />
@@ -63,7 +60,11 @@ public sealed class
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this), FolderArtifactId, cancellation);
+        return stateMonad.RunStepsAsync(
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
+            FolderArtifactId,
+            cancellation
+        );
     }
 
     /// <summary>
