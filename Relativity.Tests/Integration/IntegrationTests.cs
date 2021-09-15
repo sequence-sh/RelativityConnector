@@ -22,15 +22,32 @@ using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 namespace Reductech.EDR.Connectors.Relativity.Tests.Integration
 {
 
-[AutoTheory.UseTestOutputHelper]
 public partial class IntegrationTests
 {
+    public IntegrationTests(ITestOutputHelper testOutputHelper)
+    {
+        TestOutputHelper = testOutputHelper;
+    }
 
-#if DEBUG
-    public const string SkipAll = "";
-#else
-    public const string SkipAll = "Manual";
-#endif
+    public ITestOutputHelper TestOutputHelper { get; set; }
+        
+    public const string SkipAll = "manual";
+
+    [Fact(Skip = SkipAll)]
+    public async void TestImportConcordance()
+    {
+        var step = new RelativityImport()
+        {
+            Workspace = TestSteps.IntegrationTestWorkspace,
+            FilePath =
+                Constant("D:\\Mark\\SampleData\\Concordance\\Carla2\\loadfile.dat"),
+            SettingsFilePath =
+                Constant("D:\\Mark\\SampleData\\Concordance\\CarlaSettings.kwe"),
+            FileImportType = Constant(FileImportType.Object)
+        };
+
+        await TestSCLSequence(step);
+    }
 
     [Fact(Skip = SkipAll)]
     public async void TestDeleteAllIntegrationTestWorkspace()
@@ -57,7 +74,7 @@ public partial class IntegrationTests
         var step = TestSteps.ImportEntities(filePath);
         step.Workspace = new OneOfStep<int, StringStream>(Constant(123));
 
-        await TestSCLSequence( step);
+        await TestSCLSequence(step);
     }
 
     [Fact(Skip = SkipAll)]
