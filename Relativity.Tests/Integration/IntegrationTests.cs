@@ -40,9 +40,9 @@ public partial class IntegrationTests
         {
             Workspace = TestSteps.IntegrationTestWorkspace,
             FilePath =
-                Constant("D:\\Mark\\SampleData\\Concordance\\Carla2\\loadfile.dat"),
+                Constant("C:\\Users\\wainw\\source\\repos\\Examples\\Concordance\\Carla2\\loadfile.dat"),
             SettingsFilePath =
-                Constant("D:\\Mark\\SampleData\\Concordance\\CarlaSettings.kwe"),
+                Constant("C:\\Users\\wainw\\source\\repos\\Examples\\Concordance\\CarlaSettings.kwe"),
             FileImportType = Constant(FileImportType.Object)
         };
 
@@ -96,6 +96,21 @@ public partial class IntegrationTests
             )
         };
 
+        await TestSCLSequence(step);
+    }
+
+    [Fact(Skip = SkipAll)]
+    public async void CreateWorkspace()
+    {
+        var step = new Sequence<Unit>()
+        {
+            InitialSteps = new List<IStep<Unit>>()
+            {
+                TestSteps.DeleteAllIntegrationTestWorkspace,
+                TestSteps.MaybeCreateTestMatter,
+                TestSteps.MaybeCreateIntegrationTestWorkspace,
+            }
+        };
         await TestSCLSequence(step);
     }
 
