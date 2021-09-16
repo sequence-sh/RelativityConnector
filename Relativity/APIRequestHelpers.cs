@@ -38,49 +38,36 @@ public static class RelativityEntityConversionHelpers
 
     public static Entity ConvertToEntity(this DisplayableObjectIdentifier obj)
     {
-        var w = new
-        {
-            obj.Name,
-            obj.ArtifactID
-        };
+        var w = new { obj.Name, obj.ArtifactID };
 
         return ConvertToEntity(w);
     }
-    
+
     public static Entity ConvertToEntity(this DeleteItem obj)
     {
-        var w = new
-        {
-            obj.ObjectTypeName,
-            obj.Action,
-            obj.Count,
-            obj.Connection
-        };
+        var w = new { obj.ObjectTypeName, obj.Action, obj.Count, obj.Connection };
 
         return ConvertToEntity(w);
     }
-    
+
     public static Entity ConvertToEntity(this DeleteResult obj)
     {
         var w = new
         {
             obj.Report.DeletedItems.Count,
-            DeletedItems = obj.Report.DeletedItems.Select(x=>x.ConvertToEntity()).ToList()
+            DeletedItems = obj.Report.DeletedItems.Select(x => x.ConvertToEntity()).ToList()
         };
 
         return ConvertToEntity(w);
     }
-    
+
     public static Entity ConvertToEntity(this WorkspaceSummary obj)
     {
-        var w = new
-        {
-            obj.DocumentCount, obj.FileSize
-        };
+        var w = new { obj.DocumentCount, obj.FileSize };
 
         return ConvertToEntity(w);
     }
-    
+
     public static Entity ConvertToEntity(this MatterResponse obj)
     {
         var w = new
@@ -94,7 +81,7 @@ public static class RelativityEntityConversionHelpers
 
         return ConvertToEntity(w);
     }
-    
+
     public static Entity ConvertToEntity(this KeywordSearch obj)
     {
         var w = new
@@ -113,28 +100,23 @@ public static class RelativityEntityConversionHelpers
 
         return ConvertToEntity(w);
     }
-    
+
     public static Entity ConvertToEntity(this FolderMoveResultSet obj)
     {
-        var w = new
-        {
-            obj.TotalOperations,
-            obj.OperationsCompleted,
-            obj.ProcessState
-        };
+        var w = new { obj.TotalOperations, obj.OperationsCompleted, obj.ProcessState };
 
         return ConvertToEntity(w);
     }
-    
+
     public static Entity ConvertToEntity(this Folder x)
     {
         var w = new
         {
             x.Name,
             x.ArtifactID,
-            x.HasChildren, 
+            x.HasChildren,
             x.SystemCreatedOn,
-            x.SystemLastModifiedOn, 
+            x.SystemLastModifiedOn,
             x.Selected
         };
 
@@ -150,7 +132,10 @@ public static class RelativityEntityConversionHelpers
             var v = propertyInfo.GetValue(thing);
 
             properties.Add(
-                new ValueTuple<EntityPropertyKey, object?>(new EntityPropertyKey(propertyInfo.Name), v)
+                new ValueTuple<EntityPropertyKey, object?>(
+                    new EntityPropertyKey(propertyInfo.Name),
+                    v
+                )
             );
         }
 
@@ -176,10 +161,24 @@ public static class APIRequestHelpers
         }
         catch (FlurlHttpException flurlHttpException)
         {
-            IDictionary<string, object?> responseException =
-                await flurlHttpException.GetResponseJsonAsync();
+            string responseMessage;
 
-            var responseMessage = responseException?["Message"]?.ToString() ?? "";
+            try
+            {
+                IDictionary<string, object?> responseDict =
+                    await flurlHttpException.GetResponseJsonAsync();
+
+                if (responseDict.TryGetValue("Message", out var v))
+                    responseMessage = v?.ToString() ?? "";
+                else
+                {
+                    responseMessage = "";
+                }
+            }
+            catch (Exception)
+            {
+                responseMessage = "";
+            }
 
             return ErrorCode_Relativity.RequestFailed
                 .ToErrorBuilder(

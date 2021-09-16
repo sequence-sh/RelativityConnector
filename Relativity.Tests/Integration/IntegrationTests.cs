@@ -100,6 +100,18 @@ public partial class IntegrationTests
     }
 
     [Fact(Skip = SkipAll)]
+    public async void CreateField()
+    {
+        var step = new RelativityCreateField()
+        {
+            FieldName = Constant("MyTestField"),
+            //ObjectType = new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document)),
+            Workspace = TestSteps.IntegrationTestWorkspace
+        };
+        await TestSCLSequence(step);
+    }
+
+    [Fact(Skip = SkipAll)]
     public async void CreateWorkspace()
     {
         var step = new Sequence<Unit>()

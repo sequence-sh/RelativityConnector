@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Managers;
 using Relativity.Kepler.Services;
 using Relativity.Kepler.Transport;
+using Relativity.Services.Interfaces.Field;
 
 namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
 {
