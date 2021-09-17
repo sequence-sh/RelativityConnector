@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RootNamespace>Reductech.EDR.Connectors.Relativity</RootNamespace>
     <AssemblyName>Reductech.EDR.Connectors.Relativity</AssemblyName>
