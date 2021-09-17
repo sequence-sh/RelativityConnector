@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Grpc.Core;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Core;
@@ -68,7 +70,10 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         if (startResult.IsFailure)
             return startResult.ConvertFailure<Unit>();
 
-        using var _ = startResult.Value;
+        using var processReference = startResult.Value;
+
+        var loggingTask = processReference.OutputChannel.ReadAllAsync(cancellationToken)
+            .ForEachAsync(x => stateMonad.Logger.LogInformation(x.line), cancellationToken);
 
         Channel channel = new("127.0.0.1:30051", ChannelCredentials.Insecure);
 
@@ -176,11 +181,16 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
         var response = await call.ResponseAsync;
 
+        
+
         if (!response.Success)
             return Result.Failure<Unit, IError>(
                 ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(response.Message)
                     .WithLocation(this)
             );
+
+        processReference.Dispose();
+        await loggingTask;
 
         return Unit.Default;
     }

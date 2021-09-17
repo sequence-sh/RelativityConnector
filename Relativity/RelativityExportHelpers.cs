@@ -143,15 +143,12 @@ public static class RelativityExportHelpers
                         order++;
                     }
 
-                    IKeplerStream keplerStream;
+                    string data;
 
                     try
                     {
-                        keplerStream =
-                            await documentFileManager.DownloadNativeFileAsync(
-                                workspaceId,
-                                resultElement.ArtifactID
-                            );
+                        data =
+                            await documentFileManager .DownloadDataAsync(workspaceId, resultElement.ArtifactID);
                     }
                     catch (Exception e)
                     {
@@ -161,17 +158,17 @@ public static class RelativityExportHelpers
                         );
                     }
 
-                    var data = await ReadKeplerStream(keplerStream);
+                    //var data = await ReadKeplerStream(keplerStream);
 
-                    if (data.IsFailure)
-                        throw new ErrorException(data.Error.WithLocation(errorLocation));
+                    //if (data.IsFailure)
+                    //    throw new ErrorException(data.Error.WithLocation(errorLocation));
 
-                    keplerStream.Dispose();
+                    //keplerStream.Dispose();
 
                     properties.Add(
                         new EntityProperty(
                             NativeFileKey,
-                            new EntityValue.String(data.Value),
+                            new EntityValue.String(data),
                             null,
                             order
                         )
@@ -186,6 +183,8 @@ public static class RelativityExportHelpers
             current += batchSize;
         }
     }
+
+    
 
     public static async Task<Result<ExportInitializationResults, IErrorBuilder>> SetupExportAsync(
         int workspaceId,

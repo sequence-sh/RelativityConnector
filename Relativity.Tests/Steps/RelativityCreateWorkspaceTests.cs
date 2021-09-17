@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
@@ -22,8 +23,7 @@ public partial class
     {
         get
         {
-            var expectedEntityString =
-                "('Client': \"\" 'ClientNumber': \"\" 'DownloadHandlerUrl': \"TestURL\" 'EnableDataGrid': False 'Matter': \"\" 'MatterNumber': \"\" 'ProductionRestrictions': \"\" 'ResourcePool': \"\" 'DefaultFileRepository': \"\" 'DataGridFileRepository': \"\" 'DefaultCacheLocation': \"\" 'SqlServer': \"\" 'AzureCredentials': \"\" 'AzureFileSystemCredentials': \"\" 'SqlFullTextLanguage': \"\" 'Status': \"\" 'WorkspaceAdminGroup': \"\" 'Keywords': \"\" 'Notes': \"\" 'CreatedOn': 0001-01-01T00:00:00.0000000 'CreatedBy': \"\" 'LastModifiedBy': \"\" 'LastModifiedOn': 0001-01-01T00:00:00.0000000 'Meta': \"\" 'Actions': \"\" 'Name': \"MyNewWorkspace\" 'ArtifactID': 0 'Guids': \"\")";
+            var expectedEntityString = "('Name': \"MyNewWorkspace\" 'ArtifactID': 123 'Notes': \"TestNotes\" 'CreatedOn': 1970-01-01T00:00:00.0000000Z 'DownloadHandlerUrl': \"TestURL\")";
 
             yield return new StepCase(
                         "Export with condition",
@@ -53,7 +53,7 @@ public partial class
                             ),
                             new WorkspaceResponse()
                             {
-                                Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL"
+                                Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL", ArtifactID = 123, Notes = "TestNotes", CreatedOn = DateTime.UnixEpoch
                             }
                         ),
                         new MockSetup<IWorkspaceManager1, string>(
@@ -64,101 +64,6 @@ public partial class
                 ;
         }
     }
-
-    public const string ResponseJson = @"{
-  ""Client"": {
-    ""Secured"": false,
-    ""Value"": {
-      ""Name"": ""Relativity"",
-      ""ArtifactID"": 1015644,
-      ""Guids"": []
-    }
-  },
-  ""ClientNumber"": {
-    ""Secured"": false,
-    ""Value"": ""Relativity""
-  },
-  ""DownloadHandlerUrl"": ""Relativity.Distributed"",
-  ""EnableDataGrid"": false,
-  ""Matter"": {
-    ""Secured"": false,
-    ""Value"": {
-      ""Name"": ""Salt vs. Pepper"",
-      ""ArtifactID"": 1016816,
-      ""Guids"": []
-    }
-  },
-  ""MatterNumber"": {
-    ""Secured"": false,
-    ""Value"": ""1""
-  },
-  ""ProductionRestrictions"": {
-    ""Secured"": false,
-    ""Value"": {
-      ""Name"": ""Saved Search 1"",
-      ""ArtifactID"": 1117132,
-      ""Guids"": []
-    }
-  },
-  ""ResourcePool"": {
-    ""Secured"": false,
-    ""Value"": {
-      ""Name"": ""Default"",
-      ""ArtifactID"": 1015040,
-      ""Guids"": []
-    }
-  },
-  ""DefaultFileRepository"": {
-    ""Secured"": false,
-    ""Value"": {
-      ""Name"": ""\\\\A-BC-DE-FGHIJK\\fileshare\\"",
-      ""ArtifactID"": 1014887,
-      ""Guids"": []
-    }
-  },
-  ""DefaultCacheLocation"": {
-    ""Secured"": false,
-    ""Value"": {
-      ""Name"": ""Default Cache Location"",
-      ""ArtifactID"": 1015534,
-      ""Guids"": []
-    }
-  },
-  ""SqlServer"": {
-    ""Secured"": false,
-    ""Value"": {
-      ""Name"": ""A-BC-DE-FGHIJK\\EDDSINSTANCE001"",
-      ""ArtifactID"": 1015096,
-      ""Guids"": []
-    }
-  },
-  ""SqlFullTextLanguage"": {
-    ""Name"": ""English"",
-    ""ID"": 1033
-  },
-  ""Status"": {
-    ""Name"": ""Active"",
-    ""ArtifactID"": 675,
-    ""Guids"": []
-  },
-  ""Keywords"": ""Sample keywords for a workspace"",
-  ""Notes"": ""Sample notes for a workspace"",
-  ""CreatedOn"": ""2018-04-24T15:19:57.677"",
-  ""CreatedBy"": {
-    ""Name"": ""Admin, Relativity"",
-    ""ArtifactID"": 9,
-    ""Guids"": []
-  },
-  ""LastModifiedBy"": {
-    ""Name"": ""Admin, Relativity"",
-    ""ArtifactID"": 9,
-    ""Guids"": []
-  },
-  ""LastModifiedOn"": ""2020-01-09T15:51:39.13"",
-  ""Name"": ""Sample workspace"",
-  ""ArtifactID"": 1017266,
-  ""Guids"": []
-}";
 }
 
 }

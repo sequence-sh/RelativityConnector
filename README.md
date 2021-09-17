@@ -1,13 +1,16 @@
 # EDR Connector for Relativity®
 
-[Reductech EDR](https://gitlab.com/reductech/edr) is a collection of
-libraries that automates cross-application e-discovery and forensic workflows.
+The EDR Connector for Relativity® allows users to automate ediscovery
+and forensic workflows that use [Relativity](https://www.relativity.com/).
 
-The Relativity connector contains Steps to:
+This connector has [Steps](https://docs.reductech.io/edr/steps/relativity.html) to:
 
-- Import/Export data
+- Create new matters and workspaces
+- Ingest data from CSV/Concordance or as entities
+- Search and tag items
+- Export Data as entities
 
-### [Try Relativity Connector](https://gitlab.com/reductech/edr/edr/-/releases)
+### [Try EDR Connector for Relativity®](https://gitlab.com/reductech/edr/edr/-/releases)
 
 Using [EDR](https://gitlab.com/reductech/edr/edr),
 the command line tool for running Sequences.
@@ -16,28 +19,14 @@ the command line tool for running Sequences.
 
 Documentation is available here: https://docs.reductech.io
 
-## E-discovery Reduct
+- [SCL Examples](https://docs.reductech.io/edr/examples/relativity.html)
+- [Connector Help](https://docs.reductech.io/edr/connectors/relativity.html)
+- [Connector Steps](https://docs.reductech.io/edr/steps/Relativity.html)
 
-# EDR Relativity Connector
+## Connector Settings
 
-The EDR Relativity Connector allows users to automate forensic workflows using
-[Relativity](https://www.relativity.com/).
-
-This connector has [Steps](https://docs.reductech.io/edr/steps/Relativity.html) to:
-
-- Create new matters and workspaces
-- Ingest data from CSV/Concordance or as entities
-- Search and tag items
-- Export Data as entities
-
-[Relativity SCL examples available here](https://docs.reductech.io/edr/examples/relativity.html).
-
-Source code available on [GitLab](https://gitlab.com/reductech/edr/connectors/relativity).
-
-## Relativity Connector Settings
-
-The Relativity Connector requires additional configuration which can be
-provided using the `settings` key in `connectors.json`.
+The EDR Connector for Relativity® requires additional configuration
+which can be provided using the `settings` key in `connectors.json`.
 
 ### Supported Settings
 
@@ -49,7 +38,7 @@ provided using the `settings` key in `connectors.json`.
 | DesktopClientPath  |          | `string` | The Path to the Relativity Desktop client. Required for the `RelativityImport` step.    |
 | APIVersionNumber   |          |  `int`   | The version of the API to use. Defaults to `1`. You probably don't need to change this. |
 
-### Example Settings
+### Example `connectors.json` Entry
 
 ```json
 "Reductech.EDR.Connectors.Nuix": {
@@ -78,15 +67,11 @@ Download the latest:
 The EntityImportClient is automatically downloaded and included in the connector
 package when building using the CI.
 
-# Releases
+## Releases
 
 Can be downloaded from the [Releases page](https://gitlab.com/reductech/edr/connectors/relativity/-/releases).
 
-# NuGet Packages
-
-Are available for download from the [Reductech Nuget feed](https://gitlab.com/reductech/nuget/-/packages).
-
-# Licensing
+## Licensing
 
 This product is licensed under the Apache License, Version 2.0.
 For further details please see http://www.apache.org/licenses/LICENSE-2.0.

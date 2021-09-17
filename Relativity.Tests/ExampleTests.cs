@@ -22,11 +22,17 @@ using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests
 {
-
-[AutoTheory.UseTestOutputHelper]
+    
 public partial class ExampleTests
 {
-    public static IEnumerable<(string name, IStep step)> Examples
+
+    public ExampleTests(ITestOutputHelper testOutputHelper)
+    {
+        TestOutputHelper = testOutputHelper;
+    }
+    public ITestOutputHelper TestOutputHelper { get; set; }
+
+        public static IEnumerable<(string name, IStep step)> Examples
     {
         get
         {
