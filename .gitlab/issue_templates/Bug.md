@@ -3,7 +3,8 @@
 /label ~"priority::3"
 /label ~"wf::backlog"
 /label ~"area::connectors"
-/label ~"relativity"
+/label ~relativity
+/label ~edr
 
 ## Summary
 
