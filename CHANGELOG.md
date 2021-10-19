@@ -1,3 +1,13 @@
+# v0.11.2 (2021-10-19)
+
+Update `EntityImportClient` to v0.1.1.
+
+## Issues Closed in this Release
+
+### Maintenance
+
+- Update EntityImportClient to v0.1.1 for releases #44
+
 # v0.11.1 (2021-09-17)
 
 Bug fix release.
