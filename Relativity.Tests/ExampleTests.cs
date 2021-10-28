@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Divergic.Logging.Xunit;
+using Json.Schema;
 using Microsoft.Extensions.Logging;
 using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Connectors.Relativity.Steps;
@@ -19,6 +19,7 @@ using Relativity.Services;
 using Xunit;
 using Xunit.Abstractions;
 using static Reductech.EDR.Core.TestHarness.StaticHelpers;
+using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests
 {
@@ -94,17 +95,19 @@ public partial class ExampleTests
                                       
                                       )
                                   ),
-                              Schema = Constant(new Schema()
-                              {
-                                  Name = "Test Schema",
-                                  Properties = new Dictionary<string, SchemaProperty>()
-                                  {
-                                      {"Control Number", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
-                                      {"Title", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
-                                      {"File Path", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
-                                      {"Folder Path", new SchemaProperty(){Type = SCLType.String, Multiplicity = Multiplicity.ExactlyOne}},
-                                  }.ToImmutableSortedDictionary()
-                              }.ConvertToEntity()),
+                              Schema = Constant(
+                                  new JsonSchemaBuilder()
+                                      .Title("Test Schema")
+                                      .Properties(
+                                          ("Control Number", AnyString),
+                                          ("Title", AnyString),
+                                          ("File Path", AnyString),
+                                          ("Folder Path", AnyString)
+                                          
+                                          )
+                                      .Build().ConvertToEntity()
+                          
+                          ),
                               ControlNumberField = Constant("Control Number"),
                               FilePathField = Constant("File Path"),
                               FolderPathField = Constant("Folder Path")
@@ -382,7 +385,8 @@ public partial class ExampleTests
             {
                 InjectedContexts = new ConnectorInjection().TryGetInjectedContexts()
                     .Value.ToArray()
-            }
+            },
+            DefaultRestClientFactory.Instance
         );
 
         var r = await runner.RunSequenceFromTextAsync(

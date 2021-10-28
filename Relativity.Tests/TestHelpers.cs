@@ -74,7 +74,7 @@ public class MockSetup<TService, TResult> : IMockSetup<TService>
         var s = mock.Setup(Function);
 
         if (AdditionalAction.HasValue)
-            AdditionalAction.Value(s);
+            AdditionalAction.GetValueOrThrow()(s);
 
         s.ReturnsAsync(Result);
     }
@@ -147,7 +147,7 @@ public static class TestHelpers
         {
             Mock mock = CreateMock(repo, grouping.First() as dynamic, grouping.ToList());
 
-            services.Add(mock.Object as IDisposable);
+            services.Add((IDisposable)mock.Object);
         }
 
         stepCase.WithContext(

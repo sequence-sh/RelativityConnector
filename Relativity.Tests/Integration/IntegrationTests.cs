@@ -249,7 +249,8 @@ public partial class IntegrationTests
             {
                 InjectedContexts = new ConnectorInjection().TryGetInjectedContexts()
                     .Value.ToArray()
-            }
+            },
+            DefaultRestClientFactory.Instance
         );
 
         var r = await runner.RunSequenceFromTextAsync(

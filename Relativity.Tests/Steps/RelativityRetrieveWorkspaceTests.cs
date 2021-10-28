@@ -34,7 +34,7 @@ public partial class
                         }
                     },
                     Unit.Default,
-                    @"('Name': ""My Workspace"" 'ArtifactID': 11 'Notes': ""My Notes"" 'CreatedOn': 0001-01-01T00:00:00.0000000 'DownloadHandlerUrl': """")"
+                    @"('Name': ""My Workspace"" 'ArtifactID': 11 'Notes': ""My Notes"" 'CreatedOn': 0001-01-01T00:00:00.0000000 'DownloadHandlerUrl': null)"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IWorkspaceManager1, WorkspaceResponse>(

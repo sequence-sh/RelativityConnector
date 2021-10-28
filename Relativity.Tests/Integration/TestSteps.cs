@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+using Json.Schema;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
+
 using Reductech.EDR.Core.Util;
 using Relativity.Services;
+using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Integration
 {
@@ -105,7 +107,7 @@ internal static class TestSteps
         }
     };
 
-    public static IStep<Unit> MaybeCreateTestMatter = new If()
+    public static IStep<Unit> MaybeCreateTestMatter = new If<Unit>()
     {
         Condition = new ArrayIsEmpty<Entity>()
         {
@@ -218,45 +220,15 @@ internal static class TestSteps
                     )
                 ),
                 Schema = StaticHelpers.Constant(
-                    new Schema()
-                    {
-                        Name = "Test Schema",
-                        Properties = new Dictionary<string, SchemaProperty>()
-                        {
-                            {
-                                "Control Number",
-                                new SchemaProperty()
-                                {
-                                    Type         = SCLType.String,
-                                    Multiplicity = Multiplicity.ExactlyOne
-                                }
-                            },
-                            {
-                                "Title",
-                                new SchemaProperty()
-                                {
-                                    Type         = SCLType.String,
-                                    Multiplicity = Multiplicity.ExactlyOne
-                                }
-                            },
-                            {
-                                "File Path",
-                                new SchemaProperty()
-                                {
-                                    Type         = SCLType.String,
-                                    Multiplicity = Multiplicity.ExactlyOne
-                                }
-                            },
-                            {
-                                "Folder Path",
-                                new SchemaProperty()
-                                {
-                                    Type         = SCLType.String,
-                                    Multiplicity = Multiplicity.ExactlyOne
-                                }
-                            },
-                        }.ToImmutableSortedDictionary()
-                    }.ConvertToEntity()
+                    new JsonSchemaBuilder()
+                        .Title("Test Schema")
+                        .Properties(
+                            ("Control Number", AnyString),
+                            ("Title", AnyString),
+                            ("File Path", AnyString),
+                            ("Folder Path", AnyString)
+                            
+                            ).Build().ConvertToEntity()
                 ),
                 ControlNumberField = StaticHelpers.Constant("Control Number"),
                 FilePathField      = StaticHelpers.Constant("File Path"),
@@ -264,7 +236,7 @@ internal static class TestSteps
             };
     }
 
-    public static IStep<Unit> MaybeCreateIntegrationTestWorkspace = new If()
+    public static IStep<Unit> MaybeCreateIntegrationTestWorkspace = new If<Unit>()
     {
         Condition = new ArrayIsEmpty<Entity>()
         {

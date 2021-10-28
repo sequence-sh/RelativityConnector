@@ -29,7 +29,7 @@ public partial class
                         }
                     ),
                     Unit.Default,
-                    @"('ArtifactID': 12 'Name': ""My Search"" 'ArtifactTypeID': 0 'Notes': """" 'Keywords': """" 'QueryHint': """" 'RequiresManualRun': False 'Scope': ScopeType.EntireCase 'SearchText': """" 'SearchType': ""KeywordSearch"")"
+                    @"('ArtifactID': 12 'Name': ""My Search"" 'ArtifactTypeID': 0 'Notes': null 'Keywords': null 'QueryHint': null 'RequiresManualRun': False 'Scope': ScopeType.EntireCase 'SearchText': null 'SearchType': ""KeywordSearch"")"
                 )
                 .WithTestRelativitySettings()
                 .WithService(

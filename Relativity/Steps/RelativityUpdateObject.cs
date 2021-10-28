@@ -19,6 +19,9 @@ using Entity = Reductech.EDR.Core.Entity;
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
 
+/// <summary>
+/// Update a Relativity Object
+/// </summary>
 public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspaceId, UpdateRequest updateRequest, UpdateOptions updateOptions), IObjectManager1, UpdateResult, Unit>
 {
     /// <inheritdoc />
@@ -93,7 +96,7 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
             {
                 yield return new FieldRefValuePair()
                 {
-                    Field = new FieldRef() { Name = key }, Value = value.BestValue.ObjectValue
+                    Field = new FieldRef() { Name = key }, Value = value.Value.ObjectValue
                 };
             }
         }
@@ -130,9 +133,12 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
     [Required]
     public IStep<int> ObjectArtifactId { get; set; } = null!;
 
+    /// <summary>
+    /// The updated values to use
+    /// </summary>
     [StepProperty(3)]
     [Required]
-    public IStep<Core.Entity> FieldValues { get; set; } = null!;
+    public IStep<Entity> FieldValues { get; set; } = null!;
 
     /// <summary>
     /// indicates whether you want to replace or merge a choice or object. These options are available for only multiple choice and multiple object fields.
