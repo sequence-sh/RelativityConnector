@@ -13,14 +13,15 @@ using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Internal.Errors;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
-using Relativity.Services.Interfaces.Document;
-using Relativity.Services.Objects;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 
 namespace Reductech.EDR.Connectors.Relativity
 {
 
+/// <summary>
+/// Contains methods to help with Relativity export
+/// </summary>
 public static class RelativityExportHelpers
 {
     public static async Task<Result<Array<Entity>, IError>> ExportAsync(
@@ -123,7 +124,6 @@ public static class RelativityExportHelpers
                                 new EntityProperty(
                                     field.Name,
                                     new EntityValue.String(v.Value),
-                                    null,
                                     order
                                 )
                             );
@@ -134,7 +134,6 @@ public static class RelativityExportHelpers
                                 new EntityProperty(
                                     field.Name,
                                     EntityValue.CreateFromObject(fieldValue),
-                                    null,
                                     order
                                 )
                             );
@@ -158,18 +157,10 @@ public static class RelativityExportHelpers
                         );
                     }
 
-                    //var data = await ReadKeplerStream(keplerStream);
-
-                    //if (data.IsFailure)
-                    //    throw new ErrorException(data.Error.WithLocation(errorLocation));
-
-                    //keplerStream.Dispose();
-
                     properties.Add(
                         new EntityProperty(
                             NativeFileKey,
                             new EntityValue.String(data),
-                            null,
                             order
                         )
                     );

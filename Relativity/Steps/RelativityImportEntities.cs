@@ -8,12 +8,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Grpc.Core;
+using Json.Schema;
 using Microsoft.Extensions.Logging;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Core;
 using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.Entities;
+using Reductech.EDR.Core.Entities.Schema;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Errors;
 using Reductech.EDR.Core.Util;
@@ -23,6 +25,9 @@ using Entity = Reductech.EDR.Core.Entity;
 namespace Reductech.EDR.Connectors.Relativity.Steps
 {
 
+/// <summary>
+/// Import Entities into Relativity
+/// </summary>
 public sealed class RelativityImportEntities : CompoundStep<Unit>
 {
     /// <inheritdoc />
@@ -42,7 +47,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         var data = await stateMonad.RunStepsAsync(
             Workspace.WrapArtifact(ArtifactType.Case, stateMonad, this),
             Entities,
-            Schema.WrapEntityConversion<Schema>(this),
+            Schema.WrapStep(StepMaps.ConvertToSchema(Schema)),
             ControlNumberField.WrapStringStream(),
             FilePathField.WrapStringStream(),
             FolderPathField.WrapStringStream(),
@@ -90,16 +95,25 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
             FolderPathField     = folderPathField
         };
 
-        foreach (var property in schema.Properties)
+        var schemaNode = SchemaNode.Create(schema);
+
+        if (schemaNode is not EntityNode entityNode)
+            return Result.Failure<Unit, IError>(
+                ErrorCode_Relativity.Unsuccessful
+                    .ToErrorBuilder("Schema does not represent an entity")
+                    .WithLocation(this)
+            );
+
+        foreach (var (key, (node, required)) in entityNode.EntityPropertiesData.Nodes)
         {
-            var dt = GetDataType(property.Value.Type);
+            var dt = GetDataType(node);
 
             if (dt.IsFailure)
                 return dt.ConvertFailure<Unit>().MapError(x => x.WithLocation(this));
 
             var dataField = new StartImportCommand.Types.DataField()
             {
-                Name = property.Key, DataType = dt.Value
+                Name = key, DataType = dt.Value
             };
 
             importRequest.DataFields.Add(dataField);
@@ -132,18 +146,27 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
             {
                 var io = new ImportObject();
 
-                foreach (var schemaProperty in schema.Properties)
+                var validateResult = schema.Validate(entity.ToJsonElement());
+
+                if (!validateResult.IsValid)
+                    return Result.Failure<ImportObject, IErrorBuilder>(
+                            ErrorBuilderList.Combine(
+                                validateResult.GetErrorMessages().Select(
+                                    x => ErrorCode.SchemaViolation.ToErrorBuilder(
+                                        x.message,
+                                        x.location
+                                    )
+                                )));
+
+                foreach (var (key, (node, required)) in entityNode.EntityPropertiesData.Nodes)
                 {
-                    var value = entity.TryGetValue(schemaProperty.Key);
+                    var value = entity.TryGetValue(key);
 
                     ImportObject.Types.FieldValue fieldValue;
 
                     if (value.HasValue)
                     {
-                        var fieldValueResult = GetFieldValue(
-                            value.Value,
-                            schemaProperty.Value.Type
-                        );
+                        var fieldValueResult = GetFieldValue(value.GetValueOrThrow());
 
                         if (fieldValueResult.IsFailure)
                             return fieldValueResult.ConvertFailure<ImportObject>();
@@ -157,11 +180,10 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
                     if (fieldValue.TestOneofCase
                      == ImportObject.Types.FieldValue.TestOneofOneofCase.None
-                     && schemaProperty.Value.Multiplicity == Multiplicity.ExactlyOne)
+                     && required)
                     {
-                        return ErrorCode.SchemaViolationUnexpectedNull.ToErrorBuilder(
-                            schemaProperty.Key,
-                            e
+                        return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(
+                            $"Property '{key}' is required."
                         );
                     }
 
@@ -180,8 +202,6 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         await call.RequestStream.CompleteAsync();
 
         var response = await call.ResponseAsync;
-
-        
 
         if (!response.Success)
             return Result.Failure<Unit, IError>(
@@ -239,58 +259,58 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
     public IStep<StringStream> FolderPathField { get; set; } = new StringConstant("");
 
     private static Result<ImportObject.Types.FieldValue, IErrorBuilder> GetFieldValue(
-        EntityValue entityValue,
-        SCLType sclType)
+        EntityValue entityValue)
     {
-        switch (sclType)
+        switch (entityValue)
         {
-            case SCLType.Enum:
-            case SCLType.String:
-                return new ImportObject.Types.FieldValue()
-                {
-                    StringValue = entityValue.GetPrimitiveString()
-                };
-            case SCLType.Integer:
-                return entityValue.TryGetValue<int>()
-                    .Map(x => new ImportObject.Types.FieldValue() { IntValue = x });
-            case SCLType.Double:
-                return entityValue.TryGetValue<double>()
-                    .Map(x => new ImportObject.Types.FieldValue() { DoubleValue = x });
-            case SCLType.Bool:
-                return entityValue.TryGetValue<bool>()
-                    .Map(x => new ImportObject.Types.FieldValue() { BoolValue = x });
-            case SCLType.Date:
-                return entityValue.TryGetValue<DateTime>()
-                    .Map(
-                        x => new ImportObject.Types.FieldValue()
-                        {
-                            DateValue = x.ToShortDateString()
-                        }
-                    );
-            case SCLType.Entity:
-                return ErrorCode.CannotConvertNestedEntity.ToErrorBuilder(
-                    nameof(ImportObject.Types.FieldValue)
+            case EntityValue.Boolean boolean:
+                return
+                    new ImportObject.Types.FieldValue { BoolValue = boolean.Value };
+            case EntityValue.DateTime dateTime:
+                return
+                    new ImportObject.Types.FieldValue { DateValue = dateTime.ToString() };
+            case EntityValue.Double d:
+                return
+                    new ImportObject.Types.FieldValue { DoubleValue = d.Value };
+            case EntityValue.EnumerationValue enumerationValue:
+                return
+                    new ImportObject.Types.FieldValue
+                    {
+                        StringValue = enumerationValue.Value.Value
+                    };
+            case EntityValue.Integer integer:
+                return
+                    new ImportObject.Types.FieldValue { IntValue = integer.Value };
+            case EntityValue.String s:
+                return
+                    new ImportObject.Types.FieldValue { StringValue = s.Value };
+            default:
+                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(
+                    $"Cannot import {entityValue}"
                 );
-            default: throw new ArgumentOutOfRangeException(nameof(sclType), sclType, null);
         }
     }
 
-    static Result<StartImportCommand.Types.DataField.Types.DataType, IErrorBuilder>
-        GetDataType(SCLType sclType)
+    private static Result<StartImportCommand.Types.DataField.Types.DataType, IErrorBuilder>
+        GetDataType(SchemaNode schemaNode)
     {
-        return sclType switch
+        switch (schemaNode)
         {
-            SCLType.String  => StartImportCommand.Types.DataField.Types.DataType.String,
-            SCLType.Integer => StartImportCommand.Types.DataField.Types.DataType.Int,
-            SCLType.Double  => StartImportCommand.Types.DataField.Types.DataType.Double,
-            SCLType.Enum    => StartImportCommand.Types.DataField.Types.DataType.String,
-            SCLType.Bool    => StartImportCommand.Types.DataField.Types.DataType.Bool,
-            SCLType.Date    => StartImportCommand.Types.DataField.Types.DataType.Date,
-            SCLType.Entity => ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(
-                "Cannot import a nested entity"
-            ),
-            _ => throw new ArgumentOutOfRangeException(nameof(sclType), sclType, null)
-        };
+            case BooleanNode: return StartImportCommand.Types.DataField.Types.DataType.Bool;
+            case IntegerNode: return StartImportCommand.Types.DataField.Types.DataType.Int;
+            case NumberNode:   return StartImportCommand.Types.DataField.Types.DataType.Double;
+            case StringNode stringNode:
+            {
+                if(stringNode.Format is DateTimeStringFormat)
+                    return StartImportCommand.Types.DataField.Types.DataType.Date;
+
+                return StartImportCommand.Types.DataField.Types.DataType.String;
+            }
+            default:
+                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(
+                    $"Cannot import an entity of type {schemaNode.SchemaValueType}"
+                );
+        }
     }
 }
 

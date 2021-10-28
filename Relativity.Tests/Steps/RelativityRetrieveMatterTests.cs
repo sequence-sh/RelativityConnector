@@ -26,7 +26,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': """" 'Number': ""My Number"")"
+@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
 
                 ).WithTestRelativitySettings()
                 .WithService(
@@ -45,7 +45,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': """" 'Number': ""My Number"")"
+@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
 
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(
