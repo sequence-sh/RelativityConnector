@@ -356,37 +356,40 @@ public partial class ExampleTests
 
         logger.LogInformation(scl);
 
-        var sfs = StepFactoryStore.Create(
-            new ConnectorData(
-                new ConnectorSettings()
+        var externalContext = ExternalContext.Default with
+        {
+            InjectedContexts = new ConnectorInjection().TryGetInjectedContexts()
+                .Value.ToArray()
+        };
+
+        var connectorData = new ConnectorData(
+            new ConnectorSettings()
+            {
+                Id      = "Reductech.EDR.Connectors.Relativity",
+                Enable  = true,
+                Version = "0.10.0",
+                Settings = new RelativitySettings
                 {
-                    Id      = "Reductech.EDR.Connectors.Relativity",
-                    Enable  = true,
-                    Version = "0.10.0",
-                    Settings = new RelativitySettings
-                    {
-                        RelativityUsername = "relativity.admin@relativity.com",
-                        //RelativityUsername = "mark@reduc.tech",
-                        RelativityPassword = "Test1234!",
-                        Url                = "http://relativitydevvm/",
-                        APIVersionNumber   = 1,
-                        DesktopClientPath =
-                            @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
-                    }.ToDictionary()
-                },
-                typeof(RelativityGetClients).Assembly
-            )
+                    RelativityUsername = "relativity.admin@relativity.com",
+                    //RelativityUsername = "mark@reduc.tech",
+                    RelativityPassword = "Test1234!",
+                    Url                = "http://relativitydevvm/",
+                    APIVersionNumber   = 1,
+                    DesktopClientPath =
+                        @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
+                }.ToDictionary()
+            },
+            typeof(RelativityGetClients).Assembly
         );
+
+        var sfs = StepFactoryStore.TryCreate(externalContext, connectorData);
+
+        sfs.ShouldBeSuccessful();
 
         var runner = new SCLRunner(
             logger,
-            sfs,
-            ExternalContext.Default with
-            {
-                InjectedContexts = new ConnectorInjection().TryGetInjectedContexts()
-                    .Value.ToArray()
-            },
-            DefaultRestClientFactory.Instance
+            sfs.Value,
+            externalContext
         );
 
         var r = await runner.RunSequenceFromTextAsync(

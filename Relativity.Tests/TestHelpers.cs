@@ -14,6 +14,7 @@ using Reductech.EDR.Connectors.Relativity.Managers;
 using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Connectors.Relativity.TestHelpers;
 using Reductech.EDR.Core;
+using Reductech.EDR.Core.Abstractions;
 using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
 using Reductech.EDR.Core.TestHarness;
@@ -181,37 +182,37 @@ public static class TestHelpers
         RelativitySettings relativitySettings)
         where T : ICaseThatExecutes
     {
-        var r = stepCase.WithStepFactoryStore(
-            StepFactoryStore.Create(
-                new ConnectorData(
-                    new ConnectorSettings()
+        var connectorData = new ConnectorData(
+            new ConnectorSettings()
+            {
+                Enable = true,
+                Id     = RelativityAssembly.GetName().Name!,
+                Settings = new Dictionary<string, object>()
+                {
                     {
-                        Enable = true,
-                        Id     = RelativityAssembly.GetName().Name!,
-                        Settings = new Dictionary<string, object>()
-                        {
-                            {
-                                nameof(RelativitySettings.RelativityUsername),
-                                relativitySettings.RelativityUsername
-                            },
-                            {
-                                nameof(RelativitySettings.RelativityPassword),
-                                relativitySettings.RelativityPassword
-                            },
-                            {
-                                nameof(RelativitySettings.AuthParameters),
-                                relativitySettings.AuthParameters
-                            },
-                            {
-                                nameof(RelativitySettings.DesktopClientPath),
-                                relativitySettings.DesktopClientPath
-                            },
-                            { nameof(RelativitySettings.Url), relativitySettings.Url },
-                        }
+                        nameof(RelativitySettings.RelativityUsername),
+                        relativitySettings.RelativityUsername
                     },
-                    RelativityAssembly
-                )
-            )
+                    {
+                        nameof(RelativitySettings.RelativityPassword),
+                        relativitySettings.RelativityPassword
+                    },
+                    {
+                        nameof(RelativitySettings.AuthParameters), relativitySettings.AuthParameters
+                    },
+                    {
+                        nameof(RelativitySettings.DesktopClientPath),
+                        relativitySettings.DesktopClientPath
+                    },
+                    { nameof(RelativitySettings.Url), relativitySettings.Url },
+                }
+            },
+            RelativityAssembly
+        );
+
+
+        var r = stepCase.WithStepFactoryStore(
+            StepFactoryStore.TryCreate(ExternalContext.Default, connectorData).Value
         );
 
         return r;
