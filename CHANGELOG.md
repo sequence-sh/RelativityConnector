@@ -1,3 +1,7 @@
+# v0.12.0 (2021-11-26)
+
+Maintenance release - dependency updates only.
+
 # v0.11.2 (2021-10-19)
 
 Update `EntityImportClient` to v0.1.1.
@@ -108,3 +112,4 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
