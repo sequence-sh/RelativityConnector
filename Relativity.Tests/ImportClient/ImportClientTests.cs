@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Grpc.Core;
 using Moq;
 using ReductechEntityImport;
-using Xunit;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.ImportClient;
 

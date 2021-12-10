@@ -1,7 +1,5 @@
 ﻿using System.Text;
-using System.Threading;
 using Moq;
-using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Core.ExternalProcesses;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;

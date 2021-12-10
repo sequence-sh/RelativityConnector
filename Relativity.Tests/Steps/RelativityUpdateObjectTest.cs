@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
 using Relativity.Services.Objects.DataContracts;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;

@@ -1,8 +1,6 @@
 ﻿using System.IO;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core.Steps;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Field;

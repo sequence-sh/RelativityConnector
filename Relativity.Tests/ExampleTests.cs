@@ -1,19 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Divergic.Logging.Xunit;
-using Json.Schema;
-using Microsoft.Extensions.Logging;
-using Reductech.EDR.ConnectorManagement.Base;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core.Abstractions;
-using Reductech.EDR.Core.Entities;
-using Reductech.EDR.Core.Internal.Serialization;
-using Reductech.EDR.Core.Steps;
-using Relativity.Services;
-using Xunit;
-using Xunit.Abstractions;
-using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
+﻿using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests;
 

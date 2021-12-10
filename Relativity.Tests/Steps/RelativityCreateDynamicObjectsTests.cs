@@ -1,10 +1,7 @@
-﻿using System.Linq;
-using System.Net.Http;
-using System.Threading;
+﻿using System.Net.Http;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
 using Relativity.Services.Objects.DataContracts;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;

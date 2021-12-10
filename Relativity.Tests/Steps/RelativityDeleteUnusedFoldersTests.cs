@@ -1,8 +1,6 @@
-﻿using System.Threading;
-using Moq;
+﻿using Moq;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
 using Relativity.Services.Folder;
 using Relativity.Services.Objects.DataContracts;
 

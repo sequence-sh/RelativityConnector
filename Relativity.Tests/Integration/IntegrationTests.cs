@@ -1,17 +1,5 @@
 ﻿using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Divergic.Logging.Xunit;
-using Microsoft.Extensions.Logging;
-using Reductech.EDR.ConnectorManagement.Base;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core.Abstractions;
-using Reductech.EDR.Core.Internal.Serialization;
-using Reductech.EDR.Core.Steps;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Integration;
 

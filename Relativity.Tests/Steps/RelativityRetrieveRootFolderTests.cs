@@ -1,6 +1,4 @@
 ﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core.Steps;
 using Relativity.Services.Folder;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;

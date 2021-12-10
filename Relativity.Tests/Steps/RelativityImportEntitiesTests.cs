@@ -1,6 +1,4 @@
-﻿using Reductech.EDR.Connectors.Relativity.Steps;
-
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
+﻿namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityImportEntitiesTests : StepTestBase<RelativityImportEntities, Unit>
 {

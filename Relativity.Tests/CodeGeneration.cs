@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using Reductech.EDR.Connectors.Relativity.Managers;
-using Xunit;
-using Xunit.Abstractions;
+﻿using Reductech.EDR.Connectors.Relativity.Managers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests;
 

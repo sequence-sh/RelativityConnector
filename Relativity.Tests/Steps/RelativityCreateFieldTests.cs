@@ -1,6 +1,5 @@
 ﻿using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 

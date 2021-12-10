@@ -1,9 +1,4 @@
-﻿using Json.Schema;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core.Entities;
-using Reductech.EDR.Core.Steps;
-using Relativity.Services;
-using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
+﻿using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Integration;
 

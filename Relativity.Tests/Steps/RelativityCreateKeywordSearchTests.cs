@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using Moq;
+﻿using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
 using Relativity.Services.Search;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;

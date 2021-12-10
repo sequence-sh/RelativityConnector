@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
