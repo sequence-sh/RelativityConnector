@@ -1,11 +1,7 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
+﻿using Microsoft.Extensions.Logging;
 using Relativity.Services.DataContracts.DTOs;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 public class ProgressReportProgress : IProgress<ProgressReport>
 {
@@ -27,6 +23,4 @@ public class ProgressReportProgress : IProgress<ProgressReport>
             _callingStep
         ); //TODO make a log situation
     }
-}
-
 }

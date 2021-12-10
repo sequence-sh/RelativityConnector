@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Text;
-using Reductech.EDR.Core;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 [DataContract]
 public sealed class RelativitySettings : IEntityConvertible
@@ -50,6 +46,4 @@ public sealed class RelativitySettings : IEntityConvertible
             { nameof(APIVersionNumber), APIVersionNumber },
         };
     }
-}
-
 }

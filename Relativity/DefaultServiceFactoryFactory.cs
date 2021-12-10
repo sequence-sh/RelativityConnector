@@ -1,8 +1,6 @@
-﻿using System;
-using Relativity.Services.ServiceProxy;
+﻿using Relativity.Services.ServiceProxy;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 /// <summary>
 /// Creates Service Factories which connect to a relativity server
@@ -32,6 +30,4 @@ public class DefaultServiceFactoryFactory : IServiceFactoryFactory
             return serviceFactory;
         }
     }
-}
-
 }

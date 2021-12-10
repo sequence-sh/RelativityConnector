@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using System.Linq;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Services;
 using Relativity.Services.Objects.DataContracts;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 public static class RelativityStepMaps
 {
@@ -240,6 +229,4 @@ public static class RelativityStepMaps
             return result.Objects.First().ArtifactID;
         }
     }
-}
-
 }

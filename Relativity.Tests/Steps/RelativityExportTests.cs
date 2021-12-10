@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Field;
 using Relativity.Services.Objects.DataContracts;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using FieldRef = Relativity.Services.Objects.DataContracts.FieldRef;
 using QueryRequest = Relativity.Services.Objects.DataContracts.QueryRequest;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityExportTests : StepTestBase<RelativityExport, Array<Entity>>
 {
@@ -126,6 +118,4 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
             }
         }
     }
-}
-
 }

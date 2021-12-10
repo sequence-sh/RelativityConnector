@@ -1,13 +1,8 @@
-﻿using System.Collections.Generic;
-using Moq;
+﻿using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.TestHarness;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityCreateFieldTests : StepTestBase<RelativityCreateField, int>
 {
@@ -39,6 +34,4 @@ public partial class RelativityCreateFieldTests : StepTestBase<RelativityCreateF
                 );
         }
     }
-}
-
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
@@ -9,18 +7,12 @@ using Moq;
 using Moq.Language.Flow;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.DataContracts.DTOs;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityQueryDocumentsTests : StepTestBase<RelativitySendQuery, Array<Entity>>
@@ -169,6 +161,4 @@ public partial class
                 );
         }
     }
-}
-
 }

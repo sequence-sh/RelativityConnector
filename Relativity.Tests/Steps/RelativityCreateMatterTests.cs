@@ -1,16 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.TestHarness;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Relativity.Environment.V1.Matter.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreateMatter, int>
 {
@@ -70,6 +64,4 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
                 );
         }
     }
-}
-
 }

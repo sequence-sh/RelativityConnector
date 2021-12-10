@@ -1,16 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Delete a matter
@@ -53,6 +43,4 @@ public class RelativityDeleteMatter : RelativityApiRequest<int, IMatterManager1,
     [StepProperty(1)]
     [Required]
     public IStep<int> MatterArtifactId { get; set; } = null!;
-}
-
 }

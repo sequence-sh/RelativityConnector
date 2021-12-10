@@ -1,15 +1,6 @@
-﻿using System;
-using CSharpFunctionalExtensions;
-using Reductech.EDR.ConnectorManagement.Base;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Entities;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Entity = Reductech.EDR.Core.Entity;
+﻿using Reductech.EDR.ConnectorManagement.Base;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 /// <summary>
 /// Contains helper methods for Relativity settings
@@ -78,6 +69,4 @@ public static class SettingsHelpers
 
         return service;
     }
-}
-
 }

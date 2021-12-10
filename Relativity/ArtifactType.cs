@@ -1,5 +1,4 @@
-﻿namespace Reductech.EDR.Connectors.Relativity
-{
+﻿namespace Reductech.EDR.Connectors.Relativity;
 
 /// <summary>
 /// Relativity Artifact Type
@@ -39,6 +38,4 @@ public enum ArtifactType
     ResourceServer = 32,
     InstanceSetting = 42,
     Credential = 43,
-}
-
 }

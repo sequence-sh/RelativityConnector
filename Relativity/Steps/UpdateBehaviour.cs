@@ -1,5 +1,4 @@
-﻿namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+﻿namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 public enum UpdateBehaviour
 {
@@ -14,6 +13,4 @@ public enum UpdateBehaviour
     /// overwrites the current values for the choice or object field with those that you pass into the service.
     /// </summary>
     Replace
-}
-
 }

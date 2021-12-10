@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Divergic.Logging.Xunit;
@@ -7,23 +6,17 @@ using Json.Schema;
 using Microsoft.Extensions.Logging;
 using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
 using Reductech.EDR.Core.Abstractions;
 using Reductech.EDR.Core.Entities;
-using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Internal.Serialization;
 using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
 using Relativity.Services;
 using Xunit;
 using Xunit.Abstractions;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests
-{
-    
+namespace Reductech.EDR.Connectors.Relativity.Tests;
+
 public partial class ExampleTests
 {
 
@@ -33,12 +26,12 @@ public partial class ExampleTests
     }
     public ITestOutputHelper TestOutputHelper { get; set; }
 
-        public static IEnumerable<(string name, IStep step)> Examples
+    public static IEnumerable<(string name, IStep step)> Examples
     {
         get
         {
 
-                yield return ("Search and Tag", //Note that the 'Tags' field must exist in your workspace for this to work
+            yield return ("Search and Tag", //Note that the 'Tags' field must exist in your workspace for this to work
                     
                           new ForEach<Entity>()
                           {
@@ -65,7 +58,7 @@ public partial class ExampleTests
                                   {
                                       ObjectArtifactId = new EntityGetValue<int>()
                                       {
-                                          Entity = new GetAutomaticVariable<Entity>(),
+                                          Entity   = new GetAutomaticVariable<Entity>(),
                                           Property = Constant("ArtifactId")
                                       },
                                       Workspace =
@@ -77,7 +70,7 @@ public partial class ExampleTests
                               )
                           }
                           
-                          );
+                );
 
             yield break;
 
@@ -93,8 +86,8 @@ public partial class ExampleTests
                                       ("File Path", (@"C:\Users\wainw\Documents\Half of my Heart.pdf")),
                                       ("Folder Path", (@"songs"))
                                       
-                                      )
-                                  ),
+                                  )
+                              ),
                               Schema = Constant(
                                   new JsonSchemaBuilder()
                                       .Title("Test Schema")
@@ -104,13 +97,13 @@ public partial class ExampleTests
                                           ("File Path", AnyString),
                                           ("Folder Path", AnyString)
                                           
-                                          )
+                                      )
                                       .Build().ConvertToEntity()
                           
-                          ),
+                              ),
                               ControlNumberField = Constant("Control Number"),
-                              FilePathField = Constant("File Path"),
-                              FolderPathField = Constant("Folder Path")
+                              FilePathField      = Constant("File Path"),
+                              FolderPathField    = Constant("Folder Path")
                           }
                 );
 
@@ -400,6 +393,4 @@ public partial class ExampleTests
 
         r.ShouldBeSuccessful();
     }
-}
-
 }

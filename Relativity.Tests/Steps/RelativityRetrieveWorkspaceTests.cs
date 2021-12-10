@@ -1,18 +1,11 @@
-﻿using System.Collections.Generic;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
 using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 using Action = Relativity.Shared.V1.Models.Action;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityRetrieveWorkspaceTests : StepTestBase<RelativityRetrieveWorkspace, Entity>
@@ -42,8 +35,8 @@ public partial class
                         new WorkspaceResponse()
                         {
                             ArtifactID = 11,
-                            Name = "My Workspace",
-                            Notes = "My Notes",
+                            Name       = "My Workspace",
+                            Notes      = "My Notes",
                             Actions = new List<Action>()
                             {
                                 new()
@@ -60,6 +53,4 @@ public partial class
                 );
         }
     }
-}
-
 }

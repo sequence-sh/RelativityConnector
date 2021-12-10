@@ -1,13 +1,6 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 public abstract class
     RelativityApiRequest<TRequest, TService, TServiceOutput, TOutput> : CompoundStep<TOutput>
@@ -56,6 +49,4 @@ public abstract class
     public abstract Task<Result<TRequest, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation);
-}
-
 }

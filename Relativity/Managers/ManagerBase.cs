@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Flurl.Http;
 
-namespace Reductech.EDR.Connectors.Relativity.Managers
-{
-
-
+namespace Reductech.EDR.Connectors.Relativity.Managers;
 
 public abstract class ManagerBase : IDisposable
 {
@@ -117,6 +110,4 @@ public abstract class ManagerBase : IDisposable
     {
         return s.Split("/");
     }
-}
-
 }

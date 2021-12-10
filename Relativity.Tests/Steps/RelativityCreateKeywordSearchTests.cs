@@ -1,16 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.TestHarness;
 using Relativity.Services.Search;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityCreateKeywordSearchTests : StepTestBase<RelativityCreateKeywordSearch, int>
@@ -63,6 +57,4 @@ public partial class
                 ;
         }
     }
-}
-
 }

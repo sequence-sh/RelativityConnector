@@ -1,21 +1,9 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using System.Linq;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.Folder;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Gets all children of a folder
@@ -81,6 +69,4 @@ public sealed class
     [StepProperty(2)]
     [Required]
     public IStep<int> FolderArtifactId { get; set; } = null!;
-}
-
 }

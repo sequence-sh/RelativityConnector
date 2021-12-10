@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using CSharpFunctionalExtensions;
-using Flurl.Http;
+﻿using Flurl.Http;
 using Reductech.EDR.Connectors.Relativity.Managers;
 using Reductech.EDR.Core.Connectors;
-using Reductech.EDR.Core.Internal.Errors;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 public sealed class ConnectorInjection : IConnectorInjection
 {
@@ -26,6 +22,4 @@ public sealed class ConnectorInjection : IConnectorInjection
 
         return list;
     }
-}
-
 }

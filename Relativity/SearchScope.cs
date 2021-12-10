@@ -1,5 +1,4 @@
-﻿namespace Reductech.EDR.Connectors.Relativity
-{
+﻿namespace Reductech.EDR.Connectors.Relativity;
 
 /// <summary>
 /// The scope of a relativity search
@@ -9,6 +8,4 @@ public enum SearchScope
     EntireCase = 0,
     Folders = 1,
     Subfolders = 2
-}
-
 }

@@ -1,14 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
 using Relativity.Environment.V1.Matter.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetrieveMatter, Entity>
 {
@@ -26,7 +21,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
+                    @"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
 
                 ).WithTestRelativitySettings()
                 .WithService(
@@ -45,7 +40,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         }
                     ),
                     Unit.Default,
-@"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
+                    @"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
 
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(
@@ -59,6 +54,4 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                 );
         }
     }
-}
-
 }

@@ -1,10 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Relativity.Environment.V1.Workspace.Models;
+﻿using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Kepler.Services;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
-{
+namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Workspace Manager")]
 [ServiceAudience(Audience.Public)]
@@ -36,6 +33,4 @@ public interface IWorkspaceManager1 : IManager //Relativity.Environment.V1.Works
     [HttpGet]
     [Route("{workspaceID:int}/summary")]
     Task<WorkspaceSummary> GetWorkspaceSummaryAsync(int workspaceID);
-}
-
 }

@@ -1,7 +1,6 @@
 ﻿using Relativity.Services.ServiceProxy;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 /// <summary>
 /// Produces IServiceFactories
@@ -9,6 +8,4 @@ namespace Reductech.EDR.Connectors.Relativity
 public interface IServiceFactoryFactory
 {
     IServiceFactory CreateServiceFactory(RelativitySettings relativitySettings);
-}
-
 }

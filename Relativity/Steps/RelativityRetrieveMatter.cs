@@ -1,17 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Matter.Models;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 public class
     RelativityRetrieveMatter : RelativityApiRequest<int, IMatterManager1, MatterResponse, Entity>
@@ -50,6 +40,4 @@ public class
     [StepProperty(1)]
     [Required]
     public IStep<int> MatterArtifactId { get; set; } = null!;
-}
-
 }

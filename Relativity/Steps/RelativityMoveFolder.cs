@@ -1,19 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using OneOf;
+﻿using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.Folder;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 ///  Move a folder and its children, including subfolders and documents. 
@@ -89,6 +78,4 @@ public sealed class RelativityMoveFolder : RelativityApiRequest<(int workspaceId
     [StepProperty(3)]
     [Required]
     public IStep<int> DestinationFolderArtifactId { get; set; } = null!;
-}
-
 }

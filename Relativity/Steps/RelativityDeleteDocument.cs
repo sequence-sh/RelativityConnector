@@ -1,19 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using OneOf;
+﻿using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
 using Relativity.Services.Objects.DataContracts;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Util;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 [SCLExample(
     "RelativityDeleteDocument Workspace: 11 ObjectArtifactId: 22",
@@ -77,6 +66,4 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     [StepProperty(2)]
     [Required]
     public IStep<int> ObjectArtifactId { get; set; } = null!;
-}
-
 }

@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Flurl.Http;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Services;
 using Relativity.Services.ServiceProxy;
 
-namespace Reductech.EDR.Connectors.Relativity.Managers
-{
+namespace Reductech.EDR.Connectors.Relativity.Managers;
 
 public class SkipCodeGenerationAttribute : Attribute { }
 
@@ -266,12 +262,12 @@ public class CodeGenerator
                 .Where(x => x.GetCustomAttribute<JsonParameterAttribute>() is not null)
                 .ToList();
 
-                if (!jsonParameters.Any())
-                {
-                    throw new Exception($"{methodInfo.Name} has no Json Parameters");
-                }
+            if (!jsonParameters.Any())
+            {
+                throw new Exception($"{methodInfo.Name} has no Json Parameters");
+            }
 
-                foreach (var jsonParameter in jsonParameters)
+            foreach (var jsonParameter in jsonParameters)
             {
                 sb.AppendLine(jsonParameter.Name + ",");
             }
@@ -439,6 +435,4 @@ public class TemplateServiceFactoryFactory : IServiceFactoryFactory
                    );
         }
     }
-}
-
 }

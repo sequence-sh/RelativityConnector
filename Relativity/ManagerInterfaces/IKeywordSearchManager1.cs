@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
-using Reductech.EDR.Connectors.Relativity.Managers;
-using Relativity.Kepler.Services;
+﻿using Relativity.Kepler.Services;
 using Relativity.Services.Search;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
-{
+namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
 /// IdtSearchManager interface enables interaction with Relativity dtSearch.
@@ -36,6 +33,4 @@ public interface
     Task<KeywordSearch> ReadSingleAsync(
         [JsonParameter] int workspaceArtifactID,
         [JsonParameter]  int searchArtifactID);
-}
-
 }

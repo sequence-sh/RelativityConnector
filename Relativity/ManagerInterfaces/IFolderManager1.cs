@@ -1,13 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Relativity.Kepler.Services;
+﻿using Relativity.Kepler.Services;
 using Relativity.Services.Folder;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
-{
-
-    
+namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Folder Manager")]
 [ServiceAudience(Audience.Public)]
@@ -60,6 +54,4 @@ public interface IFolderManager1 : IManager //Relativity.Services.Folder.IFolder
     Task<Folder> GetWorkspaceRootAsync([JsonParameter]int workspaceArtifactID);
 
     
-}
-
 }

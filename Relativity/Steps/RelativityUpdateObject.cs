@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using System.Linq;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.Objects.DataContracts;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Update a Relativity Object
@@ -147,6 +134,4 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
     [DefaultValueExplanation("Merge")]
     public IStep<UpdateBehaviour> UpdateBehaviour { get; set; } =
         new EnumConstant<UpdateBehaviour>(Steps.UpdateBehaviour.Merge);
-}
-
 }

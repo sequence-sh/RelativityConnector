@@ -1,15 +1,9 @@
-﻿using System.Collections.Generic;
-using Moq;
+﻿using Moq;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.TestHarness;
 using Relativity.Services.Folder;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityCreateFolderTests : StepTestBase<RelativityCreateFolder, int>
 {
@@ -42,6 +36,4 @@ public partial class RelativityCreateFolderTests : StepTestBase<RelativityCreate
                 );
         }
     }
-}
-
 }

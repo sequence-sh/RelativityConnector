@@ -1,18 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using OneOf;
+﻿using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.Folder;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Update a Relativity folder
@@ -90,6 +80,4 @@ public sealed class
     [Alias("Name")]
     [Required]
     public IStep<StringStream> FolderName { get; set; } = null!;
-}
-
 }
