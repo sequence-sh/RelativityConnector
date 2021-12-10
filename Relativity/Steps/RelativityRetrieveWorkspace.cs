@@ -1,19 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using OneOf;
+﻿using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Environment.V1.Workspace.Models;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 [SCLExample(
     "RelativityRetrieveWorkspace Workspace: 11 IncludeMetadata: True IncludeActions: True",
@@ -84,6 +73,4 @@ public sealed class
             cancellation
         );
     }
-}
-
 }

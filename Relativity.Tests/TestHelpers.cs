@@ -1,28 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
 using Flurl.Http.Testing;
 using Moq;
 using Moq.Language.Flow;
-using Reductech.EDR.ConnectorManagement.Base;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Reductech.EDR.Connectors.Relativity.Managers;
-using Reductech.EDR.Connectors.Relativity.Steps;
 using Reductech.EDR.Connectors.Relativity.TestHelpers;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Abstractions;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
 using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests;
 
 public interface IMockSetup
 {
@@ -219,6 +206,4 @@ public static class TestHelpers
     }
 
     private static Assembly RelativityAssembly { get; } = typeof(RelativityImport).Assembly;
-}
-
 }

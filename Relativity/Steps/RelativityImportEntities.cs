@@ -1,29 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
 using Grpc.Core;
-using Json.Schema;
 using Microsoft.Extensions.Logging;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Entities;
 using Reductech.EDR.Core.Entities.Schema;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using ReductechEntityImport;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Import Entities into Relativity
@@ -150,13 +134,13 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
                 if (!validateResult.IsValid)
                     return Result.Failure<ImportObject, IErrorBuilder>(
-                            ErrorBuilderList.Combine(
-                                validateResult.GetErrorMessages().Select(
-                                    x => ErrorCode.SchemaViolation.ToErrorBuilder(
-                                        x.message,
-                                        x.location
-                                    )
-                                )));
+                        ErrorBuilderList.Combine(
+                            validateResult.GetErrorMessages().Select(
+                                x => ErrorCode.SchemaViolation.ToErrorBuilder(
+                                    x.message,
+                                    x.location
+                                )
+                            )));
 
                 foreach (var (key, (node, required)) in entityNode.EntityPropertiesData.Nodes)
                 {
@@ -298,7 +282,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         {
             case BooleanNode: return StartImportCommand.Types.DataField.Types.DataType.Bool;
             case IntegerNode: return StartImportCommand.Types.DataField.Types.DataType.Int;
-            case NumberNode:   return StartImportCommand.Types.DataField.Types.DataType.Double;
+            case NumberNode:  return StartImportCommand.Types.DataField.Types.DataType.Double;
             case StringNode stringNode:
             {
                 if(stringNode.Format is DateTimeStringFormat)
@@ -312,6 +296,4 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                 );
         }
     }
-}
-
 }

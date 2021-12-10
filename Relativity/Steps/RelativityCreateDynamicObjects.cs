@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using System.Linq;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.Objects.DataContracts;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Create a relativity dynamic objects from entities.
@@ -60,7 +47,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         var stepsResult = await stateMonad.RunStepsAsync(
-            Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this),
+            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
             Entities.WrapArray(),
             ArtifactType.WrapArtifactId(this),
             ParentArtifactId.WrapNullable(),
@@ -163,6 +150,4 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     [StepProperty(4)]
     [DefaultValueExplanation("The Workspace Root")]
     public IStep<int>? ParentArtifactId { get; set; } = null;
-}
-
 }

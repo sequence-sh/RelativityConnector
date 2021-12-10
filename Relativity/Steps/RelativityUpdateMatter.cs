@@ -1,18 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 public class RelativityUpdateMatter : RelativityApiRequest<(int matterArtifactId, MatterRequest
     matterRequest),
@@ -114,6 +104,4 @@ public class RelativityUpdateMatter : RelativityApiRequest<(int matterArtifactId
     [StepProperty(7)]
     [DefaultValueExplanation("Do not set")]
     public IStep<StringStream>? Notes { get; set; } = null!;
-}
-
 }

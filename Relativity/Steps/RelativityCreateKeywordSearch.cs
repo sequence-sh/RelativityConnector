@@ -1,22 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using System.Linq;
 using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.Field;
 using Relativity.Services.Folder;
 using Relativity.Services.Search;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Creates a keyword search. Returns the artifact id of the created search.
@@ -167,6 +156,4 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
             _ => throw new ArgumentOutOfRangeException(nameof(searchScope), searchScope, null)
         };
     }
-}
-
 }

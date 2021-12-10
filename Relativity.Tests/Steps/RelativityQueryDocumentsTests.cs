@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using FluentAssertions;
 using Moq;
 using Moq.Language.Flow;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
-using Reductech.EDR.Core.Util;
 using Relativity.Services.DataContracts.DTOs;
 using Relativity.Services.Objects.DataContracts;
 using Entity = Reductech.EDR.Core.Entity;
+using SortEnum = Relativity.Services.Objects.DataContracts.SortEnum;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityQueryDocumentsTests : StepTestBase<RelativitySendQuery, Array<Entity>>
@@ -32,7 +20,7 @@ public partial class
         qr.Fields.Select(x => x.ArtifactID).Should().BeEquivalentTo(new []{100, 101});
         qr.Sorts.Should().HaveCount(1);
 
-        qr.Sorts.Single().Direction.Should().Be(SortEnum.Descending);
+        qr.Sorts.Single().Direction.Should().Be( SortEnum.Descending);
         qr.Sorts.Single().FieldIdentifier.ArtifactID.Should().Be(13);
 
         return true;
@@ -169,6 +157,4 @@ public partial class
                 );
         }
     }
-}
-
 }

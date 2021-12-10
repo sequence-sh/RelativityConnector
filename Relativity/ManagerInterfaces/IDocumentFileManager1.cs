@@ -1,13 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Managers;
+﻿using Reductech.EDR.Connectors.Relativity.Managers;
 using Relativity.Kepler.Services;
 using Relativity.Kepler.Transport;
-using Relativity.Services.Interfaces.Field;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
-{
+namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
 /// Exposes the methods for working with files associated with documents
@@ -27,7 +22,5 @@ public interface IDocumentFileManager1 : IManager //Relativity.Services.Interfac
 
     [SkipCodeGeneration]
     Task<string> DownloadDataAsync(Int32 workspaceID, Int32 documentID);
-
-}
 
 }

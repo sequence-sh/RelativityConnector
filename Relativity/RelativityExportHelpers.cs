@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Entities;
-using Reductech.EDR.Core.Internal.Errors;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Objects.DataContracts;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 /// <summary>
 /// Contains methods to help with Relativity export
@@ -253,6 +242,4 @@ public static class RelativityExportHelpers
             return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(e.Message);
         }
     }
-}
-
 }

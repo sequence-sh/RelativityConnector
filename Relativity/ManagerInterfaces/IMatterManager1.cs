@@ -1,12 +1,8 @@
 ﻿using Relativity.Environment.V1.Matter.Models;
 using Relativity.Kepler.Services;
 using Relativity.Shared.V1.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
-{
+namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Matter Manager")]
 [ServiceAudience(Audience.Public)]
@@ -44,6 +40,4 @@ public interface IMatterManager1 : IManager //Relativity.Environment.V1.Matter.I
     [HttpGet]
     [Route("eligible-statuses")]
     Task<List<DisplayableObjectIdentifier>> GetEligibleStatusesAsync();
-}
-
 }

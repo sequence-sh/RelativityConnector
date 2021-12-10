@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
+﻿using System.Linq;
 using Flurl.Http;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Services.Folder;
 using Relativity.Services.Interfaces.Shared.Models;
 using Relativity.Services.Objects.DataContracts;
 using Relativity.Services.Search;
-using Entity = Reductech.EDR.Core.Entity;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 public static class RelativityEntityConversionHelpers
 {
@@ -195,6 +186,4 @@ public static class APIRequestHelpers
 
         return result;
     }
-}
-
 }

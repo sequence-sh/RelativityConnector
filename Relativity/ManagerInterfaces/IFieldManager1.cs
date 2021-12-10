@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Relativity.Kepler.Services;
+﻿using Relativity.Kepler.Services;
 using Relativity.Services.Field.Models;
-using Relativity.Services.Interfaces.Field;
 using Relativity.Services.Interfaces.Field.Models;
 using Relativity.Services.Interfaces.Shared;
 using Relativity.Services.Interfaces.Shared.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
-{
+namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 //I had to create this because ObjectType needs to be a securable object identifier
 
 public class FixedLengthFieldRequest1 : BaseFieldRequest1
 {
-         /// <summary>Gets or sets the maximum length for the field.</summary>
+    /// <summary>Gets or sets the maximum length for the field.</summary>
     public int Length { get; set; }
 
     /// <summary>
@@ -90,7 +85,7 @@ public class FixedLengthFieldRequest1 : BaseFieldRequest1
 
 public abstract class BaseFieldRequest1
 {
-        /// <summary>Gets or sets the name for the field.</summary>
+    /// <summary>Gets or sets the name for the field.</summary>
     public string Name { get; set; }
 
     /// <summary>
@@ -211,6 +206,4 @@ public interface IFieldManager1 : IManager
     [Route("fields/available-object-types")]
     Task<List<ObjectTypeIdentifier>> GetAvailableObjectTypesAsync(
         int workspaceID);
-}
-
 }

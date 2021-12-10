@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Relativity.Services.ServiceProxy;
 
-namespace Reductech.EDR.Connectors.Relativity.TestHelpers
-{
+namespace Reductech.EDR.Connectors.Relativity.TestHelpers;
 
 public class TestServiceFactoryFactory : IServiceFactoryFactory
 {
@@ -41,6 +38,4 @@ public class TestServiceFactoryFactory : IServiceFactoryFactory
             return result;
         }
     }
-}
-
 }

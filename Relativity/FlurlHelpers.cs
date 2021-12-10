@@ -2,8 +2,7 @@
 using Flurl;
 using Flurl.Http;
 
-namespace Reductech.EDR.Connectors.Relativity
-{
+namespace Reductech.EDR.Connectors.Relativity;
 
 public static class FlurlHelpers
 {
@@ -29,6 +28,4 @@ public static class FlurlHelpers
 
         return request;
     }
-}
-
 }

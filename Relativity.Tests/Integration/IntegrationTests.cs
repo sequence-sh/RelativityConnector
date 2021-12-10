@@ -1,26 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Divergic.Logging.Xunit;
-using Microsoft.Extensions.Logging;
-using Reductech.EDR.ConnectorManagement.Base;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Abstractions;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Serialization;
-using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
-using Xunit;
-using Xunit.Abstractions;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Integration
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Integration;
 
 public partial class IntegrationTests
 {
@@ -264,6 +245,4 @@ public partial class IntegrationTests
 
         r.ShouldBeSuccessful();
     }
-}
-
 }

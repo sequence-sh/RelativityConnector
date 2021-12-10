@@ -1,15 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.TestHarness;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
-using Reductech.EDR.Core.Util;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityDeleteWorkspaceTests : StepTestBase<RelativityDeleteWorkspace, Unit>
 {
@@ -34,6 +25,4 @@ public partial class RelativityDeleteWorkspaceTests : StepTestBase<RelativityDel
                 ;
         }
     }
-}
-
 }

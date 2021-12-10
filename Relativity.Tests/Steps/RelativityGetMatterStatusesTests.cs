@@ -1,14 +1,7 @@
-﻿using System.Collections.Generic;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
-using Relativity.Environment.V1.Matter;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityGetMatterStatusesTests : StepTestBase<RelativityGetMatterStatuses, Array<Entity>>
@@ -39,6 +32,4 @@ public partial class
                 ;
         }
     }
-}
-
 }

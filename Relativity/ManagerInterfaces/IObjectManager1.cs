@@ -1,14 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Relativity.Kepler.Services;
+﻿using Relativity.Kepler.Services;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Objects.DataContracts;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces
-{
+namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
 /// IObjectManager interface exposes methods on the Relativity Object Manager web service used for querying as well as reading and updating fields on Documents and Relativity Dynamic Objects (RDOs).
@@ -166,6 +162,4 @@ public interface IObjectManager1 : IManager //Relativity.Services.Objects.IObjec
         UpdateRequest request,
         [JsonParameter]
         UpdateOptions operationOptions);
-}
-
 }

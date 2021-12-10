@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Logging;
 using OneOf;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Attributes;
 using Reductech.EDR.Core.ExternalProcesses;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Internal.Errors;
-using Reductech.EDR.Core.Util;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Imports a load file into Relativity using the desktop client
@@ -314,6 +302,4 @@ public enum FileImportType
     [Display(Name = "native")] Native, //n
     [Display(Name = "image")] Image,   //i
     [Display(Name = "object")] Object  //o
-}
-
 }

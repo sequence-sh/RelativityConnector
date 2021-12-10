@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
-using Reductech.EDR.Core.Internal.Errors;
 
-namespace Reductech.EDR.Connectors.Relativity.Errors
-{
+namespace Reductech.EDR.Connectors.Relativity.Errors;
 
 /// <summary>
 /// Error Code for Nuix
@@ -41,6 +39,4 @@ public sealed record ErrorCode_Relativity : ErrorCodeBase
         Debug.Assert(s != null, nameof(s) + " != null");
         return s;
     }
-}
-
 }

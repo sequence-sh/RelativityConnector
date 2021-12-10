@@ -1,16 +1,7 @@
-﻿using System.Collections.Generic;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
-using Reductech.EDR.Core.Util;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
-using static Reductech.EDR.Core.TestHarness.StaticHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityRetrieveRootFolderTests : StepTestBase<RelativityRetrieveRootFolder, Entity>
@@ -30,7 +21,7 @@ public partial class
                         }
                     },
                     Unit.Default,
-@"('Name': ""MyFolder"" 'ArtifactID': 12345 'HasChildren': False 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Selected': False)"
+                    @"('Name': ""MyFolder"" 'ArtifactID': 12345 'HasChildren': False 'SystemCreatedOn': 0001-01-01T00:00:00.0000000 'SystemLastModifiedOn': 0001-01-01T00:00:00.0000000 'Selected': False)"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IFolderManager1, Folder>(
@@ -40,6 +31,4 @@ public partial class
                 );
         }
     }
-}
-
 }

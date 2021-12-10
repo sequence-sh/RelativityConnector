@@ -1,18 +1,6 @@
-﻿using System.Collections.Generic;
-using Json.Schema;
-using Reductech.EDR.Connectors.Relativity.Steps;
-using Reductech.EDR.Core;
-using Reductech.EDR.Core.Entities;
-using Reductech.EDR.Core.Internal;
-using Reductech.EDR.Core.Steps;
-using Reductech.EDR.Core.TestHarness;
+﻿using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
 
-using Reductech.EDR.Core.Util;
-using Relativity.Services;
-using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
-
-namespace Reductech.EDR.Connectors.Relativity.Tests.Integration
-{
+namespace Reductech.EDR.Connectors.Relativity.Tests.Integration;
 
 internal static class TestSteps
 {
@@ -228,7 +216,7 @@ internal static class TestSteps
                             ("File Path", AnyString),
                             ("Folder Path", AnyString)
                             
-                            ).Build().ConvertToEntity()
+                        ).Build().ConvertToEntity()
                 ),
                 ControlNumberField = StaticHelpers.Constant("Control Number"),
                 FilePathField      = StaticHelpers.Constant("File Path"),
@@ -291,6 +279,4 @@ internal static class TestSteps
             }
         }
     };
-}
-
 }
