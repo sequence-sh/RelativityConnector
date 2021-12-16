@@ -4,7 +4,7 @@ using Relativity.Environment.V1.Matter.Models;
 namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 public class
-    RelativityRetrieveMatter : RelativityApiRequest<int, IMatterManager1, MatterResponse, Entity>
+    RelativityRetrieveMatter : RelativityApiRequest<SCLInt, IMatterManager1, MatterResponse, Entity>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -20,14 +20,14 @@ public class
     public override Task<MatterResponse> SendRequest(
         IStateMonad stateMonad,
         IMatterManager1 service,
-        int requestObject,
+        SCLInt requestObject,
         CancellationToken cancellationToken)
     {
         return service.ReadAsync(requestObject);
     }
 
     /// <inheritdoc />
-    public override Task<Result<int, IError>> TryCreateRequest(
+    public override Task<Result<SCLInt, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
@@ -39,5 +39,5 @@ public class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<int> MatterArtifactId { get; set; } = null!;
+    public IStep<SCLInt> MatterArtifactId { get; set; } = null!;
 }

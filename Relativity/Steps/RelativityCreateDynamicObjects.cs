@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Objects.DataContracts;
@@ -12,19 +11,19 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
 /// </summary>
 public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspaceId,
     MassCreateRequest createRequest
-    ), IObjectManager1, MassCreateResult, Array<int>>
+    ), IObjectManager1, MassCreateResult, Array<SCLInt>>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
-        new SimpleStepFactory<RelativityCreateDynamicObjects, Array<int>>();
+        new SimpleStepFactory<RelativityCreateDynamicObjects, Array<SCLInt>>();
 
     /// <inheritdoc />
-    public override Result<Array<int>, IErrorBuilder> ConvertOutput(MassCreateResult serviceOutput)
+    public override Result<Array<SCLInt>, IErrorBuilder> ConvertOutput(MassCreateResult serviceOutput)
     {
         if (!serviceOutput.Success)
             return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(serviceOutput.Message);
 
-        var array = serviceOutput.Objects.Select(x => x.ArtifactID).ToList().ToSCLArray();
+        var array = serviceOutput.Objects.Select(x => x.ArtifactID.ConvertToSCLObject()).ToSCLArray();
         return array;
     }
 
@@ -74,7 +73,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     public static Result<MassCreateRequest, IErrorBuilder> ToCreateRequest(
         IReadOnlyList<Entity> entities,
         ArtifactType artifactType,
-        Maybe<int> parentArtifactId)
+        Maybe<SCLInt> parentArtifactId)
     {
         var createRequest = new MassCreateRequest
         {
@@ -109,7 +108,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
                 var v = entity.TryGetValue(fieldRef.Name);
 
                 if (v.HasValue)
-                    valueList.Add(v.Value.ObjectValue); //TODO maybe do some conversion here
+                    valueList.Add(v.Value.ToCSharpObject()); //TODO maybe do some conversion here
                 else
                     valueList.Add(null);
             }
@@ -128,7 +127,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The entities to import
@@ -142,12 +141,12 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     /// </summary>
     [StepProperty(3)]
     [Required]
-    public IStep<OneOf<ArtifactType, int>> ArtifactType { get; set; } = null!;
+    public IStep<SCLOneOf<SCLEnum<ArtifactType>, SCLInt>> ArtifactType { get; set; } = null!;
 
     /// <summary>
     /// The artifact Id of the parent object
     /// </summary>
     [StepProperty(4)]
     [DefaultValueExplanation("The Workspace Root")]
-    public IStep<int>? ParentArtifactId { get; set; } = null;
+    public IStep<SCLInt>? ParentArtifactId { get; set; } = null;
 }

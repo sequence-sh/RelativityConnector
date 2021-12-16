@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Integration;
 
-public partial class IntegrationTests
+public class IntegrationTests
 {
     public IntegrationTests(ITestOutputHelper testOutputHelper)
     {
@@ -17,7 +17,7 @@ public partial class IntegrationTests
     [Fact(Skip = SkipAll)]
     public async void TestImportConcordance()
     {
-        var step = new RelativityImport()
+        var step = new RelativityImport
         {
             Workspace = TestSteps.IntegrationTestWorkspace,
             FilePath =
@@ -53,7 +53,7 @@ public partial class IntegrationTests
         );
 
         var step = TestSteps.ImportEntities(filePath);
-        step.Workspace = new OneOfStep<int, StringStream>(Constant(123));
+        step.Workspace = new OneOfStep<SCLInt, StringStream>(Constant(123));
 
         await TestSCLSequence(step);
     }
@@ -61,19 +61,19 @@ public partial class IntegrationTests
     [Fact(Skip = SkipAll)]
     public async void TestExportEntities()
     {
-        var exportStep = new RelativityExport()
+        var exportStep = new RelativityExport
         {
             Workspace  = TestSteps.IntegrationTestWorkspace,
             Condition  = Constant("'Title' LIKE 'Bond'"),
             FieldNames = Array("Title")
         };
 
-        var step = new ForEach<Entity>()
+        var step = new ForEach<Entity>
         {
             Array = exportStep,
             Action = new LambdaFunction<Entity, Unit>(
                 null,
-                new Log<Entity>() { Value = GetEntityVariable }
+                new Log { Value = GetEntityVariable }
             )
         };
 
@@ -83,10 +83,10 @@ public partial class IntegrationTests
     [Fact(Skip = SkipAll)]
     public async void CreateField()
     {
-        var step = new RelativityCreateField()
+        var step = new RelativityCreateField
         {
             FieldName = Constant("MyTestField"),
-            //ObjectType = new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document)),
+            //ObjectType = new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Document)),
             Workspace = TestSteps.IntegrationTestWorkspace
         };
         await TestSCLSequence(step);
@@ -95,9 +95,9 @@ public partial class IntegrationTests
     [Fact(Skip = SkipAll)]
     public async void CreateWorkspace()
     {
-        var step = new Sequence<Unit>()
+        var step = new Sequence<Unit>
         {
-            InitialSteps = new List<IStep<Unit>>()
+            InitialSteps = new List<IStep<Unit>>
             {
                 TestSteps.DeleteAllIntegrationTestWorkspace,
                 TestSteps.MaybeCreateTestMatter,
@@ -118,9 +118,9 @@ public partial class IntegrationTests
             "TestDocument.pdf"
         );
 
-        var step = new Sequence<Unit>()
+        var step = new Sequence<Unit>
         {
-            InitialSteps = new List<IStep<Unit>>()
+            InitialSteps = new List<IStep<Unit>>
             {
                 TestSteps.DeleteAllIntegrationTestWorkspace,
                 TestSteps.MaybeCreateTestMatter,
@@ -128,7 +128,7 @@ public partial class IntegrationTests
                 TestSteps.AssertDocumentCount(0),
                 //TestSteps.AssertFolderCount(0),
 
-                new RunStep<int>
+                new RunStep<SCLInt>
                 {
                     Step = new RelativityCreateFolder
                     {
@@ -144,7 +144,7 @@ public partial class IntegrationTests
                 TestSteps.LogWorkspaceStatistics,
                 TestSteps.DeleteDocuments("Test Document"),
                 TestSteps.AssertDocumentCount(0),
-                new RelativityDeleteUnusedFolders()
+                new RelativityDeleteUnusedFolders
                 {
                     Workspace = TestSteps.IntegrationTestWorkspace
                 },
@@ -159,25 +159,25 @@ public partial class IntegrationTests
     [Fact(Skip = SkipAll)]
     public async void TestSearchAndTag()
     {
-        var step = new ForEach<Entity>()
+        var step = new ForEach<Entity>
         {
-            Array = new RelativitySendQuery()
+            Array = new RelativitySendQuery
             {
                 ArtifactType =
-                    new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document)),
+                    new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Document)),
                 Condition = Constant("'Title' LIKE 'Bond'"),
                 Workspace = TestSteps.IntegrationTestWorkspace,
                 Start     = Constant(0),
                 Length    = Constant(100),
-                Fields = new OneOfStep<Array<int>, Array<StringStream>>(
+                Fields = new OneOfStep<Array<SCLInt>, Array<StringStream>>(
                     Array("Title", "Control Number")
                 )
             },
             Action = new LambdaFunction<Entity, Unit>(
                 null,
-                new RelativityUpdateObject()
+                new RelativityUpdateObject
                 {
-                    ObjectArtifactId = new EntityGetValue<int>()
+                    ObjectArtifactId = new EntityGetValue<SCLInt>
                     {
                         Entity   = new GetAutomaticVariable<Entity>(),
                         Property = Constant("ArtifactId")
@@ -194,9 +194,9 @@ public partial class IntegrationTests
     private async Task TestSCLSequence(IStep step)
     {
         var logger =
-            TestOutputHelper.BuildLogger(new LoggingConfig() { LogLevel = LogLevel.Trace });
+            TestOutputHelper.BuildLogger(new LoggingConfig { LogLevel = LogLevel.Trace });
 
-        var scl = step.Serialize();
+        var scl = step.Serialize(SerializeOptions.Serialize);
         logger.LogInformation(scl);
 
         var externalContext = ExternalContext.Default with
@@ -206,7 +206,7 @@ public partial class IntegrationTests
         };
 
         var connectorData = new ConnectorData(
-            new ConnectorSettings()
+            new ConnectorSettings
             {
                 Id      = "Reductech.EDR.Connectors.Relativity",
                 Enable  = true,

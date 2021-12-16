@@ -2,7 +2,7 @@
 
 namespace Reductech.EDR.Connectors.Relativity.Tests;
 
-public partial class ExampleTests
+public class ExampleTests
 {
 
     public ExampleTests(ITestOutputHelper testOutputHelper)
@@ -18,36 +18,36 @@ public partial class ExampleTests
 
             yield return ("Search and Tag", //Note that the 'Tags' field must exist in your workspace for this to work
                     
-                          new ForEach<Entity>()
+                          new ForEach<Entity>
                           {
-                              Array = new RelativitySendQuery()
+                              Array = new RelativitySendQuery
                               {
                                   ArtifactType =
-                                      new OneOfStep<ArtifactType, int>(
+                                      new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(
                                           Constant(ArtifactType.Document)
                                       ),
                                   Condition = Constant("'Title' LIKE 'Bond'"),
                                   Workspace =
-                                      new OneOfStep<int, StringStream>(
+                                      new OneOfStep<SCLInt, StringStream>(
                                           Constant("Integration Test Workspace")
                                       ),
                                   Start  = Constant(0),
                                   Length = Constant(100),
-                                  Fields = new OneOfStep<Array<int>, Array<StringStream>>(
+                                  Fields = new OneOfStep<Array<SCLInt>, Array<StringStream>>(
                                       Array("Title", "Control Number")
                                   )
                               },
                               Action = new LambdaFunction<Entity, Unit>(
                                   null,
-                                  new RelativityUpdateObject()
+                                  new RelativityUpdateObject
                                   {
-                                      ObjectArtifactId = new EntityGetValue<int>()
+                                      ObjectArtifactId = new EntityGetValue<SCLInt>
                                       {
                                           Entity   = new GetAutomaticVariable<Entity>(),
                                           Property = Constant("ArtifactId")
                                       },
                                       Workspace =
-                                          new OneOfStep<int, StringStream>(
+                                          new OneOfStep<SCLInt, StringStream>(
                                               Constant("Integration Test Workspace")
                                           ),
                                       FieldValues = Constant(Entity.Create(("Tags","My Tag")))
@@ -61,9 +61,9 @@ public partial class ExampleTests
 
 
             yield return ("Import Entities",
-                          new RelativityImportEntities()
+                          new RelativityImportEntities
                           {
-                              Workspace = new OneOfStep<int, StringStream>(Constant("Integration Test Workspace")),
+                              Workspace = new OneOfStep<SCLInt, StringStream>(Constant("Integration Test Workspace")),
                               Entities = Array(
                                   Entity.Create(
                                       ("Control Number", "12345"), 
@@ -107,16 +107,16 @@ public partial class ExampleTests
                                           )
                                           .ToQueryString()
                                   ),
-                                  Workspace = new OneOfStep<int, StringStream>(Constant(-1)),
+                                  Workspace = new OneOfStep<SCLInt, StringStream>(Constant(-1)),
                                   ArtifactType =
-                                      new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Case))
+                                      new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Case))
                               },
                               Action = new LambdaFunction<Entity, Unit>(
                                   null,
-                                  new RelativityDeleteWorkspace()
+                                  new RelativityDeleteWorkspace
                                   {
-                                      Workspace = new OneOfStep<int, StringStream>(
-                                          new EntityGetValue<int>()
+                                      Workspace = new OneOfStep<SCLInt, StringStream>(
+                                          new EntityGetValue<SCLInt>
                                           {
                                               Entity   = new GetAutomaticVariable<Entity>(),
                                               Property = Constant("ArtifactId")
@@ -140,9 +140,9 @@ public partial class ExampleTests
                                           )
                                           .ToQueryString()
                                   ),
-                                  Workspace = new OneOfStep<int, StringStream>(Constant(-1)),
+                                  Workspace = new OneOfStep<SCLInt, StringStream>(Constant(-1)),
                                   ArtifactType =
-                                      new OneOfStep<ArtifactType, int>(
+                                      new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(
                                           Constant(ArtifactType.Matter)
                                       )
                               },
@@ -150,7 +150,7 @@ public partial class ExampleTests
                                   null,
                                   new RelativityDeleteMatter
                                   {
-                                      MatterArtifactId = new EntityGetValue<int>
+                                      MatterArtifactId = new EntityGetValue<SCLInt>
                                       {
                                           Entity   = new GetAutomaticVariable<Entity>(),
                                           Property = Constant("ArtifactId")
@@ -163,10 +163,10 @@ public partial class ExampleTests
             
 
             yield return ("Create a folder",
-                          new RelativityCreateFolder()
+                          new RelativityCreateFolder
                           {
                               FolderName = Constant("MyNewFolder"),
-                              Workspace = new OneOfStep<int, StringStream>(
+                              Workspace = new OneOfStep<SCLInt, StringStream>(
                                   Constant("Integration Test Workspace")
                               )
                           }
@@ -175,28 +175,28 @@ public partial class ExampleTests
             //yield break;
 
             yield return ("Query Documents",
-                          new ForEach<Entity>()
+                          new ForEach<Entity>
                           {
-                              Array = new RelativitySendQuery()
+                              Array = new RelativitySendQuery
                               {
                                   ArtifactType =
-                                      new OneOfStep<ArtifactType, int>(
+                                      new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(
                                           Constant(ArtifactType.Document)
                                       ),
                                   Condition = Constant("'Title' LIKE 'Bond'"),
                                   Workspace =
-                                      new OneOfStep<int, StringStream>(
+                                      new OneOfStep<SCLInt, StringStream>(
                                           Constant("Integration Test Workspace")
                                       ),
                                   Start  = Constant(0),
                                   Length = Constant(100),
-                                  Fields = new OneOfStep<Array<int>, Array<StringStream>>(
+                                  Fields = new OneOfStep<Array<SCLInt>, Array<StringStream>>(
                                       Array("Title", "Control Number")
                                   )
                               },
                               Action = new LambdaFunction<Entity, Unit>(
                                   null,
-                                  new Log<Entity>() { Value = new GetAutomaticVariable<Entity>() }
+                                  new Log { Value = new GetAutomaticVariable<Entity>() }
                               )
                           }
                 );
@@ -204,18 +204,18 @@ public partial class ExampleTests
             //yield break;
 
             yield return ("Create a workspace and import data",
-                          new Sequence<Unit>()
+                          new Sequence<Unit>
                           {
-                              InitialSteps = new List<IStep<Unit>>()
+                              InitialSteps = new List<IStep<Unit>>
                               {
-                                  new SetVariable<int>()
+                                  new SetVariable<SCLInt>
                                   {
-                                      Value = new RelativityCreateMatter()
+                                      Value = new RelativityCreateMatter
                                       {
                                           Client =
-                                              new OneOfStep<int, StringStream>(Constant("Test Client")),
+                                              new OneOfStep<SCLInt, StringStream>(Constant("Test Client")),
                                           Status =
-                                              new OneOfStep<int, MatterStatus>(Constant(671)),
+                                              new OneOfStep<SCLInt, SCLEnum<MatterStatus>>(Constant(671)),
                                           MatterName = Constant("Test Matter"),
                                           Number     = Constant("Ten"),
                                           Keywords   = Constant("Test Keywords"),
@@ -223,22 +223,22 @@ public partial class ExampleTests
                                       },
                                       Variable = new VariableName("MatterId")
                                   },
-                                  new SetVariable<Entity>()
+                                  new SetVariable<Entity>
                                   {
                                       Variable = new VariableName("Workspace"),
-                                      Value = new RelativityCreateWorkspace()
+                                      Value = new RelativityCreateWorkspace
                                       {
                                           WorkspaceName = Constant("Integration Test Workspace"),
-                                          Matter = new OneOfStep<int, StringStream>(
-                                              GetVariable<int>("MatterId")
+                                          Matter = new OneOfStep<SCLInt, StringStream>(
+                                              GetVariable<SCLInt>("MatterId")
                                           ),
                                           TemplateId =
-                                              new OneOfStep<int, StringStream>(
+                                              new OneOfStep<SCLInt, StringStream>(
                                                   Constant("Relativity Starter Template")
                                               ), // = Constant(1015024),
                                           StatusId = Constant(675),
                                           ResourcePoolId =
-                                              new OneOfStep<int, StringStream>(
+                                              new OneOfStep<SCLInt, StringStream>(
                                                   Constant("Default")
                                               ), // Constant(1015040),
                                           SqlServerId             = Constant(1015096),
@@ -246,49 +246,49 @@ public partial class ExampleTests
                                           DefaultCacheLocationId  = Constant(1015534)
                                       }
                                   },
-                                  new SetVariable<int>()
+                                  new SetVariable<SCLInt>
                                   {
                                       Variable = new VariableName("WorkspaceId"),
-                                      Value = new EntityGetValue<int>()
+                                      Value = new EntityGetValue<SCLInt>
                                       {
                                           Property = Constant("ArtifactID"),
-                                          Entity = new GetVariable<Entity>()
+                                          Entity = new GetVariable<Entity>
                                           {
                                               Variable = new VariableName("Workspace")
                                           }
                                       }
                                   },
-                                  new SetVariable<int>()
+                                  new SetVariable<SCLInt>
                                   {
                                       Variable = new VariableName("FolderId"),
-                                      Value = new RelativityCreateFolder()
+                                      Value = new RelativityCreateFolder
                                       {
                                           FolderName = Constant("MyFolder"),
                                           Workspace =
-                                              new OneOfStep<int, StringStream>(
-                                                  GetVariable<int>("WorkspaceId")
+                                              new OneOfStep<SCLInt, StringStream>(
+                                                  GetVariable<SCLInt>("WorkspaceId")
                                               ),
                                       }
                                   },
-                                  //new SetVariable<Array<int>>()
+                                  //new SetVariable<Array<SCLInt>>()
                                   //{
                                   //    Variable = new VariableName("DynamicObjectIds"),
                                   //    Value = new RelativityCreateDynamicObjects()
                                   //    {
-                                  //        ArtifactType = new OneOfStep<ArtifactType, int>(Constant(10)),
+                                  //        ArtifactType = new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(10)),
                                   //        Workspace =
-                                  //            new OneOfStep<int, StringStream>(GetVariable<int>("WorkspaceId")),
+                                  //            new OneOfStep<SCLInt, StringStream>(GetVariable<SCLInt>("WorkspaceId")),
                                   //        Entities = Array(
                                   //            Entity.Create(
                                   //                ("Title", "Thing 1"),
                                   //                ("Title", "Thing 2")
                                   //            )
                                   //        ),
-                                  //        ParentArtifactId = GetVariable<int>("FolderId"),
+                                  //        ParentArtifactId = GetVariable<SCLInt>("FolderId"),
                                   //    },
                                   //},
 
-                                  new RelativityImport()
+                                  new RelativityImport
                                   {
                                       FilePath =
                                           Constant(
@@ -300,19 +300,19 @@ public partial class ExampleTests
                                               @"C:\Users\wainw\source\repos\Examples\Concordance\CarlaSettings.kwe"
                                           ),
                                       StartLineNumber = null,
-                                      Workspace = new OneOfStep<int, StringStream>(
-                                          GetVariable<int>("WorkspaceId")
+                                      Workspace = new OneOfStep<SCLInt, StringStream>(
+                                          GetVariable<SCLInt>("WorkspaceId")
                                       )
                                   },
                                   //new RelativityDeleteWorkspace()
                                   //{
-                                  //    Workspace = new OneOfStep<int, StringStream>(
-                                  //        GetVariable<int>("WorkspaceId")
+                                  //    Workspace = new OneOfStep<SCLInt, StringStream>(
+                                  //        GetVariable<SCLInt>("WorkspaceId")
                                   //    )
                                   //},
                                   //new RelativityDeleteMatter()
                                   //{
-                                  //    MatterArtifactId = GetVariable<int>("MatterId"),
+                                  //    MatterArtifactId = GetVariable<SCLInt>("MatterId"),
                                   //}
                               }
                           }
@@ -321,7 +321,7 @@ public partial class ExampleTests
     }
 
     public static IEnumerable<object[]> IntegrationTestCaseArgs =>
-        Examples.Select(x => new object[] { x.name, x.step.Serialize() });
+        Examples.Select(x => new object[] { x.name, x.step.Serialize(SerializeOptions.Serialize) });
 
     [Theory(Skip = "Manual")]
     //[Theory]
@@ -330,7 +330,7 @@ public partial class ExampleTests
     public async Task RunSCLSequence(string name, string scl)
     {
         var logger =
-            TestOutputHelper.BuildLogger(new LoggingConfig() { LogLevel = LogLevel.Trace });
+            TestOutputHelper.BuildLogger(new LoggingConfig { LogLevel = LogLevel.Trace });
 
         logger.LogInformation(scl);
 
@@ -341,7 +341,7 @@ public partial class ExampleTests
         };
 
         var connectorData = new ConnectorData(
-            new ConnectorSettings()
+            new ConnectorSettings
             {
                 Id      = "Reductech.EDR.Connectors.Relativity",
                 Enable  = true,

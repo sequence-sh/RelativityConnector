@@ -14,32 +14,32 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
             yield return new StepCase(
                     "Retrieve Matter",
                     TestHelpers.LogEntity(
-                        new RelativityRetrieveMatter()
+                        new RelativityRetrieveMatter
                         {
-                            MatterArtifactId = StaticHelpers.Constant(1234)
+                            MatterArtifactId = Constant(1234)
                         }
                     ),
                     Unit.Default,
-                    @"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
+                    @"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': Null 'Number': ""My Number"")"
 
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IMatterManager1, MatterResponse>(
                         x => x.ReadAsync(1234),
-                        new MatterResponse() { ArtifactID = 1234, Number = "My Number", Name = "My Response", Keywords = "My Keywords" }
+                        new MatterResponse { ArtifactID = 1234, Number = "My Number", Name = "My Response", Keywords = "My Keywords" }
                     )
                 );
 
             yield return new StepCase(
                     "Retrieve Matter with HTTP",
                     TestHelpers.LogEntity(
-                        new RelativityRetrieveMatter()
+                        new RelativityRetrieveMatter
                         {
-                            MatterArtifactId = StaticHelpers.Constant(1234)
+                            MatterArtifactId = Constant(1234)
                         }
                     ),
                     Unit.Default,
-                    @"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': null 'Number': ""My Number"")"
+                    @"('ArtifactID': 1234 'Name': ""My Response"" 'Keywords': ""My Keywords"" 'Notes': Null 'Number': ""My Number"")"
 
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(
@@ -48,7 +48,7 @@ public partial class RelativityRetrieveMatterTests : StepTestBase<RelativityRetr
                         )
                         .WithVerb(HttpMethod.Get)
                         .RespondWithJson(
-                            new MatterResponse() { ArtifactID = 1234, Number = "My Number", Name = "My Response", Keywords = "My Keywords"}
+                            new MatterResponse { ArtifactID = 1234, Number = "My Number", Name = "My Response", Keywords = "My Keywords"}
                         )
                 );
         }

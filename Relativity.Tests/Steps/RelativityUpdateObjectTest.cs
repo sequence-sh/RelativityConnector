@@ -29,9 +29,9 @@ public partial class RelativityUpdateObjectTest : StepTestBase<RelativityUpdateO
         {
             yield return new StepCase(
                     "Test Update Field",
-                    new RelativityUpdateObject()
+                    new RelativityUpdateObject
                     {
-                        Workspace        = new OneOfStep<int, StringStream>(Constant(11)),
+                        Workspace        = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                         ObjectArtifactId = Constant(22),
                         FieldValues      = Constant(Entity.Create(("a", 1))),
                         UpdateBehaviour  = Constant(UpdateBehaviour.Replace)
@@ -45,11 +45,11 @@ public partial class RelativityUpdateObjectTest : StepTestBase<RelativityUpdateO
                                          It.Is<UpdateOptions>(a=>CheckUpdateOptions(a))
                             
                         ),
-                        new UpdateResult()
+                        new UpdateResult
                         {
-                            EventHandlerStatuses = new List<EventHandlerStatus>()
+                            EventHandlerStatuses = new List<EventHandlerStatus>
                             {
-                                new EventHandlerStatus()
+                                new EventHandlerStatus
                                 {
                                     Success = true
                                 }

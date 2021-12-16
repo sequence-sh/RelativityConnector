@@ -5,6 +5,7 @@ namespace Reductech.EDR.Connectors.Relativity;
 public abstract class
     RelativityApiRequest<TRequest, TService, TServiceOutput, TOutput> : CompoundStep<TOutput>
     where TService : IManager
+where TOutput : ISCLObject
 {
     /// <inheritdoc />
     protected override async Task<Result<TOutput, IError>> Run(

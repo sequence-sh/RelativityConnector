@@ -15,36 +15,36 @@ public partial class
         {
             yield return new StepCase(
                     "Retrieve Workspace",
-                    new Log<Entity>()
+                    new Log
                     {
-                        Value = new RelativityRetrieveWorkspace()
+                        Value = new RelativityRetrieveWorkspace
                         {
-                            Workspace       = new OneOfStep<int, StringStream>(Constant(11)),
+                            Workspace       = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                             IncludeActions  = Constant(true),
                             IncludeMetadata = Constant(true),
                         }
                     },
                     Unit.Default,
-                    @"('Name': ""My Workspace"" 'ArtifactID': 11 'Notes': ""My Notes"" 'CreatedOn': 0001-01-01T00:00:00.0000000 'DownloadHandlerUrl': null)"
+                    @"('Name': ""My Workspace"" 'ArtifactID': 11 'Notes': ""My Notes"" 'CreatedOn': 0001-01-01T00:00:00.0000000 'DownloadHandlerUrl': Null)"
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IWorkspaceManager1, WorkspaceResponse>(
                         a => a.ReadAsync(11, true, true),
-                        new WorkspaceResponse()
+                        new WorkspaceResponse
                         {
                             ArtifactID = 11,
                             Name       = "My Workspace",
                             Notes      = "My Notes",
-                            Actions = new List<Action>()
+                            Actions = new List<Action>
                             {
                                 new()
                                 {
                                     Name = "MyAction", IsAvailable = true, Verb = "Post"
                                 }
                             },
-                            Meta = new Meta()
+                            Meta = new Meta
                             {
-                                ReadOnly = new List<string>() { "Meta", "Data" }
+                                ReadOnly = new List<string> { "Meta", "Data" }
                             }
                         }
                     )

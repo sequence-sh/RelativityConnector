@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Field;
 using Relativity.Services.Folder;
@@ -10,45 +9,46 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
 /// <summary>
 /// Creates a keyword search. Returns the artifact id of the created search.
 /// </summary>
-public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspaceID, KeywordSearch
+public class RelativityCreateKeywordSearch : RelativityApiRequest<(SCLInt workspaceID, KeywordSearch
     search),
-    IKeywordSearchManager1, int, int>
+    IKeywordSearchManager1, SCLInt, SCLInt>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory { get; } =
-        new SimpleStepFactory<RelativityCreateKeywordSearch, int>();
+        new SimpleStepFactory<RelativityCreateKeywordSearch, SCLInt>();
 
     /// <inheritdoc />
-    public override Result<int, IErrorBuilder> ConvertOutput(int serviceOutput)
+    public override Result<SCLInt, IErrorBuilder> ConvertOutput(SCLInt serviceOutput)
     {
         return serviceOutput;
     }
 
     /// <inheritdoc />
-    public override Task<int> SendRequest(
+    public override async Task<SCLInt> SendRequest(
         IStateMonad stateMonad,
         IKeywordSearchManager1 service,
-        (int workspaceID, KeywordSearch search) requestObject,
+        (SCLInt workspaceID, KeywordSearch search) requestObject,
         CancellationToken cancellationToken)
     {
-        return service.CreateSingleAsync(requestObject.workspaceID, requestObject.search);
+        var r = await service.CreateSingleAsync(requestObject.workspaceID, requestObject.search);
+        return r.ConvertToSCLObject();
     }
 
     /// <inheritdoc />
-    public override Task<Result<(int workspaceID, KeywordSearch search), IError>> TryCreateRequest(
+    public override Task<Result<(SCLInt workspaceID, KeywordSearch search), IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
-                Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
+                Workspace.WrapArtifact(ArtifactType.Case, stateMonad, this),
                 SearchName.WrapStringStream(),
                 SearchText.WrapStringStream(),
                 SortByRank,
-                Fields.WrapOneOf(StepMaps.Array<int>(), StepMaps.Array(StepMaps.String())),
+                Fields.WrapOneOf(StepMaps.Array<SCLInt>(), StepMaps.Array(StepMaps.String())),
                 Notes.WrapNullable(StepMaps.String()),
                 Keywords.WrapNullable(StepMaps.String()),
                 Scope,
-                SearchFolderArtifactIds.WrapNullable(StepMaps.Array<int>()),
+                SearchFolderArtifactIds.WrapNullable(StepMaps.Array<SCLInt>()),
                 cancellation
             )
             .Map(
@@ -89,7 +89,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The name of the new search
@@ -110,7 +110,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
     /// </summary>
     [StepProperty(4)]
     [Required]
-    public IStep<bool> SortByRank { get; set; } = null!;
+    public IStep<SCLBool> SortByRank { get; set; } = null!;
 
     /// <summary>
     /// The fields of the search
@@ -118,7 +118,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
     /// </summary>
     [StepProperty(5)]
     [Required] 
-    public IStep<OneOf<Array<int>, Array<StringStream>>> Fields { get; set; } = null!;
+    public IStep<SCLOneOf<Array<SCLInt>, Array<StringStream>>> Fields { get; set; } = null!;
 
     [StepProperty(6)]
     [DefaultValueExplanation("")]
@@ -136,15 +136,15 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(int workspace
     /// </summary>
     [StepProperty(8)]
     [DefaultValueExplanation(nameof(SearchScope.EntireCase))]
-    public IStep<SearchScope> Scope { get; set; } =
-        new EnumConstant<SearchScope>(SearchScope.EntireCase);
+    public IStep<SCLEnum<SearchScope>> Scope { get; set; } =
+        new SCLConstant<SCLEnum<SearchScope>>(new SCLEnum<SearchScope>(SearchScope.EntireCase));
 
     /// <summary>
     /// Artifact ids of the folders to search
     /// </summary>
     [StepProperty(9)]
     [DefaultValueExplanation("Do not specify any folders - for searching the entire case")]
-    public IStep<Array<int>>? SearchFolderArtifactIds { get; set; } = null!;
+    public IStep<Array<SCLInt>>? SearchFolderArtifactIds { get; set; } = null!;
 
     private static ScopeType MapSearchScope(SearchScope searchScope)
     {

@@ -16,24 +16,24 @@ public partial class
         {
             yield return new StepCase(
                     "Delete Unused Folders using workspace id",
-                    new RelativityDeleteUnusedFolders()
+                    new RelativityDeleteUnusedFolders
                     {
-                        Workspace = new OneOfStep<int, StringStream>(Constant(42)),
+                        Workspace = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                     },
                     Unit.Default
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IFolderManager1, FolderResultSet>(
                         x => x.DeleteUnusedFoldersAsync(42),
-                        new FolderResultSet() { Success = true }
+                        new FolderResultSet { Success = true }
                     )
                 );
 
             yield return new StepCase(
                     "Delete Unused Folders using workspace name",
-                    new RelativityDeleteUnusedFolders()
+                    new RelativityDeleteUnusedFolders
                     {
-                        Workspace = new OneOfStep<int, StringStream>(Constant("My Workspace")),
+                        Workspace = new OneOfStep<SCLInt, StringStream>(Constant("My Workspace")),
                     },
                     Unit.Default
                 ).WithTestRelativitySettings()
@@ -46,9 +46,9 @@ public partial class
                             1,
                             It.IsAny<CancellationToken>()
                         ),
-                        new QueryResultSlim()
+                        new QueryResultSlim
                         {
-                            Objects = new List<RelativityObjectSlim>()
+                            Objects = new List<RelativityObjectSlim>
                             {
                                 new() { ArtifactID = 42 }
                             }
@@ -56,7 +56,7 @@ public partial class
                     ),
                     new MockSetup<IFolderManager1, FolderResultSet>(
                         x => x.DeleteUnusedFoldersAsync(42),
-                        new FolderResultSet() { Success = true }
+                        new FolderResultSet { Success = true }
                     )
                 );
         }
@@ -69,24 +69,24 @@ public partial class
         {
             yield return new ErrorCase(
                     "Result unsuccessful",
-                    new RelativityDeleteUnusedFolders()
+                    new RelativityDeleteUnusedFolders
                     {
-                        Workspace = new OneOfStep<int, StringStream>(Constant(42)),
+                        Workspace = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                     },
                     ErrorCode_Relativity.Unsuccessful.ToErrorBuilder("Test Error Message")
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IFolderManager1, FolderResultSet>(
                         x => x.DeleteUnusedFoldersAsync(42),
-                        new FolderResultSet() { Success = false, Message = "Test Error Message" }
+                        new FolderResultSet { Success = false, Message = "Test Error Message" }
                     )
                 );
 
             yield return new ErrorCase(
                     "Workspace search unsuccessful",
-                    new RelativityDeleteUnusedFolders()
+                    new RelativityDeleteUnusedFolders
                     {
-                        Workspace = new OneOfStep<int, StringStream>(Constant("Test Workspace")),
+                        Workspace = new OneOfStep<SCLInt, StringStream>(Constant("Test Workspace")),
                     },
                     ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Case", "Test Workspace")
                 ).WithTestRelativitySettings()
@@ -94,15 +94,15 @@ public partial class
 
             yield return new ErrorCase(
                         "Workspace does not exist",
-                        new RelativityDeleteUnusedFolders()
+                        new RelativityDeleteUnusedFolders
                         {
-                            Workspace = new OneOfStep<int, StringStream>(Constant("Test Workspace")),
+                            Workspace = new OneOfStep<SCLInt, StringStream>(Constant("Test Workspace")),
                         },
                         ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder("Case", "Test Workspace")
                     ).WithTestRelativitySettings()
                     .WithFlurlMocks(
                         x => x.RespondWithJson(
-                            new QueryResultSlim { Objects = new List<RelativityObjectSlim> { } }
+                            new QueryResultSlim { Objects = new List<RelativityObjectSlim>() }
                         )
                     )
                 ;

@@ -1,20 +1,19 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Shared.V1.Models;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
 
-public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatterManager1, int, int>
+public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatterManager1, int, SCLInt>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
-        new SimpleStepFactory<RelativityCreateMatter, int>();
+        new SimpleStepFactory<RelativityCreateMatter, SCLInt>();
 
     /// <inheritdoc />
-    public override Result<int, IErrorBuilder> ConvertOutput(int serviceOutput)
+    public override Result<SCLInt, IErrorBuilder> ConvertOutput(int serviceOutput)
     {
-        return serviceOutput;
+        return serviceOutput.ConvertToSCLObject();
     }
 
     /// <inheritdoc />
@@ -72,9 +71,9 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
         return result;
     }
 
-    [StepProperty(1)][Required] public IStep<OneOf<int, StringStream>> Client { get; set; } = null!;
+    [StepProperty(1)][Required] public IStep<SCLOneOf<SCLInt, StringStream>> Client { get; set; } = null!;
 
-    [StepProperty(2)][Required] public IStep<OneOf<int, MatterStatus>> Status { get; set; } = null!;
+    [StepProperty(2)][Required] public IStep<SCLOneOf<SCLInt, SCLEnum<MatterStatus>>> Status { get; set; } = null!;
 
     /// <summary>
     /// The name of the matter to create

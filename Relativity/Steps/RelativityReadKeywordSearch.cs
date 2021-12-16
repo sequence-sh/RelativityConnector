@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Search;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -7,7 +6,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
 /// <summary>
 /// Reads a search
 /// </summary>
-public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId, int searchId),
+public class RelativityReadKeywordSearch : RelativityApiRequest<(SCLInt workspaceId, SCLInt searchId),
     IKeywordSearchManager1, KeywordSearch, Entity>
 {
     /// <inheritdoc />
@@ -24,19 +23,19 @@ public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId
     public override Task<KeywordSearch> SendRequest(
         IStateMonad stateMonad,
         IKeywordSearchManager1 service,
-        (int workspaceId, int searchId) requestObject,
+        (SCLInt workspaceId, SCLInt searchId) requestObject,
         CancellationToken cancellationToken)
     {
         return service.ReadSingleAsync(requestObject.workspaceId, requestObject.searchId);
     }
 
     /// <inheritdoc />
-    public override Task<Result<(int workspaceId, int searchId), IError>> TryCreateRequest(
+    public override Task<Result<(SCLInt workspaceId, SCLInt searchId), IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
-            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
+            Workspace.WrapArtifact(ArtifactType.Case, stateMonad, this),
             SearchId,
             cancellation
         );
@@ -48,12 +47,12 @@ public class RelativityReadKeywordSearch : RelativityApiRequest<(int workspaceId
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The Id of the search to read
     /// </summary>
     [StepProperty(2)]
     [Required]
-    public IStep<int> SearchId { get; set; } = null!;
+    public IStep<SCLInt> SearchId { get; set; } = null!;
 }

@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
 
@@ -72,7 +71,7 @@ public sealed class RelativityExport : CompoundStep<Array<Entity>>
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The condition that documents must meet to be exported
@@ -80,7 +79,7 @@ public sealed class RelativityExport : CompoundStep<Array<Entity>>
     [StepProperty]
     [Example("'Extracted Text' ISSET ")]
     [DefaultValueExplanation("No condition")]
-    public IStep<StringStream> Condition { get; set; } = new StringConstant("");
+    public IStep<StringStream> Condition { get; set; } = new SCLConstant<StringStream>("");
 
     /// <summary>
     /// Names of fields to export
@@ -94,7 +93,7 @@ public sealed class RelativityExport : CompoundStep<Array<Entity>>
     /// </summary>
     [StepProperty]
     [DefaultValueExplanation("10")]
-    public IStep<int> BatchSize { get; set; } = new IntConstant(10);
+    public IStep<SCLInt> BatchSize { get; set; } = new SCLConstant<SCLInt>(10.ConvertToSCLObject());
 
     /// <inheritdoc />
     public override IStepFactory StepFactory =>

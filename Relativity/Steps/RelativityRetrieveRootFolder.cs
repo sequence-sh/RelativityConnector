@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -14,7 +13,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
     ExecuteInTests = false
 )]
 public sealed class
-    RelativityRetrieveRootFolder : RelativityApiRequest<int, IFolderManager1, Folder, Entity>
+    RelativityRetrieveRootFolder : RelativityApiRequest<SCLInt, IFolderManager1, Folder, Entity>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory { get; } =
@@ -30,14 +29,14 @@ public sealed class
     public override async Task<Folder> SendRequest(
         IStateMonad stateMonad,
         IFolderManager1 service,
-        int requestObject,
+        SCLInt requestObject,
         CancellationToken cancellationToken)
     {
         return await service.GetWorkspaceRootAsync(requestObject);
     }
 
     /// <inheritdoc />
-    public override async Task<Result<int, IError>> TryCreateRequest(
+    public override async Task<Result<SCLInt, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
@@ -52,5 +51,5 @@ public sealed class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 }

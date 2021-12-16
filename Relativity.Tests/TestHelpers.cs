@@ -75,16 +75,16 @@ public static class TestHelpers
 {
     public static IStep<Unit> LogEntity(IStep<Entity> entityStep)
     {
-        return new Log<Entity>() { Value = entityStep };
+        return new Log { Value = entityStep };
     }
 
     public static IStep<Unit> LogAllEntities(IStep<Array<Entity>> arrayStep)
     {
-        return new ForEach<Entity>()
+        return new ForEach<Entity>
         {
             Action = new LambdaFunction<Entity, Unit>(
                 null,
-                new Log<Entity>() { Value = new GetAutomaticVariable<Entity>() }
+                new Log { Value = new GetAutomaticVariable<Entity>() }
             ),
             Array = arrayStep
         };
@@ -170,11 +170,11 @@ public static class TestHelpers
         where T : ICaseThatExecutes
     {
         var connectorData = new ConnectorData(
-            new ConnectorSettings()
+            new ConnectorSettings
             {
                 Enable = true,
                 Id     = RelativityAssembly.GetName().Name!,
-                Settings = new Dictionary<string, object>()
+                Settings = new Dictionary<string, object>
                 {
                     {
                         nameof(RelativitySettings.RelativityUsername),

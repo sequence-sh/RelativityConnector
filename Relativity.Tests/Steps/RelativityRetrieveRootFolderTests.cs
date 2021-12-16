@@ -13,11 +13,11 @@ public partial class
         {
             yield return new StepCase(
                     "Retrieve Root Folder",
-                    new Log<Entity>()
+                    new Log
                     {
-                        Value = new RelativityRetrieveRootFolder()
+                        Value = new RelativityRetrieveRootFolder
                         {
-                            Workspace = new OneOfStep<int, StringStream>(Constant(42)),
+                            Workspace = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                         }
                     },
                     Unit.Default,
@@ -26,7 +26,7 @@ public partial class
                 .WithService(
                     new MockSetup<IFolderManager1, Folder>(
                         x => x.GetWorkspaceRootAsync(42),
-                        new Folder() { Name = "MyFolder", ArtifactID = 12345 }
+                        new Folder { Name = "MyFolder", ArtifactID = 12345 }
                     )
                 );
         }

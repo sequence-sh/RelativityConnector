@@ -5,7 +5,7 @@ using Relativity.Environment.V1.Matter.Models;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
-public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreateMatter, int>
+public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreateMatter, SCLInt>
 {
     /// <inheritdoc />
     protected override IEnumerable<StepCase> StepCases
@@ -14,16 +14,16 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
         {
             yield return new StepCase(
                     "Create Matter",
-                    new RelativityCreateMatter()
+                    new RelativityCreateMatter
                     {
                         MatterName = Constant("My Matter"),
-                        Client     = new OneOfStep<int, StringStream>(Constant(123)) ,
+                        Client     = new OneOfStep<SCLInt, StringStream>(Constant(123)) ,
                         Keywords   = Constant("My Keywords"),
                         Notes      = Constant("My Notes"),
                         Number     = Constant("My Number"),
-                        Status     = new OneOfStep<int, MatterStatus>(Constant(456)) 
+                        Status     = new OneOfStep<SCLInt, SCLEnum<MatterStatus>>(Constant(456)) 
                     },
-                    42
+                    42.ConvertToSCLObject()
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IMatterManager1, int>(
@@ -43,16 +43,16 @@ public partial class RelativityCreateMatterTests : StepTestBase<RelativityCreate
 
             yield return new StepCase(
                     "Create Matter with API",
-                    new RelativityCreateMatter()
+                    new RelativityCreateMatter
                     {
                         MatterName = Constant("My Matter"),
-                        Client     = new OneOfStep<int, StringStream>(Constant(123)),
+                        Client     = new OneOfStep<SCLInt, StringStream>(Constant(123)),
                         Keywords   = Constant("My Keywords"),
                         Notes      = Constant("My Notes"),
                         Number     = Constant("My Number"),
-                        Status     = new OneOfStep<int, MatterStatus>(Constant(456))
+                        Status     = new OneOfStep<SCLInt, SCLEnum<MatterStatus>>(Constant(456))
                     },
-                    42
+                    42.ConvertToSCLObject()
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(
                     x => x.ForCallsTo(

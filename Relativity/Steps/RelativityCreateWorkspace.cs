@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
 
@@ -98,7 +97,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<OneOf<int, StringStream>> Matter { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Matter { get; set; } = null!;
 
     /// <summary>
     /// The Template Artifact Id.
@@ -106,7 +105,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<OneOf<int, StringStream>> TemplateId { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> TemplateId { get; set; } = null!;
 
     /// <summary>
     /// The status Artifact Id.
@@ -114,7 +113,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<int> StatusId { get; set; } = null!;
+    public IStep<SCLInt> StatusId { get; set; } = null!;
 
     /// <summary>
     /// The Resource Pool Artifact Id
@@ -122,7 +121,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<OneOf<int, StringStream>> ResourcePoolId { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> ResourcePoolId { get; set; } = null!;
 
     /// <summary>
     /// The Sql Server Artifact Id
@@ -130,7 +129,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<int> SqlServerId { get; set; } = null!;
+    public IStep<SCLInt> SqlServerId { get; set; } = null!;
 
     /// <summary>
     /// The Default File Repository Artifact Id.
@@ -138,7 +137,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<int> DefaultFileRepositoryId { get; set; } = null!;
+    public IStep<SCLInt> DefaultFileRepositoryId { get; set; } = null!;
 
     /// <summary>
     /// The Default Cache Location Artifact Id
@@ -146,7 +145,7 @@ public sealed class
     /// </summary>
     [StepProperty]
     [Required]
-    public IStep<int> DefaultCacheLocationId { get; set; } = null!;
+    public IStep<SCLInt> DefaultCacheLocationId { get; set; } = null!;
 
     /// <inheritdoc />
     public override IStepFactory StepFactory =>

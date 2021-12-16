@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -64,14 +63,14 @@ public sealed class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The Id of the folder you want to update
     /// </summary>
     [StepProperty(2)]
     [Required]
-    public IStep<int> FolderId { get; set; } = null!;
+    public IStep<SCLInt> FolderId { get; set; } = null!;
 
     /// <summary>
     /// The new name of the folder.

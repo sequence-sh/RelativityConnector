@@ -16,18 +16,18 @@ public partial class
 
             yield return new StepCase(
                         "Export with condition",
-                        new Log<Entity>()
+                        new Log
                         {
-                            Value = new RelativityCreateWorkspace()
+                            Value = new RelativityCreateWorkspace
                             {
                                 WorkspaceName           = Constant("MyNewWorkspace"),
                                 DefaultCacheLocationId  = Constant(1),
                                 DefaultFileRepositoryId = Constant(2),
-                                Matter                  = new OneOfStep<int, StringStream>(Constant(3)),
-                                ResourcePoolId          = new OneOfStep<int, StringStream>(Constant(4)) ,
+                                Matter                  = new OneOfStep<SCLInt, StringStream>(Constant(3)),
+                                ResourcePoolId          = new OneOfStep<SCLInt, StringStream>(Constant(4)) ,
                                 SqlServerId             = Constant(5),
                                 StatusId                = Constant(6),
-                                TemplateId              = new OneOfStep<int, StringStream>(Constant(7)) 
+                                TemplateId              = new OneOfStep<SCLInt, StringStream>(Constant(7)) 
                             }
                         },
                         Unit.Default,
@@ -40,7 +40,7 @@ public partial class
                                 It.IsAny<WorkspaceRequest>(),
                                 It.IsAny<CancellationToken>()
                             ),
-                            new WorkspaceResponse()
+                            new WorkspaceResponse
                             {
                                 Name = "MyNewWorkspace", DownloadHandlerUrl = "TestURL", ArtifactID = 123, Notes = "TestNotes", CreatedOn = DateTime.UnixEpoch
                             }

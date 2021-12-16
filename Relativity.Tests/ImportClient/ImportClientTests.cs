@@ -10,7 +10,7 @@ public class ImportClientTests
     [Fact]
     public void StartImportMustWork()
     {
-        var startCommand = new StartImportCommand()
+        var startCommand = new StartImportCommand
         {
             ControlNumberField  = "ControlNumber",
             FilePathField       = "FilePath",
@@ -32,7 +32,7 @@ public class ImportClientTests
                               It.IsAny<string>(),
                               It.IsAny<CallOptions>(),
                               startCommand
-                          )).Returns(new StartImportReply(){Message = "Test Message", Success = true})
+                          )).Returns(new StartImportReply {Message = "Test Message", Success = true})
                                   
             ;
 
@@ -48,7 +48,7 @@ public class ImportClientTests
     [Fact]
     public async Task StartImportAsyncMustWork()
     {
-        var startCommand = new StartImportCommand()
+        var startCommand = new StartImportCommand
         {
             ControlNumberField  = "ControlNumber",
             FilePathField       = "FilePath",
@@ -72,7 +72,7 @@ public class ImportClientTests
                               startCommand
                           )).Returns(
                 new AsyncUnaryCall<StartImportReply>(
-                    Task.FromResult(new StartImportReply(){Message = "Test Message", Success = true}),
+                    Task.FromResult(new StartImportReply {Message = "Test Message", Success = true}),
                     _ => Task.FromResult(new Metadata()),
                     _ =>                         new Status(StatusCode.OK, "DetailString"),
                     _=> new Metadata(),
@@ -95,7 +95,8 @@ public class ImportClientTests
     [Fact]
     public async void ImportObjectsMustWork()
     {
-        var importObject = new ImportObject(){Values = { new ImportObject.Types.FieldValue()
+        var importObject = new ImportObject
+        {Values = { new ImportObject.Types.FieldValue
         {
             StringValue = "Hello World"
         } }};
@@ -114,7 +115,7 @@ public class ImportClientTests
                           ))
             .Returns(new AsyncClientStreamingCall<ImportObject, ImportDataReply>(
                          new ClientRequestStream<ImportObject,ImportDataReply>(WriteOptions.Default),
-                         Task.FromResult(new ImportDataReply(){Message = "Test Message", Success = true}),
+                         Task.FromResult(new ImportDataReply {Message = "Test Message", Success = true}),
                          Task.FromResult(new Metadata()) ,
                          ()=>new Status(StatusCode.OK, "TestDetail"),
                          ()=> new Metadata(),
@@ -154,7 +155,7 @@ public class ImportClientTests
 
         private WriteFlags GetWriteFlags()
         {
-            return WriteOptions == null ? (WriteFlags) 0 : WriteOptions.Flags;
+            return WriteOptions == null ? 0 : WriteOptions.Flags;
         }
     }
 }

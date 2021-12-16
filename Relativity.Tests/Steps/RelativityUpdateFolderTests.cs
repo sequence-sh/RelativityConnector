@@ -14,11 +14,11 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
         {
             yield return new StepCase(
                     "Update Folder with service mock",
-                    new RelativityUpdateFolder()
+                    new RelativityUpdateFolder
                     {
                         FolderName = Constant("NewName"),
                         FolderId   = Constant(22),
-                        Workspace  = new OneOfStep<int, StringStream>(Constant(11)),
+                        Workspace  = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                     },
                     Unit.Default
                 ).WithTestRelativitySettings()
@@ -34,11 +34,11 @@ public partial class RelativityUpdateFolderTests : StepTestBase<RelativityUpdate
 
             yield return new StepCase(
                     "Update Folder with http mock",
-                    new RelativityUpdateFolder()
+                    new RelativityUpdateFolder
                     {
                         FolderName = Constant("NewName"),
                         FolderId   = Constant(22),
-                        Workspace  = new OneOfStep<int, StringStream>(Constant(11)),
+                        Workspace  = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                     },
                     Unit.Default
                 ).WithTestRelativitySettings()

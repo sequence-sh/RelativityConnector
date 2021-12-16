@@ -14,16 +14,16 @@ public partial class
         {
             yield return new StepCase(
                         "Get Subfolders",
-                        new ForEach<Entity>()
+                        new ForEach<Entity>
                         {
-                            Array = new RelativityGetSubfolders()
+                            Array = new RelativityGetSubfolders
                             {
-                                Workspace        = new OneOfStep<int, StringStream>(Constant(11)),
+                                Workspace        = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                                 FolderArtifactId = Constant(22)
                             },
                             Action = new LambdaFunction<Entity, Unit>(
                                 null,
-                                new Log<Entity>() { Value = new GetAutomaticVariable<Entity>() }
+                                new Log { Value = new GetAutomaticVariable<Entity>() }
                             )
                         },
                         Unit.Default,
@@ -35,13 +35,13 @@ public partial class
                     .WithService(
                         new MockSetup<IFolderManager1, List<Folder>>(
                             x => x.GetChildrenAsync(11, 22),
-                            new EditableList<Folder>()
+                            new EditableList<Folder>
                             {
                                 new()
                                 {
                                     ArtifactID = 101,
                                     Name       = "SubFolder 1",
-                                    ParentFolder = new FolderRef()
+                                    ParentFolder = new FolderRef
                                     {
                                         Name = "MyFolder", ArtifactID = 22
                                     }
@@ -50,7 +50,7 @@ public partial class
                                 {
                                     ArtifactID = 102,
                                     Name       = "SubFolder 2",
-                                    ParentFolder = new FolderRef()
+                                    ParentFolder = new FolderRef
                                     {
                                         Name = "MyFolder", ArtifactID = 22
                                     }

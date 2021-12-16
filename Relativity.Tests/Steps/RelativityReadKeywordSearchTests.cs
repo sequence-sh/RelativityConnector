@@ -14,20 +14,20 @@ public partial class
             yield return new StepCase(
                     "Read Search",
                     TestHelpers.LogEntity(
-                        new RelativityReadKeywordSearch()
+                        new RelativityReadKeywordSearch
                         {
-                            Workspace = new OneOfStep<int, StringStream>(Constant(11)),
+                            Workspace = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                             SearchId  = Constant(12)
                         }
                     ),
                     Unit.Default,
-                    @"('ArtifactID': 12 'Name': ""My Search"" 'ArtifactTypeID': 0 'Notes': null 'Keywords': null 'QueryHint': null 'RequiresManualRun': False 'Scope': ScopeType.EntireCase 'SearchText': null 'SearchType': ""KeywordSearch"")"
+                    @"('ArtifactID': 12 'Name': ""My Search"" 'ArtifactTypeID': 0 'Notes': Null 'Keywords': Null 'QueryHint': Null 'RequiresManualRun': False 'Scope': ""EntireCase"" 'SearchText': Null 'SearchType': ""KeywordSearch"")"
                 )
                 .WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IKeywordSearchManager1, KeywordSearch>(
                         x => x.ReadSingleAsync(11, 12),
-                        new KeywordSearch() { Name = "My Search", ArtifactID = 12, }
+                        new KeywordSearch { Name = "My Search", ArtifactID = 12, }
                     )
                 );
         }

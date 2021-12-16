@@ -14,11 +14,11 @@ public partial class
         {
             yield return new StepCase(
                         "Retrieve Workspace Statistics",
-                        new Log<Entity>()
+                        new Log
                         {
-                            Value = new RelativityRetrieveWorkspaceStatistics()
+                            Value = new RelativityRetrieveWorkspaceStatistics
                             {
-                                Workspace = new OneOfStep<int, StringStream>(Constant(42)),
+                                Workspace = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                             }
                         },
                         Unit.Default,
@@ -27,7 +27,7 @@ public partial class
                     .WithService(
                         new MockSetup<IWorkspaceManager1, WorkspaceSummary>(
                             x => x.GetWorkspaceSummaryAsync(42),
-                            new WorkspaceSummary() { DocumentCount = 1234, FileSize = 5678 }
+                            new WorkspaceSummary { DocumentCount = 1234, FileSize = 5678 }
                         )
                     )
                 ;

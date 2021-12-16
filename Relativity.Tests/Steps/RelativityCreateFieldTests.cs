@@ -3,7 +3,7 @@ using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
-public partial class RelativityCreateFieldTests : StepTestBase<RelativityCreateField, int>
+public partial class RelativityCreateFieldTests : StepTestBase<RelativityCreateField, SCLInt>
 {
     /// <inheritdoc />
     protected override IEnumerable<StepCase> StepCases
@@ -12,12 +12,12 @@ public partial class RelativityCreateFieldTests : StepTestBase<RelativityCreateF
         {
             yield return new StepCase(
                     "Create a folder with a parent folder",
-                    new RelativityCreateField()
+                    new RelativityCreateField
                     {
-                        Workspace = new OneOfStep<int, StringStream>(StaticHelpers.Constant(13)),
-                        FieldName = StaticHelpers.Constant("MyField")
+                        Workspace = new OneOfStep<SCLInt, StringStream>(Constant(13)),
+                        FieldName = Constant("MyField")
                     },
-                    42
+                    42.ConvertToSCLObject()
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IFieldManager1, int>(

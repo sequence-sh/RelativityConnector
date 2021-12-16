@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
 
@@ -12,7 +11,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
     Description = "Deletes workspace 42"
 )]
 public sealed class
-    RelativityDeleteWorkspace : RelativityApiRequest<int, IWorkspaceManager1, Unit, Unit>
+    RelativityDeleteWorkspace : RelativityApiRequest<SCLInt, IWorkspaceManager1, Unit, Unit>
 {
     public override IStepFactory StepFactory { get; } =
         new SimpleStepFactory<RelativityDeleteWorkspace, Unit>();
@@ -27,7 +26,7 @@ public sealed class
     public override async Task<Unit> SendRequest(
         IStateMonad stateMonad,
         IWorkspaceManager1 service,
-        int requestObject,
+        SCLInt requestObject,
         CancellationToken cancellationToken)
     {
         await service.DeleteAsync(requestObject, cancellationToken);
@@ -36,7 +35,7 @@ public sealed class
     }
 
     /// <inheritdoc />
-    public override async Task<Result<int, IError>> TryCreateRequest(
+    public override async Task<Result<SCLInt, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
@@ -52,5 +51,5 @@ public sealed class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 }

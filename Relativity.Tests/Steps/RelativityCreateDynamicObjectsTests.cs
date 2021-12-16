@@ -7,7 +7,7 @@ using Relativity.Services.Objects.DataContracts;
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
-    RelativityCreateDynamicObjectsTests : StepTestBase<RelativityCreateDynamicObjects, Array<int>>
+    RelativityCreateDynamicObjectsTests : StepTestBase<RelativityCreateDynamicObjects, Array<SCLInt>>
 {
     static bool CheckCreateRequest(MassCreateRequest createRequest)
     {
@@ -39,10 +39,10 @@ public partial class
     {
         get
         {
-            var massCreateResult = new MassCreateResult()
+            var massCreateResult = new MassCreateResult
             {
                 Success = true,
-                Objects = new List<RelativityObjectRef>()
+                Objects = new List<RelativityObjectRef>
                 {
                     new() { ArtifactID = 100 },
                     new() { ArtifactID = 101 },
@@ -52,17 +52,17 @@ public partial class
 
             yield return new StepCase(
                     "Create Dynamic objects with mock service",
-                    new RelativityCreateDynamicObjects()
+                    new RelativityCreateDynamicObjects
                     {
-                        ArtifactType = new OneOfStep<ArtifactType, int>(Constant(10)) ,
-                        Workspace    = new OneOfStep<int, StringStream>(Constant(42)),
+                        ArtifactType = new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(10)) ,
+                        Workspace    = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),
                             Entity.Create(("beta", 3), ("alpha", 4))
                         )
                     },
-                    new[] { 100, 101, 102 }.ToSCLArray()
+                    new[] { 100, 101, 102 }.Select(x=>x.ConvertToSCLObject()).ToSCLArray()
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IObjectManager1, MassCreateResult>(
@@ -77,17 +77,17 @@ public partial class
             
             yield return new StepCase(
                     "Create Dynamic objects with mock service using artifactType",
-                    new RelativityCreateDynamicObjects()
+                    new RelativityCreateDynamicObjects
                     {
-                        ArtifactType        = new OneOfStep<ArtifactType, int>(Constant(ArtifactType.Document)) ,
-                        Workspace = new OneOfStep<int, StringStream>(Constant(42)),
+                        ArtifactType        = new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Document)) ,
+                        Workspace = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),
                             Entity.Create(("beta", 3), ("alpha", 4))
                         )
                     },
-                    new[] { 100, 101, 102 }.ToSCLArray()
+                    new[] { 100, 101, 102 }.Select(x=>x.ConvertToSCLObject()).ToSCLArray()
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IObjectManager1, MassCreateResult>(
@@ -102,17 +102,17 @@ public partial class
 
             yield return new StepCase(
                     "Create Dynamic objects with mock http",
-                    new RelativityCreateDynamicObjects()
+                    new RelativityCreateDynamicObjects
                     {
-                        ArtifactType = new OneOfStep<ArtifactType, int>(Constant(10)),
-                        Workspace    = new OneOfStep<int, StringStream>(Constant(42)),
+                        ArtifactType = new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(10)),
+                        Workspace    = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),
                             Entity.Create(("beta", 3), ("alpha", 4))
                         )
                     },
-                    new[] { 100, 101, 102 }.ToSCLArray()
+                    new[] { 100, 101, 102 }.Select(x=>x.ConvertToSCLObject()).ToSCLArray()
                 ).WithTestRelativitySettings()
                 .WithFlurlMocks(
                     x => x.ForCallsTo(
@@ -131,10 +131,10 @@ public partial class
         {
             yield return new ErrorCase(
                     "Not Success",
-                    new RelativityCreateDynamicObjects()
+                    new RelativityCreateDynamicObjects
                     {
-                        ArtifactType = new OneOfStep<ArtifactType, int>(Constant(10)),
-                        Workspace    = new OneOfStep<int, StringStream>(Constant(42)),
+                        ArtifactType = new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(10)),
+                        Workspace    = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                         Entities = Array(
                             Entity.Create(("alpha", 1)),
                             Entity.Create(("beta", 2)),
@@ -150,7 +150,7 @@ public partial class
                             It.IsAny<MassCreateRequest>(),
                             It.IsAny<CancellationToken>()
                         ),
-                        new MassCreateResult() { Success = false, Message = "Test Error" }
+                        new MassCreateResult { Success = false, Message = "Test Error" }
                     )
                 );
 

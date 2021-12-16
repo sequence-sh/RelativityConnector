@@ -14,10 +14,10 @@ public partial class RelativityUpdateMatterTests : StepTestBase<RelativityUpdate
         {
             yield return new StepCase(
                     "Update Matter with mock service",
-                    new RelativityUpdateMatter()
+                    new RelativityUpdateMatter
                     {
-                        MatterArtifactId = StaticHelpers.Constant(1234),
-                        MatterName       = StaticHelpers.Constant("New Name")
+                        MatterArtifactId = Constant(1234),
+                        MatterName       = Constant("New Name")
                     },
                     Unit.Default
                 )
@@ -33,10 +33,10 @@ public partial class RelativityUpdateMatterTests : StepTestBase<RelativityUpdate
 
             yield return new StepCase(
                     "Update Matter with mock http",
-                    new RelativityUpdateMatter()
+                    new RelativityUpdateMatter
                     {
-                        MatterArtifactId = StaticHelpers.Constant(1234),
-                        MatterName       = StaticHelpers.Constant("New Name")
+                        MatterArtifactId = Constant(1234),
+                        MatterName       = Constant("New Name")
                     },
                     Unit.Default
                 )

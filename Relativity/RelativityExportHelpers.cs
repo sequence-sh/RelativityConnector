@@ -112,7 +112,7 @@ public static class RelativityExportHelpers
                             properties.Add(
                                 new EntityProperty(
                                     field.Name,
-                                    new EntityValue.String(v.Value),
+                                    new StringStream(v.Value),
                                     order
                                 )
                             );
@@ -122,7 +122,7 @@ public static class RelativityExportHelpers
                             properties.Add(
                                 new EntityProperty(
                                     field.Name,
-                                    EntityValue.CreateFromObject(fieldValue),
+                                    ISCLObject.CreateFromCSharpObject(fieldValue),
                                     order
                                 )
                             );
@@ -149,7 +149,7 @@ public static class RelativityExportHelpers
                     properties.Add(
                         new EntityProperty(
                             NativeFileKey,
-                            new EntityValue.String(data),
+                            new StringStream(data),
                             order
                         )
                     );
