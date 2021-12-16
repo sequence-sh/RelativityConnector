@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Objects.DataContracts;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -10,7 +9,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
     ExpectedOutput =
         "(Count: 1, DeletedItems: [(ObjectTypeName: \"document\" Action: \"delete\" Count: 1 Connection: \"object\")])"
 )]
-public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspaceId, DeleteRequest
+public sealed class RelativityDeleteDocument : RelativityApiRequest<(SCLInt workspaceId, DeleteRequest
     deleteRequest),
     IObjectManager1, DeleteResult, Entity>
 {
@@ -28,7 +27,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     public override Task<DeleteResult> SendRequest(
         IStateMonad stateMonad,
         IObjectManager1 service,
-        (int workspaceId, DeleteRequest deleteRequest) requestObject,
+        (SCLInt workspaceId, DeleteRequest deleteRequest) requestObject,
         CancellationToken cancellationToken)
     {
         return service.DeleteAsync(
@@ -39,7 +38,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     }
 
     /// <inheritdoc />
-    public override Task<Result<(int workspaceId, DeleteRequest deleteRequest), IError>>
+    public override Task<Result<(SCLInt workspaceId, DeleteRequest deleteRequest), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(Workspace.WrapArtifact(ArtifactType.Case,stateMonad, this), ObjectArtifactId, cancellation)
@@ -58,12 +57,12 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(int workspa
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The id of the object to delete
     /// </summary>
     [StepProperty(2)]
     [Required]
-    public IStep<int> ObjectArtifactId { get; set; } = null!;
+    public IStep<SCLInt> ObjectArtifactId { get; set; } = null!;
 }

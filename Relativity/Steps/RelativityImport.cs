@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using OneOf;
 using Reductech.EDR.Core.ExternalProcesses;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -122,12 +121,12 @@ public sealed class RelativityImport : CompoundStep<Unit>
                 cancellation
             ),
             await TryMakeArgument(
-                Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
+                Workspace.WrapArtifact(ArtifactType.Case, stateMonad, this),
                 true,
                 stateMonad,
                 "c",
                 nameof(Workspace),
-                x => x.ToString(),
+                x => x.Serialize(SerializeOptions.Primitive),
                 callingStep,
                 cancellation
             ),
@@ -157,7 +156,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
                 stateMonad,
                 "s",
                 nameof(StartLineNumber),
-                x => x.ToString(),
+                x => x.Serialize(SerializeOptions.Primitive),
                 callingStep,
                 cancellation
             ),
@@ -167,7 +166,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
                 stateMonad,
                 "d",
                 nameof(DestinationFolder),
-                x => x.ToString(),
+                x => x.Serialize(SerializeOptions.Primitive),
                 callingStep,
                 cancellation
             ),
@@ -177,7 +176,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
                 stateMonad,
                 "e",
                 nameof(LoadFileEncoding),
-                x => x.ToString(),
+                x => x.Serialize(SerializeOptions.Primitive),
                 callingStep,
                 cancellation
             ),
@@ -187,7 +186,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
                 stateMonad,
                 "x",
                 nameof(FullTextFileEncoding),
-                x => x.ToString(),
+                x => x.Serialize(SerializeOptions.Primitive),
                 callingStep,
                 cancellation
             ),
@@ -214,7 +213,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!; //flag -c
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!; //flag -c
 
     /// <summary>
     /// The file import type
@@ -222,7 +221,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
     [StepProperty]
     [Required]
     [Example("Native")]
-    public IStep<FileImportType> FileImportType { get; set; } = null!; //flag -m
+    public IStep<SCLEnum<FileImportType>> FileImportType { get; set; } = null!; //flag -m
 
     //TODO oauth
 
@@ -240,7 +239,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
     [StepProperty]
     [Example("1252")]
     [DefaultValueExplanation("Windows' default encoding")]
-    public IStep<int>? LoadFileEncoding { get; set; } = null!; //flag -e
+    public IStep<SCLInt>? LoadFileEncoding { get; set; } = null!; //flag -e
 
     /// <summary>
     /// Sets the encoding of any full text files to a particular code page id.
@@ -248,7 +247,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
     [StepProperty]
     [Example("1252")]
     [DefaultValueExplanation("Windows' default encoding")]
-    public IStep<int>? FullTextFileEncoding { get; set; } = null!; //flag -x
+    public IStep<SCLInt>? FullTextFileEncoding { get; set; } = null!; //flag -x
 
     /// <summary>
     /// Sets the destination folder for the upload.
@@ -256,14 +255,14 @@ public sealed class RelativityImport : CompoundStep<Unit>
     [StepProperty]
     [Example("1476826")]
     [DefaultValueExplanation("The case root folder.")]
-    public IStep<int>? DestinationFolder { get; set; } = null!; //flag -d
+    public IStep<SCLInt>? DestinationFolder { get; set; } = null!; //flag -d
 
     /// <summary>
     /// The starting line number of the load file for the upload.
     /// </summary>
     [StepProperty]
     [DefaultValueExplanation("0")]
-    public IStep<int>? StartLineNumber { get; set; } = null!; //flag -s
+    public IStep<SCLInt>? StartLineNumber { get; set; } = null!; //flag -s
 
     //[StepProperty]
     //[DefaultValueExplanation("No Error line is created")]
@@ -272,9 +271,9 @@ public sealed class RelativityImport : CompoundStep<Unit>
     //TODO Error line file path -ef
     //TODO Error report file path -er
 
-    private static string GetFileImportTypeString(FileImportType fileImportType)
+    private static string GetFileImportTypeString(SCLEnum<FileImportType> fileImportType)
     {
-        return fileImportType switch
+        return fileImportType.Value switch
         {
             Steps.FileImportType.Native => "n",
             Steps.FileImportType.Image => "i",

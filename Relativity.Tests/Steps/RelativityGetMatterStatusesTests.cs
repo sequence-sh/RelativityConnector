@@ -15,14 +15,14 @@ public partial class
                         "Get Matter Statuses",
                         TestHelpers.LogAllEntities(new RelativityGetMatterStatuses()),
                         Unit.Default,
-                        "('Name': \"Status 1\" 'ArtifactID': 1 'Guids': null)",
-                        "('Name': \"Status 2\" 'ArtifactID': 2 'Guids': null)"
+                        "('Name': \"Status 1\" 'ArtifactID': 1 'Guids': [])",
+                        "('Name': \"Status 2\" 'ArtifactID': 2 'Guids': [])"
                     )
                     .WithTestRelativitySettings()
                     .WithService(
                         new MockSetup<IMatterManager1, List<DisplayableObjectIdentifier>>(
                             x => x.GetEligibleStatusesAsync(),
-                            new List<DisplayableObjectIdentifier>()
+                            new List<DisplayableObjectIdentifier>
                             {
                                 new() { ArtifactID = 1, Name = "Status 1" },
                                 new() { ArtifactID = 2, Name = "Status 2" }

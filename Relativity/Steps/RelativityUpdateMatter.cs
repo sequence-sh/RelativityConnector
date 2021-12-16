@@ -4,7 +4,7 @@ using Relativity.Shared.V1.Models;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
 
-public class RelativityUpdateMatter : RelativityApiRequest<(int matterArtifactId, MatterRequest
+public class RelativityUpdateMatter : RelativityApiRequest<(SCLInt matterArtifactId, MatterRequest
     matterRequest),
     IMatterManager1, Unit, Unit>
 {
@@ -22,7 +22,7 @@ public class RelativityUpdateMatter : RelativityApiRequest<(int matterArtifactId
     public override async Task<Unit> SendRequest(
         IStateMonad stateMonad,
         IMatterManager1 service,
-        (int matterArtifactId, MatterRequest matterRequest) requestObject,
+        (SCLInt matterArtifactId, MatterRequest matterRequest) requestObject,
         CancellationToken cancellationToken)
     {
         await service.UpdateAsync(requestObject.matterArtifactId, requestObject.matterRequest);
@@ -30,7 +30,7 @@ public class RelativityUpdateMatter : RelativityApiRequest<(int matterArtifactId
     }
 
     /// <inheritdoc />
-    public override Task<Result<(int matterArtifactId, MatterRequest matterRequest), IError>>
+    public override Task<Result<(SCLInt matterArtifactId, MatterRequest matterRequest), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
@@ -79,15 +79,15 @@ public class RelativityUpdateMatter : RelativityApiRequest<(int matterArtifactId
             ;
     }
 
-    [StepProperty(1)][Required] public IStep<int> MatterArtifactId { get; set; } = null!;
+    [StepProperty(1)][Required] public IStep<SCLInt> MatterArtifactId { get; set; } = null!;
 
     [StepProperty(2)]
     [DefaultValueExplanation("Do not set")]
-    public IStep<int>? ClientId { get; set; } = null!;
+    public IStep<SCLInt>? ClientId { get; set; } = null!;
 
     [StepProperty(3)]
     [DefaultValueExplanation("Do not set")]
-    public IStep<int>? StatusId { get; set; } = null!;
+    public IStep<SCLInt>? StatusId { get; set; } = null!;
 
     [StepProperty(4)]
     [DefaultValueExplanation("Do not set")]

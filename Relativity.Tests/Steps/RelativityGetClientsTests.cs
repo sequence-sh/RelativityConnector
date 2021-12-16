@@ -14,14 +14,14 @@ public partial class RelativityGetClientsTests : StepTestBase<RelativityGetClien
                     "Get Clients",
                     TestHelpers.LogAllEntities(new RelativityGetClients()),
                     Unit.Default,
-                    "('Name': \"Client 1\" 'ArtifactID': 1 'Guids': null)",
-                    "('Name': \"Client 2\" 'ArtifactID': 2 'Guids': null)"
+                    "('Name': \"Client 1\" 'ArtifactID': 1 'Guids': [])",
+                    "('Name': \"Client 2\" 'ArtifactID': 2 'Guids': [])"
                 )
                 .WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IMatterManager1, List<DisplayableObjectIdentifier>>(
                         x => x.GetEligibleClientsAsync(),
-                        new List<DisplayableObjectIdentifier>()
+                        new List<DisplayableObjectIdentifier>
                         {
                             new() { ArtifactID = 1, Name = "Client 1" },
                             new() { ArtifactID = 2, Name = "Client 2" },

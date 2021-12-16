@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using OneOf;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Objects.DataContracts;
 using ObjectTypeRef = Relativity.Services.Objects.DataContracts.ObjectTypeRef;
@@ -27,28 +26,28 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
 
         foreach (var relativityObject in serviceOutput.Objects)
         {
-            var entity = Entity.Create(GetEntityValues(relativityObject));
+            var entity = Entity.Create(GetEntityValues(relativityObject).ToArray());
             entities.Add(entity);
         }
 
         return entities.ToSCLArray();
 
-        static IEnumerable<(EntityPropertyKey key, object? value)> GetEntityValues(
+        static IEnumerable<(string key, object? value)> GetEntityValues(
             RelativityObject relativityObject)
         {
-            yield return (new EntityPropertyKey(nameof(RelativityObject.Name)),
+            yield return (nameof(RelativityObject.Name),
                           relativityObject.Name);
 
-            yield return (new EntityPropertyKey(nameof(RelativityObject.ArtifactID)),
+            yield return (nameof(RelativityObject.ArtifactID),
                           relativityObject.ArtifactID);
 
             if (relativityObject.ParentObject is not null)
-                yield return (new EntityPropertyKey(nameof(relativityObject.ParentObject)),
+                yield return (nameof(relativityObject.ParentObject),
                               relativityObject.ParentObject.ArtifactID);
 
             foreach (var f in relativityObject.FieldValues)
             {
-                yield return (new EntityPropertyKey(f.Field.Name), f.Value);
+                yield return ((f.Field.Name), f.Value);
             }
         }
     }
@@ -84,7 +83,7 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
             Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
             Condition.WrapStringStream(),
             Fields.WrapNullable(
-                StepMaps.OneOf(StepMaps.Array<int>(), StepMaps.Array(StepMaps.String()))
+                StepMaps.OneOf(StepMaps.Array<SCLInt>(), StepMaps.Array(StepMaps.String()))
             ),
             Start,
             Length,
@@ -111,7 +110,7 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
                 new Sort()
                 {
                     Direction       = sortDirection,
-                    FieldIdentifier = new FieldRef() { ArtifactID = sortArtifactId.Value }
+                    FieldIdentifier = new FieldRef() { ArtifactID = sortArtifactId.Value.Value }
                 }
             );
         }
@@ -151,7 +150,7 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The query condition
@@ -169,44 +168,43 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
     /// </summary>
     [StepProperty(3)]
     [DefaultValueExplanation("Just ArtifactId")]
-    public IStep<OneOf<Array<int>, Array<StringStream>>>? Fields { get; set; } = null!;
+    public IStep<SCLOneOf<Array<SCLInt>, Array<StringStream>>>? Fields { get; set; } = null!;
 
     /// <summary>
     /// 1-based index of first document in query results to retrieve
     /// </summary>
     [StepProperty]
     [DefaultValueExplanation("0")]
-    public IStep<int> Start { get; set; } = new IntConstant(0);
+    public IStep<SCLInt> Start { get; set; } = new SCLConstant<SCLInt>(0.ConvertToSCLObject());
 
     /// <summary>
     /// Max number of results to return in this query call.
     /// </summary>
     [StepProperty]
     [DefaultValueExplanation("100")]
-    public IStep<int> Length { get; set; } = new IntConstant(100);
+    public IStep<SCLInt> Length { get; set; } = new SCLConstant<SCLInt>(100.ConvertToSCLObject());
 
     /// <summary>
     /// ArtifactId of the field to sort by
     /// </summary>
     [StepProperty]
     [DefaultValueExplanation("Do not sort")]
-    public IStep<int>? SortArtifactId { get; set; } = null!;
+    public IStep<SCLInt>? SortArtifactId { get; set; } = null!;
 
     /// <summary>
     /// Direction to sort by
     /// </summary>
     [StepProperty]
     [DefaultValueExplanation(nameof(SortEnum.Ascending))]
-    public IStep<SortEnum> SortDirection { get; set; } =
-        new EnumConstant<SortEnum>(SortEnum.Ascending);
+    public IStep<SCLEnum<SortEnum>> SortDirection { get; set; } =
+        new SCLConstant<SCLEnum<SortEnum>>(new SCLEnum<SortEnum>(SortEnum.Ascending));
 
     /// <summary>
     /// The Artifact type to query
     /// </summary>
     [StepProperty]
     [DefaultValueExplanation("Document (10)")]
-    public IStep<OneOf<ArtifactType, int>> ArtifactType { get; set; } =
-        new OneOfStep<ArtifactType, int>(
-            new EnumConstant<ArtifactType>(Relativity.ArtifactType.Document)
+    public IStep<SCLOneOf<SCLEnum<ArtifactType>, SCLInt>> ArtifactType { get; set; } =
+        new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(new SCLConstant<SCLEnum<ArtifactType>>(new SCLEnum<ArtifactType>(Relativity.ArtifactType.Document))
         );
 }

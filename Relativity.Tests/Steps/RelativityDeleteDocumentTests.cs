@@ -13,11 +13,11 @@ public partial class RelativityDeleteDocumentTests : StepTestBase<RelativityDele
         {
             yield return new StepCase(
                     "Delete Document",
-                    new Log<Entity>()
+                    new Log
                     {
-                        Value = new RelativityDeleteDocument()
+                        Value = new RelativityDeleteDocument
                         {
-                            Workspace        = new OneOfStep<int, StringStream>(Constant(11)),
+                            Workspace        = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                             ObjectArtifactId = Constant(22)
                         }
                     },
@@ -32,11 +32,11 @@ public partial class RelativityDeleteDocumentTests : StepTestBase<RelativityDele
                                 It.Is<DeleteRequest>(dr => dr.Object.ArtifactID == 22),
                                 It.IsAny<CancellationToken>()
                             ),
-                        new DeleteResult()
+                        new DeleteResult
                         {
-                            Report = new DeleteReport()
+                            Report = new DeleteReport
                             {
-                                DeletedItems = new List<DeleteItem>()
+                                DeletedItems = new List<DeleteItem>
                                 {
                                     new()
                                     {

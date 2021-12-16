@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Interfaces.Field.Models;
 using Relativity.Services.Interfaces.Shared.Models;
 
@@ -10,15 +9,15 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
 /// </summary>
 public sealed class RelativityCreateField : RelativityApiRequest<(FixedLengthFieldRequest1 fieldRequest, int workspaceId),
     IFieldManager1,
-    int, int>
+    int, SCLInt>
 {
     /// <inheritdoc />
-    public override IStepFactory StepFactory => new SimpleStepFactory<RelativityCreateField, int>();
+    public override IStepFactory StepFactory => new SimpleStepFactory<RelativityCreateField, SCLInt>();
 
     /// <inheritdoc />
-    public override Result<int, IErrorBuilder> ConvertOutput(int serviceOutput)
+    public override Result<SCLInt, IErrorBuilder> ConvertOutput(int serviceOutput)
     {
-        return serviceOutput;
+        return serviceOutput.ConvertToSCLObject();
     }
 
     /// <inheritdoc />
@@ -42,7 +41,7 @@ public sealed class RelativityCreateField : RelativityApiRequest<(FixedLengthFie
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The Name for the field
@@ -57,8 +56,8 @@ public sealed class RelativityCreateField : RelativityApiRequest<(FixedLengthFie
     ///// </summary>
     //[StepProperty(3)]
     //[DefaultValueExplanation("Document (10)")]
-    //public IStep<OneOf<ArtifactType, int>> ObjectType { get; set; } =
-    //    new OneOfStep<ArtifactType, int>(
+    //public IStep<SCLOneOf<SCLEnum<ArtifactType>, SCLInt>> ObjectType { get; set; } =
+    //    new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(
     //        new EnumConstant<ArtifactType>(ArtifactType.Document)
     //    );
 
@@ -67,7 +66,7 @@ public sealed class RelativityCreateField : RelativityApiRequest<(FixedLengthFie
     /// </summary>
     [StepProperty(3)]
     [DefaultValueExplanation("100")]
-    public IStep<int> Length { get; set; } = new IntConstant(100);
+    public IStep<SCLInt> Length { get; set; } = new SCLConstant<SCLInt>(100.ConvertToSCLObject());
 
     /// <inheritdoc />
     public override async Task<Result<(FixedLengthFieldRequest1 fieldRequest, int workspaceId), IError>> TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)

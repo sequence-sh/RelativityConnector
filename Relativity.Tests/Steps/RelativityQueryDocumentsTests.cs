@@ -33,16 +33,16 @@ public partial class
         {
             yield return new StepCase(
                     "Query Documents",
-                    new ForEach<Entity>()
+                    new ForEach<Entity>
                     {
-                        Array = new RelativitySendQuery()
+                        Array = new RelativitySendQuery
                         {
-                            Workspace = new OneOfStep<int, StringStream>(Constant(11)),
+                            Workspace = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                             Condition = Constant("Test Condition"),
                             ArtifactType =
-                                new OneOfStep<ArtifactType, int>(Constant(ArtifactType.View)),
+                                new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.View)),
                             Fields =
-                                new OneOfStep<Array<int>, Array<StringStream>>(Array(100, 101)),
+                                new OneOfStep<Array<SCLInt>, Array<StringStream>>(Array(100, 101)),
                             Length         = Constant(50),
                             SortArtifactId = Constant(13),
                             SortDirection  = Constant(SortEnum.Descending),
@@ -50,7 +50,7 @@ public partial class
                         },
                         Action = new LambdaFunction<Entity, Unit>(
                             null,
-                            new Log<Entity>() { Value = new GetAutomaticVariable<Entity>() }
+                            new Log { Value = new GetAutomaticVariable<Entity>() }
                         )
                     },
                     Unit.Default,
@@ -69,24 +69,24 @@ public partial class
                                 It.IsAny<CancellationToken>(),
                                 It.IsAny<IProgress<ProgressReport>>()
                             ),
-                        new QueryResult()
+                        new QueryResult
                         {
                             CurrentStartIndex = 10,
                             ResultCount       = 50,
                             TotalCount        = 1000,
-                            ObjectType        = new ObjectType() { ArtifactID = 12 },
-                            Objects = new List<RelativityObject>()
+                            ObjectType        = new ObjectType { ArtifactID = 12 },
+                            Objects = new List<RelativityObject>
                             {
                                 new()
                                 {
                                     ArtifactID = 11111,
                                     Name       = "Result 1",
-                                    FieldValues = new List<FieldValuePair>()
+                                    FieldValues = new List<FieldValuePair>
                                     {
                                         new()
                                         {
                                             Value = "Test Value 1a",
-                                            Field = new Field()
+                                            Field = new Field
                                             {
                                                 ArtifactID = 100,
                                                 Name       = "Field a"
@@ -95,7 +95,7 @@ public partial class
                                         new()
                                         {
                                             Value = "Test Value 1b",
-                                            Field = new Field()
+                                            Field = new Field
                                             {
                                                 ArtifactID = 101,
                                                 Name       = "Field b"
@@ -107,12 +107,12 @@ public partial class
                                 {
                                     ArtifactID = 22222,
                                     Name       = "Result 2",
-                                    FieldValues = new List<FieldValuePair>()
+                                    FieldValues = new List<FieldValuePair>
                                     {
                                         new()
                                         {
                                             Value = "Test Value 2a",
-                                            Field = new Field()
+                                            Field = new Field
                                             {
                                                 ArtifactID = 100,
                                                 Name       = "Field a"
@@ -121,7 +121,7 @@ public partial class
                                         new()
                                         {
                                             Value = "Test Value 2b",
-                                            Field = new Field()
+                                            Field = new Field
                                             {
                                                 ArtifactID = 100,
                                                 Name       = "Field b"

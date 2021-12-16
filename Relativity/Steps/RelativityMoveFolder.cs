@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -12,7 +11,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
     expectedOutput: "(TotalOperations: 1 ProcessState: \"Complete\" OperationsCompleted: 1)",
     ExecuteInTests = false
 )]
-public sealed class RelativityMoveFolder : RelativityApiRequest<(int workspaceId, int folderId, int
+public sealed class RelativityMoveFolder : RelativityApiRequest<(SCLInt workspaceId, SCLInt folderId, SCLInt
     destinationFolderId), IFolderManager1,
     FolderMoveResultSet, Entity>
 {
@@ -30,7 +29,7 @@ public sealed class RelativityMoveFolder : RelativityApiRequest<(int workspaceId
     public override async Task<FolderMoveResultSet> SendRequest(
         IStateMonad stateMonad,
         IFolderManager1 service,
-        (int workspaceId, int folderId, int destinationFolderId) requestObject,
+        (SCLInt workspaceId, SCLInt folderId, SCLInt destinationFolderId) requestObject,
         CancellationToken cancellationToken)
     {
         var (workspaceId, folderId, destinationFolderId) = requestObject;
@@ -46,11 +45,11 @@ public sealed class RelativityMoveFolder : RelativityApiRequest<(int workspaceId
     }
 
     /// <inheritdoc />
-    public override Task<Result<(int workspaceId, int folderId, int destinationFolderId), IError>>
+    public override Task<Result<(SCLInt workspaceId, SCLInt folderId, SCLInt destinationFolderId), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(
-            Workspace.WrapArtifact(Relativity.ArtifactType.Case, stateMonad, this),
+            Workspace.WrapArtifact(ArtifactType.Case, stateMonad, this),
             FolderArtifactId,
             DestinationFolderArtifactId,
             cancellation
@@ -63,19 +62,19 @@ public sealed class RelativityMoveFolder : RelativityApiRequest<(int workspaceId
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The Id of the folder.
     /// </summary>
     [StepProperty(2)]
     [Required]
-    public IStep<int> FolderArtifactId { get; set; } = null!;
+    public IStep<SCLInt> FolderArtifactId { get; set; } = null!;
 
     /// <summary>
     /// The Id of the destination folder.
     /// </summary>
     [StepProperty(3)]
     [Required]
-    public IStep<int> DestinationFolderArtifactId { get; set; } = null!;
+    public IStep<SCLInt> DestinationFolderArtifactId { get; set; } = null!;
 }

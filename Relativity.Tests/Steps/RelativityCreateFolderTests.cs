@@ -4,7 +4,7 @@ using Relativity.Services.Folder;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
-public partial class RelativityCreateFolderTests : StepTestBase<RelativityCreateFolder, int>
+public partial class RelativityCreateFolderTests : StepTestBase<RelativityCreateFolder, SCLInt>
 {
     /// <inheritdoc />
     protected override IEnumerable<StepCase> StepCases
@@ -13,13 +13,13 @@ public partial class RelativityCreateFolderTests : StepTestBase<RelativityCreate
         {
             yield return new StepCase(
                     "Create a folder with a parent folder",
-                    new RelativityCreateFolder()
+                    new RelativityCreateFolder
                     {
                         FolderName     = Constant("MyNewFolder"),
                         ParentFolderId = Constant(14),
-                        Workspace      = new OneOfStep<int, StringStream>(Constant(13))
+                        Workspace      = new OneOfStep<SCLInt, StringStream>(Constant(13))
                     },
-                    42
+                    42.ConvertToSCLObject()
                 ).WithTestRelativitySettings()
                 .WithService(
                     new MockSetup<IFolderManager1, int>(

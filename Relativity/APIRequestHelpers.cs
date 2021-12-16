@@ -11,6 +11,9 @@ using Relativity.Services.Search;
 
 namespace Reductech.EDR.Connectors.Relativity;
 
+/// <summary>
+/// Contains methods for converting Relativity objects to entities
+/// </summary>
 public static class RelativityEntityConversionHelpers
 {
     public static Entity ConvertToEntity(this WorkspaceResponse workspaceResponse)
@@ -116,21 +119,21 @@ public static class RelativityEntityConversionHelpers
 
     public static Entity ConvertToEntity<T>(T thing) where T : class
     {
-        var properties = new List<(EntityPropertyKey key, object? value)>();
+        var properties = new List<(string key, object? value)>();
 
         foreach (var propertyInfo in typeof(T).GetProperties())
         {
             var v = propertyInfo.GetValue(thing);
 
             properties.Add(
-                new ValueTuple<EntityPropertyKey, object?>(
-                    new EntityPropertyKey(propertyInfo.Name),
+                new ValueTuple<string, object?>(
+                    propertyInfo.Name,
                     v
                 )
             );
         }
 
-        return Entity.Create(properties);
+        return Entity.Create(properties.ToArray());
     }
 }
 

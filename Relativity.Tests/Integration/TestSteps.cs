@@ -7,17 +7,17 @@ internal static class TestSteps
     public static string TestMatterName = "Test Matter";
     public static string IntegrationTestWorkspaceName = "Integration Test Workspace";
 
-    public static OneOfStep<int, StringStream> IntegrationTestWorkspace =
-        new(StaticHelpers.Constant(IntegrationTestWorkspaceName));
+    public static OneOfStep<SCLInt, StringStream> IntegrationTestWorkspace =
+        new(Constant(IntegrationTestWorkspaceName));
 
-    public static OneOfStep<int, StringStream> TestMatter =
-        new(StaticHelpers.Constant(TestMatterName));
+    public static OneOfStep<SCLInt, StringStream> TestMatter =
+        new(Constant(TestMatterName));
 
     public static IStep<Unit> DeleteAllTestMatter = new ForEach<Entity>
     {
         Array = new RelativitySendQuery
         {
-            Condition = StaticHelpers.Constant(
+            Condition = Constant(
                 new TextCondition(
                         "Name",
                         TextConditionEnum.EqualTo,
@@ -25,18 +25,18 @@ internal static class TestSteps
                     )
                     .ToQueryString()
             ),
-            Workspace = new OneOfStep<int, StringStream>(StaticHelpers.Constant(-1)),
+            Workspace = new OneOfStep<SCLInt, StringStream>(Constant(-1)),
             ArtifactType =
-                new OneOfStep<ArtifactType, int>(StaticHelpers.Constant(ArtifactType.Matter))
+                new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Matter))
         },
         Action = new LambdaFunction<Entity, Unit>(
             null,
             new RelativityDeleteMatter
             {
-                MatterArtifactId = new EntityGetValue<int>
+                MatterArtifactId = new EntityGetValue<SCLInt>
                 {
                     Entity   = new GetAutomaticVariable<Entity>(),
-                    Property = StaticHelpers.Constant("ArtifactId")
+                    Property = Constant("ArtifactId")
                 }
             }
         )
@@ -46,7 +46,7 @@ internal static class TestSteps
     {
         Array = new RelativitySendQuery
         {
-            Condition = StaticHelpers.Constant(
+            Condition = Constant(
                 new TextCondition(
                         "Name",
                         TextConditionEnum.EqualTo,
@@ -54,19 +54,19 @@ internal static class TestSteps
                     )
                     .ToQueryString()
             ),
-            Workspace = new OneOfStep<int, StringStream>(StaticHelpers.Constant(-1)),
+            Workspace = new OneOfStep<SCLInt, StringStream>(Constant(-1)),
             ArtifactType =
-                new OneOfStep<ArtifactType, int>(StaticHelpers.Constant(ArtifactType.Case))
+                new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Case))
         },
         Action = new LambdaFunction<Entity, Unit>(
             null,
-            new RelativityDeleteWorkspace()
+            new RelativityDeleteWorkspace
             {
-                Workspace = new OneOfStep<int, StringStream>(
-                    new EntityGetValue<int>()
+                Workspace = new OneOfStep<SCLInt, StringStream>(
+                    new EntityGetValue<SCLInt>
                     {
                         Entity   = new GetAutomaticVariable<Entity>(),
-                        Property = StaticHelpers.Constant("ArtifactId")
+                        Property = Constant("ArtifactId")
                     }
                 )
             }
@@ -74,34 +74,34 @@ internal static class TestSteps
     };
 
     public static IStep<Unit> AssertDocumentCount(int count) => new
-        AssertEqual<int>()
+        AssertEqual<SCLInt>
         {
-            Left = StaticHelpers.Constant(count),
-            Right = new EntityGetValue<int>()
+            Left = Constant(count),
+            Right = new EntityGetValue<SCLInt>
             {
-                Entity = new RelativityRetrieveWorkspaceStatistics()
+                Entity = new RelativityRetrieveWorkspaceStatistics
                 {
                     Workspace = IntegrationTestWorkspace
                 },
-                Property = StaticHelpers.Constant("documentCount")
+                Property = Constant("documentCount")
             }
         };
 
-    public static IStep<Unit> LogWorkspaceStatistics = new Log<Entity>()
+    public static IStep<Unit> LogWorkspaceStatistics = new Log
     {
-        Value = new RelativityRetrieveWorkspaceStatistics()
+        Value = new RelativityRetrieveWorkspaceStatistics
         {
             Workspace = IntegrationTestWorkspace
         }
     };
 
-    public static IStep<Unit> MaybeCreateTestMatter = new If<Unit>()
+    public static IStep<Unit> MaybeCreateTestMatter = new If<Unit>
     {
-        Condition = new ArrayIsEmpty<Entity>()
+        Condition = new ArrayIsEmpty<Entity>
         {
             Array = new RelativitySendQuery
             {
-                Condition = StaticHelpers.Constant(
+                Condition = Constant(
                     new TextCondition(
                             "Name",
                             TextConditionEnum.EqualTo,
@@ -109,36 +109,36 @@ internal static class TestSteps
                         )
                         .ToQueryString()
                 ),
-                Workspace = new OneOfStep<int, StringStream>(StaticHelpers.Constant(-1)),
+                Workspace = new OneOfStep<SCLInt, StringStream>(Constant(-1)),
                 ArtifactType =
-                    new OneOfStep<ArtifactType, int>(StaticHelpers.Constant(ArtifactType.Matter))
+                    new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Matter))
             }
         },
         Else =
-            new Log<StringStream>()
+            new Log
             {
-                Value = StaticHelpers.Constant("Test Matter already exists, skip creating it.")
+                Value = Constant("Test Matter already exists, skip creating it.")
             },
-        Then = new Sequence<Unit>()
+        Then = new Sequence<Unit>
         {
-            InitialSteps = new List<IStep<Unit>>()
+            InitialSteps = new List<IStep<Unit>>
             {
-                new Log<StringStream>()
+                new Log
                 {
-                    Value = StaticHelpers.Constant("Test Matter does not exist, creating it.")
+                    Value = Constant("Test Matter does not exist, creating it.")
                 },
-                new RunStep<int>()
+                new RunStep<SCLInt>
                 {
-                    Step = new RelativityCreateMatter()
+                    Step = new RelativityCreateMatter
                     {
                         Client =
-                            new OneOfStep<int, StringStream>(StaticHelpers.Constant("Test Client")),
+                            new OneOfStep<SCLInt, StringStream>(Constant("Test Client")),
                         Status =
-                            new OneOfStep<int, MatterStatus>(StaticHelpers.Constant(671)),
-                        MatterName = StaticHelpers.Constant(TestMatterName),
-                        Number     = StaticHelpers.Constant("Ten"),
-                        Keywords   = StaticHelpers.Constant("Test Keywords"),
-                        Notes      = StaticHelpers.Constant("Test Notes")
+                            new OneOfStep<SCLInt, SCLEnum<MatterStatus>>(Constant(671)),
+                        MatterName = Constant(TestMatterName),
+                        Number     = Constant("Ten"),
+                        Keywords   = Constant("Test Keywords"),
+                        Notes      = Constant("Test Notes")
                     }
                 }
             }
@@ -149,7 +149,7 @@ internal static class TestSteps
     {
         Array = new RelativitySendQuery
         {
-            Condition = StaticHelpers.Constant(
+            Condition = Constant(
                 new TextCondition(
                         "Title",
                         TextConditionEnum.EqualTo,
@@ -159,18 +159,18 @@ internal static class TestSteps
             ),
             Workspace = IntegrationTestWorkspace,
             ArtifactType =
-                new OneOfStep<ArtifactType, int>(StaticHelpers.Constant(ArtifactType.Document))
+                new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Document))
         },
         Action = new LambdaFunction<Entity, Unit>(
             null,
-            new RunStep<Entity>()
+            new RunStep<Entity>
             {
-                Step = new RelativityDeleteDocument()
+                Step = new RelativityDeleteDocument
                 {
-                    ObjectArtifactId = new EntityGetValue<int>()
+                    ObjectArtifactId = new EntityGetValue<SCLInt>
                     {
                         Entity   = new GetAutomaticVariable<Entity>(),
-                        Property = StaticHelpers.Constant("ArtifactId")
+                        Property = Constant("ArtifactId")
                     },
                     Workspace = IntegrationTestWorkspace
                 }
@@ -178,17 +178,17 @@ internal static class TestSteps
         )
     };
 
-    public static IStep<Unit> AssertFolderCount(int expectedCount) => new AssertEqual<int>()
+    public static IStep<Unit> AssertFolderCount(int expectedCount) => new AssertEqual<SCLInt>
     {
-        Left = StaticHelpers.Constant(expectedCount),
-        Right = new ArrayLength<Entity>()
+        Left = Constant(expectedCount),
+        Right = new ArrayLength<Entity>
         {
-            Array = new RelativitySendQuery()
+            Array = new RelativitySendQuery
             {
-                Condition = StaticHelpers.Constant(""),
+                Condition = Constant(""),
                 Workspace = IntegrationTestWorkspace,
                 ArtifactType =
-                    new OneOfStep<ArtifactType, int>(StaticHelpers.Constant(ArtifactType.Folder))
+                    new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Folder))
             }
         }
     };
@@ -198,8 +198,8 @@ internal static class TestSteps
         return
             new RelativityImportEntities
             {
-                Workspace = TestSteps.IntegrationTestWorkspace,
-                Entities = StaticHelpers.Array(
+                Workspace = IntegrationTestWorkspace,
+                Entities = Array(
                     Entity.Create(
                         ("Control Number", "12345"),
                         ("Title", ("Test Document")),
@@ -207,7 +207,7 @@ internal static class TestSteps
                         ("Folder Path", (@"TestFolder"))
                     )
                 ),
-                Schema = StaticHelpers.Constant(
+                Schema = Constant(
                     new JsonSchemaBuilder()
                         .Title("Test Schema")
                         .Properties(
@@ -218,19 +218,19 @@ internal static class TestSteps
                             
                         ).Build().ConvertToEntity()
                 ),
-                ControlNumberField = StaticHelpers.Constant("Control Number"),
-                FilePathField      = StaticHelpers.Constant("File Path"),
-                FolderPathField    = StaticHelpers.Constant("Folder Path")
+                ControlNumberField = Constant("Control Number"),
+                FilePathField      = Constant("File Path"),
+                FolderPathField    = Constant("Folder Path")
             };
     }
 
-    public static IStep<Unit> MaybeCreateIntegrationTestWorkspace = new If<Unit>()
+    public static IStep<Unit> MaybeCreateIntegrationTestWorkspace = new If<Unit>
     {
-        Condition = new ArrayIsEmpty<Entity>()
+        Condition = new ArrayIsEmpty<Entity>
         {
             Array = new RelativitySendQuery
             {
-                Condition = StaticHelpers.Constant(
+                Condition = Constant(
                     new TextCondition(
                             "Name",
                             TextConditionEnum.EqualTo,
@@ -238,42 +238,42 @@ internal static class TestSteps
                         )
                         .ToQueryString()
                 ),
-                Workspace = new OneOfStep<int, StringStream>(StaticHelpers.Constant(-1)),
+                Workspace = new OneOfStep<SCLInt, StringStream>(Constant(-1)),
                 ArtifactType =
-                    new OneOfStep<ArtifactType, int>(StaticHelpers.Constant(ArtifactType.Case))
+                    new OneOfStep<SCLEnum<ArtifactType>, SCLInt>(Constant(ArtifactType.Case))
             }
         },
         Else =
-            new Log<StringStream>()
+            new Log
             {
-                Value = StaticHelpers.Constant("Integration Test Workspace already exists, skip creating it.")
+                Value = Constant("Integration Test Workspace already exists, skip creating it.")
             },
-        Then = new Sequence<Unit>()
+        Then = new Sequence<Unit>
         {
-            InitialSteps = new List<IStep<Unit>>()
+            InitialSteps = new List<IStep<Unit>>
             {
-                new Log<StringStream>()
+                new Log
                 {
-                    Value = StaticHelpers.Constant("Integration Test Workspace does not exist, creating it.")
+                    Value = Constant("Integration Test Workspace does not exist, creating it.")
                 },
-                new RunStep<Entity>()
+                new RunStep<Entity>
                 {
-                    Step = new RelativityCreateWorkspace()
+                    Step = new RelativityCreateWorkspace
                     {
-                        WorkspaceName = StaticHelpers.Constant(IntegrationTestWorkspaceName),
+                        WorkspaceName = Constant(IntegrationTestWorkspaceName),
                         Matter        = TestMatter,
                         TemplateId =
-                            new OneOfStep<int, StringStream>(
-                                StaticHelpers.Constant("Relativity Starter Template")
+                            new OneOfStep<SCLInt, StringStream>(
+                                Constant("Relativity Starter Template")
                             ), // = Constant(1015024),
-                        StatusId = StaticHelpers.Constant(675),
+                        StatusId = Constant(675),
                         ResourcePoolId =
-                            new OneOfStep<int, StringStream>(
-                                StaticHelpers.Constant("Default")
+                            new OneOfStep<SCLInt, StringStream>(
+                                Constant("Default")
                             ), // Constant(1015040),
-                        SqlServerId             = StaticHelpers.Constant(1015096),
-                        DefaultFileRepositoryId = StaticHelpers.Constant(1014887),
-                        DefaultCacheLocationId  = StaticHelpers.Constant(1015534)
+                        SqlServerId             = Constant(1015096),
+                        DefaultFileRepositoryId = Constant(1014887),
+                        DefaultCacheLocationId  = Constant(1015534)
                     }
                 }
             }

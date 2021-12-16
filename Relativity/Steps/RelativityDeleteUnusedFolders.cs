@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.Errors;
+﻿using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
@@ -10,7 +9,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
 /// </summary>
 [SCLExample("RelativityDeleteUnusedFolders Workspace: 42", ExecuteInTests = false)]
 public sealed class
-    RelativityDeleteUnusedFolders : RelativityApiRequest<int, IFolderManager1, FolderResultSet, Unit>
+    RelativityDeleteUnusedFolders : RelativityApiRequest<SCLInt, IFolderManager1, FolderResultSet, Unit>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory { get; } =
@@ -29,7 +28,7 @@ public sealed class
     public override async Task<FolderResultSet> SendRequest(
         IStateMonad stateMonad,
         IFolderManager1 service,
-        int requestObject,
+        SCLInt requestObject,
         CancellationToken cancellationToken)
     {
         var result = await service.DeleteUnusedFoldersAsync(requestObject);
@@ -38,11 +37,11 @@ public sealed class
     }
 
     /// <inheritdoc />
-    public override async Task<Result<int, IError>> TryCreateRequest(
+    public override async Task<Result<SCLInt, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return await Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this).Run(stateMonad, cancellation);
+        return await Workspace.WrapArtifact(ArtifactType.Case,stateMonad, this).Run(stateMonad, cancellation);
     }
 
     /// <summary>
@@ -51,5 +50,5 @@ public sealed class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 }

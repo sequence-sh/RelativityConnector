@@ -10,47 +10,51 @@ namespace Reductech.EDR.Connectors.Relativity;
 
 public static class RelativityStepMaps
 {
-    public static IRunnableStep<int> WrapArtifact(
-        this IRunnableStep<OneOf<int, StringStream>> step,
+    public static IRunnableStep<SCLInt> WrapArtifact(
+        this IRunnableStep<SCLOneOf<SCLInt, StringStream>> step,
         ArtifactType artifactType,
         IStateMonad stateMonad,
         IStep parentStep)
     {
         return step
-            .WrapStep(StepMaps.OneOf(StepMaps.DoNothing<int>(), StepMaps.String()))
-            .WrapStep(new RelativityQueryMap (artifactType, stateMonad, parentStep));
+            .WrapStep(StepMaps.OneOf(StepMaps.DoNothing<SCLInt>(), StepMaps.DoNothing<StringStream>()))
+            .WrapStep(new RelativityQueryMap(artifactType, stateMonad, parentStep));
     }
-    
 
-    public static IRunnableStep<int> WrapClient(
-        this IRunnableStep<OneOf<int, StringStream>> step,
+    public static IRunnableStep<SCLInt> WrapClient(
+        this IRunnableStep<SCLOneOf<SCLInt, StringStream>> step,
         IStateMonad stateMonad,
         IStep parentStep)
     {
-        return step.WrapStep(StepMaps.OneOf(StepMaps.DoNothing<int>(), StepMaps.String()))
+        return step.WrapStep(StepMaps.OneOf(StepMaps.DoNothing<SCLInt>(), StepMaps.DoNothing<StringStream>()))
                 .WrapStep(new ClientMap(stateMonad, parentStep))
             ;
     }
 
-    public static IRunnableStep<int> WrapMatterStatus(
-        this IStep<OneOf<int, MatterStatus>> step,
+    public static IRunnableStep<SCLInt> WrapMatterStatus(
+        this IStep<SCLOneOf<SCLInt, SCLEnum<MatterStatus>>> step,
         IStateMonad stateMonad,
         IStep parentStep)
     {
-        return step.WrapStep(new MatterStatusMap(stateMonad, parentStep))
+        return step.WrapOneOf(
+                    StepMaps.DoNothing<SCLInt>(),
+                    StepMaps.DoNothing<SCLEnum<MatterStatus>>()
+                )
+                .WrapStep(new MatterStatusMap(stateMonad, parentStep))
             ;
     }
 
     public static IRunnableStep<ArtifactType> WrapArtifactId(
-        this IStep<OneOf<ArtifactType, int>> step,
+        this IStep<SCLOneOf<SCLEnum<ArtifactType>, SCLInt>> step,
         IStep parentStep)
     {
         return step.WrapStep(new ArtifactTypeMap(parentStep));
     }
 
     private abstract class
-        RelativityArtifactIdMap<TKey, TService, TResult> : IStepValueMap<OneOf<int, TKey>, int>
+        RelativityArtifactIdMap<TKey, TService, TResult> : IStepValueMap<OneOf<SCLInt, TKey>, SCLInt>
         where TService : IManager
+        where TKey : ISCLObject
     {
         private readonly IStateMonad _stateMonad;
         private readonly IStep _parentStep;
@@ -62,8 +66,8 @@ public static class RelativityStepMaps
         }
 
         /// <inheritdoc />
-        public async Task<Result<int, IError>> Map(
-            OneOf<int, TKey> t,
+        public async Task<Result<SCLInt, IError>> Map(
+            OneOf<SCLInt, TKey> t,
             CancellationToken cancellationToken)
         {
             if (t.TryPickT0(out var i, out var key))
@@ -72,7 +76,7 @@ public static class RelativityStepMaps
             var serviceResult = _stateMonad.TryGetService<TService>();
 
             if (serviceResult.IsFailure)
-                return serviceResult.ConvertFailure<int>()
+                return serviceResult.ConvertFailure<SCLInt>()
                     .MapError(x => x.WithLocation(_parentStep));
 
             using var service = serviceResult.Value;
@@ -81,6 +85,7 @@ public static class RelativityStepMaps
                     manager => GetResult(manager, key, cancellationToken)
                 )
                 .Bind(x => TryGetResult(x, key))
+                .Map(x=>x.ConvertToSCLObject())
                 .MapError(x => x.WithLocation(_parentStep));
 
             return queryResult;
@@ -94,7 +99,7 @@ public static class RelativityStepMaps
         protected abstract Result<int, IErrorBuilder> TryGetResult(TResult result, TKey key);
     }
 
-    private class ClientMap : RelativityArtifactIdMap<string, IMatterManager1,
+    private class ClientMap : RelativityArtifactIdMap<StringStream, IMatterManager1,
         List<DisplayableObjectIdentifier>>
     {
         public ClientMap(IStateMonad stateMonad, IStep parentStep) :
@@ -103,16 +108,16 @@ public static class RelativityStepMaps
         /// <inheritdoc />
         protected override Task<List<DisplayableObjectIdentifier>> GetResult(
             IMatterManager1 service,
-            string key,
+            StringStream key,
             CancellationToken cancellationToken) => service.GetEligibleClientsAsync();
 
         /// <inheritdoc />
         protected override Result<int, IErrorBuilder> TryGetResult(
             List<DisplayableObjectIdentifier> result,
-            string key)
+            StringStream key)
         {
             var client = result.FirstOrDefault(
-                x => x.Name.Equals(key, StringComparison.OrdinalIgnoreCase)
+                x => x.Name.Equals(key.GetString(), StringComparison.OrdinalIgnoreCase)
             );
 
             if (client is null)
@@ -121,8 +126,8 @@ public static class RelativityStepMaps
             return client.ArtifactID;
         }
     }
-        
-    private class MatterStatusMap : RelativityArtifactIdMap<MatterStatus, IMatterManager1,
+
+    private class MatterStatusMap : RelativityArtifactIdMap<SCLEnum<MatterStatus>, IMatterManager1,
         List<DisplayableObjectIdentifier>>
     {
         /// <inheritdoc />
@@ -134,13 +139,13 @@ public static class RelativityStepMaps
         /// <inheritdoc />
         protected override Task<List<DisplayableObjectIdentifier>> GetResult(
             IMatterManager1 service,
-            MatterStatus key,
+            SCLEnum<MatterStatus> key,
             CancellationToken cancellationToken) => service.GetEligibleClientsAsync();
 
         /// <inheritdoc />
         protected override Result<int, IErrorBuilder> TryGetResult(
             List<DisplayableObjectIdentifier> result,
-            MatterStatus key)
+            SCLEnum<MatterStatus> key)
         {
             var client = result.FirstOrDefault(
                 x => x.Name.Equals(key.ToString(), StringComparison.OrdinalIgnoreCase)
@@ -153,7 +158,8 @@ public static class RelativityStepMaps
         }
     }
 
-    private class ArtifactTypeMap : IStepValueMap<OneOf<ArtifactType, int>, ArtifactType>
+    private class
+        ArtifactTypeMap : IStepValueMap<SCLOneOf<SCLEnum<ArtifactType>, SCLInt>, ArtifactType>
     {
         private readonly IStep _parentStep;
 
@@ -164,16 +170,16 @@ public static class RelativityStepMaps
 
         /// <inheritdoc />
         public async Task<Result<ArtifactType, IError>> Map(
-            OneOf<ArtifactType, int> t,
+            SCLOneOf<SCLEnum<ArtifactType>, SCLInt> t,
             CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
 
-            if (t.TryPickT0(out var at, out var i))
-                return at;
+            if (t.OneOf.TryPickT0(out var at, out var i))
+                return at.Value;
 
-            if (Enum.IsDefined(typeof(ArtifactType), i))
-                return (ArtifactType)i;
+            if (Enum.IsDefined(typeof(ArtifactType), i.Value))
+                return (ArtifactType)i.Value;
 
             return Result.Failure<ArtifactType, IError>(
                 ErrorCode.InvalidCast.ToErrorBuilder(nameof(ArtifactType), i)
@@ -182,13 +188,16 @@ public static class RelativityStepMaps
         }
     }
 
-
-    private class RelativityQueryMap : RelativityArtifactIdMap<string, IObjectManager1, QueryResultSlim>
+    private class
+        RelativityQueryMap : RelativityArtifactIdMap<StringStream, IObjectManager1, QueryResultSlim>
     {
         private readonly ArtifactType _artifactType;
 
         /// <inheritdoc />
-        public RelativityQueryMap(ArtifactType artifactType, IStateMonad stateMonad, IStep parentStep) : base(stateMonad, parentStep)
+        public RelativityQueryMap(
+            ArtifactType artifactType,
+            IStateMonad stateMonad,
+            IStep parentStep) : base(stateMonad, parentStep)
         {
             _artifactType = artifactType;
         }
@@ -196,13 +205,15 @@ public static class RelativityStepMaps
         /// <inheritdoc />
         protected override async Task<QueryResultSlim> GetResult(
             IObjectManager1 service,
-            string key,
+            StringStream key,
             CancellationToken cancellationToken)
         {
+            var keyText = await key.GetStringAsync();
+
             var request = new QueryRequest
             {
                 Condition =
-                    new TextCondition("Name", TextConditionEnum.EqualTo, key)
+                    new TextCondition("Name", TextConditionEnum.EqualTo, keyText)
                         .ToQueryString(),
                 ObjectType = new ObjectTypeRef { ArtifactTypeID = (int)_artifactType }
             };
@@ -221,10 +232,13 @@ public static class RelativityStepMaps
         /// <inheritdoc />
         protected override Result<int, IErrorBuilder> TryGetResult(
             QueryResultSlim result,
-            string key)
+            StringStream key)
         {
             if (!result.Objects.Any())
-                return ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder(_artifactType.ToString(), key);
+                return ErrorCode_Relativity.ObjectNotFound.ToErrorBuilder(
+                    _artifactType.ToString(),
+                    key
+                );
 
             return result.Objects.First().ArtifactID;
         }

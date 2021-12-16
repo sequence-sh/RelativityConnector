@@ -13,11 +13,11 @@ public partial class RelativityMoveFoldersTests : StepTestBase<RelativityMoveFol
         {
             yield return new StepCase(
                     "Move Folder",
-                    new Log<Entity>()
+                    new Log
                     {
-                        Value = new RelativityMoveFolder()
+                        Value = new RelativityMoveFolder
                         {
-                            Workspace = new OneOfStep<int, StringStream>(Constant(11)),
+                            Workspace = new OneOfStep<SCLInt, StringStream>(Constant(11)),
                             DestinationFolderArtifactId = Constant(22),
                             FolderArtifactId            = Constant(33)
                         }
@@ -28,7 +28,7 @@ public partial class RelativityMoveFoldersTests : StepTestBase<RelativityMoveFol
                 .WithService(
                     new MockSetup<IFolderManager1, FolderMoveResultSet>(
                         x => x.MoveFolderAsync(11, 33, 22, It.IsAny<CancellationToken>()),
-                        new FolderMoveResultSet()
+                        new FolderMoveResultSet
                         {
                             OperationsCompleted = 1,
                             TotalOperations     = 1,

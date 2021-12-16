@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Objects.DataContracts;
@@ -83,7 +82,7 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
             {
                 yield return new FieldRefValuePair()
                 {
-                    Field = new FieldRef() { Name = key }, Value = value.Value.ObjectValue
+                    Field = new FieldRef() { Name = key }, Value = value.Value.ToCSharpObject()
                 };
             }
         }
@@ -111,14 +110,14 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The artifact id of the object to update
     /// </summary>
     [StepProperty(2)]
     [Required]
-    public IStep<int> ObjectArtifactId { get; set; } = null!;
+    public IStep<SCLInt> ObjectArtifactId { get; set; } = null!;
 
     /// <summary>
     /// The updated values to use
@@ -132,6 +131,8 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
     /// </summary>
     [StepProperty(4)]
     [DefaultValueExplanation("Merge")]
-    public IStep<UpdateBehaviour> UpdateBehaviour { get; set; } =
-        new EnumConstant<UpdateBehaviour>(Steps.UpdateBehaviour.Merge);
+    public IStep<SCLEnum<UpdateBehaviour>> UpdateBehaviour { get; set; } =
+        new SCLConstant<SCLEnum<UpdateBehaviour>>(
+            new SCLEnum<UpdateBehaviour>(Steps.UpdateBehaviour.Merge)
+        );
 }

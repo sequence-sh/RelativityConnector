@@ -5,7 +5,7 @@ using Relativity.Services.Search;
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
 public partial class
-    RelativityCreateKeywordSearchTests : StepTestBase<RelativityCreateKeywordSearch, int>
+    RelativityCreateKeywordSearchTests : StepTestBase<RelativityCreateKeywordSearch, SCLInt>
 {
     /// <inheritdoc />
     protected override IEnumerable<StepCase> StepCases
@@ -16,18 +16,18 @@ public partial class
                         "Create Keyword",
                         new RelativityCreateKeywordSearch
                         {
-                            Workspace  = new OneOfStep<int, StringStream>(Constant(10)),
+                            Workspace  = new OneOfStep<SCLInt, StringStream>(Constant(10)),
                             SearchName = Constant("My Search"),
                             SearchText = Constant("Search Text"),
                             SortByRank = Constant(true),
                             Fields =
-                                new OneOfStep<Array<int>, Array<StringStream>>(Array(22, 33, 44)),
+                                new OneOfStep<Array<SCLInt>, Array<StringStream>>(Array(22, 33, 44)),
                             Notes                   = Constant("My Notes"),
                             Keywords                = Constant("My Keywords"),
                             Scope                   = Constant(SearchScope.EntireCase),
                             SearchFolderArtifactIds = Array(55, 66)
                         },
-                        42
+                        42.ConvertToSCLObject()
                     ).WithTestRelativitySettings()
                     .WithService(
                         new MockSetup<IKeywordSearchManager1, int>(

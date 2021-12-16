@@ -12,7 +12,7 @@ public partial class RelativityDeleteMatterTests : StepTestBase<RelativityDelete
         {
             yield return new StepCase(
                     "Delete Matter using mock service",
-                    new RelativityDeleteMatter() { MatterArtifactId = StaticHelpers.Constant(123) },
+                    new RelativityDeleteMatter { MatterArtifactId = Constant(123) },
                     Unit.Default
                 )
                 .WithTestRelativitySettings()
@@ -20,7 +20,7 @@ public partial class RelativityDeleteMatterTests : StepTestBase<RelativityDelete
 
             yield return new StepCase(
                     "Delete Matter using mock http",
-                    new RelativityDeleteMatter() { MatterArtifactId = StaticHelpers.Constant(123) },
+                    new RelativityDeleteMatter { MatterArtifactId = Constant(123) },
                     Unit.Default
                 )
                 .WithTestRelativitySettings()

@@ -11,9 +11,9 @@ public partial class RelativityDeleteWorkspaceTests : StepTestBase<RelativityDel
         {
             yield return new StepCase(
                         "Delete a Workspace",
-                        new RelativityDeleteWorkspace()
+                        new RelativityDeleteWorkspace
                         {
-                            Workspace = new OneOfStep<int, StringStream>(Constant(42)),
+                            Workspace = new OneOfStep<SCLInt, StringStream>(Constant(42)),
                         },
                         Unit.Default
                     ).WithTestRelativitySettings()

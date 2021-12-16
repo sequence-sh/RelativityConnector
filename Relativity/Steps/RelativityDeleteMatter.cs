@@ -6,7 +6,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
 /// Delete a matter
 /// </summary>
 [SCLExample("RelativityDeleteMatter 123", ExecuteInTests = false)]
-public class RelativityDeleteMatter : RelativityApiRequest<int, IMatterManager1, Unit, Unit>
+public class RelativityDeleteMatter : RelativityApiRequest<SCLInt, IMatterManager1, Unit, Unit>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -22,7 +22,7 @@ public class RelativityDeleteMatter : RelativityApiRequest<int, IMatterManager1,
     public override async Task<Unit> SendRequest(
         IStateMonad stateMonad,
         IMatterManager1 service,
-        int requestObject,
+        SCLInt requestObject,
         CancellationToken cancellationToken)
     {
         await service.DeleteAsync(requestObject);
@@ -30,7 +30,7 @@ public class RelativityDeleteMatter : RelativityApiRequest<int, IMatterManager1,
     }
 
     /// <inheritdoc />
-    public override Task<Result<int, IError>> TryCreateRequest(
+    public override Task<Result<SCLInt, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
@@ -42,5 +42,5 @@ public class RelativityDeleteMatter : RelativityApiRequest<int, IMatterManager1,
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<int> MatterArtifactId { get; set; } = null!;
+    public IStep<SCLInt> MatterArtifactId { get; set; } = null!;
 }

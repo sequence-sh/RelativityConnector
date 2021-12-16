@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Workspace.Models;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -11,7 +10,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
         "(Client: \"\" ClientNumber: \"\" DownloadHandlerUrl: \"\" EnableDataGrid: False Matter: \"\" MatterNumber: \"\" ProductionRestrictions: \"\" ResourcePool: \"\" DefaultFileRepository: \"\" DataGridFileRepository: \"\" DefaultCacheLocation: \"\" SqlServer: \"\" AzureCredentials: \"\" AzureFileSystemCredentials: \"\" SqlFullTextLanguage: \"\" Status: \"\" WorkspaceAdminGroup: \"\" Keywords: \"\" Notes: \"\" CreatedOn: 0001-01-01T00:00:00.0000000 CreatedBy: \"\" LastModifiedBy: \"\" LastModifiedOn: 0001-01-01T00:00:00.0000000 Meta: (Unsupported: \"\" ReadOnly: [\"Meta\", \"Data\"]) Actions: [(Name: \"MyAction\" Href: \"\" Verb: \"Post\" IsAvailable: True Reason: \"\")] Name: \"\" ArtifactID: 11 Guids: \"\")"
 )]
 public sealed class
-    RelativityRetrieveWorkspace : RelativityApiRequest<(int workspaceId, bool includeMetadata, bool
+    RelativityRetrieveWorkspace : RelativityApiRequest<(SCLInt workspaceId, SCLBool includeMetadata, SCLBool
         includeActions),
         IWorkspaceManager1, WorkspaceResponse, Entity>
 {
@@ -21,21 +20,21 @@ public sealed class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// Whether to include metadata in the result
     /// </summary>
     [StepProperty(2)]
     [DefaultValueExplanation("false")]
-    public IStep<bool> IncludeMetadata { get; set; } = new BoolConstant(false);
+    public IStep<SCLBool> IncludeMetadata { get; set; } = new SCLConstant<SCLBool>(false.ConvertToSCLObject());
 
     /// <summary>
     /// Whether to include actions in the result
     /// </summary>
     [StepProperty(3)]
     [DefaultValueExplanation("false")]
-    public IStep<bool> IncludeActions { get; set; } = new BoolConstant(false);
+    public IStep<SCLBool> IncludeActions { get; set; } = new SCLConstant<SCLBool>(false.ConvertToSCLObject());
 
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
@@ -51,7 +50,7 @@ public sealed class
     public override async Task<WorkspaceResponse> SendRequest(
         IStateMonad stateMonad,
         IWorkspaceManager1 service,
-        (int workspaceId, bool includeMetadata, bool includeActions) requestObject,
+        (SCLInt workspaceId, SCLBool includeMetadata, SCLBool includeActions) requestObject,
         CancellationToken cancellationToken)
     {
         return await service.ReadAsync(
@@ -63,7 +62,7 @@ public sealed class
 
     /// <inheritdoc />
     public override async
-        Task<Result<(int workspaceId, bool includeMetadata, bool includeActions), IError>>
+        Task<Result<(SCLInt workspaceId, SCLBool includeMetadata, SCLBool includeActions), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return await stateMonad.RunStepsAsync(

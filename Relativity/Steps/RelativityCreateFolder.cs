@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -9,16 +8,16 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
 /// </summary>
 public sealed class
     RelativityCreateFolder : RelativityApiRequest<(Folder folder, int workspaceId), IFolderManager1,
-        int, int>
+        int, SCLInt>
 {
     /// <inheritdoc />
     public override IStepFactory StepFactory =>
-        new SimpleStepFactory<RelativityCreateFolder, int>();
+        new SimpleStepFactory<RelativityCreateFolder, SCLInt>();
 
     /// <inheritdoc />
-    public override Result<int, IErrorBuilder> ConvertOutput(int serviceOutput)
+    public override Result<SCLInt, IErrorBuilder> ConvertOutput(int serviceOutput)
     {
-        return serviceOutput;
+        return serviceOutput.ConvertToSCLObject();
     }
 
     /// <inheritdoc />
@@ -69,7 +68,7 @@ public sealed class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The name of the Folder DTO that you want to create.
@@ -84,5 +83,5 @@ public sealed class
     /// </summary>
     [StepProperty(3)]
     [DefaultValueExplanation("Create the folder at the root of the workspace.")]
-    public IStep<int>? ParentFolderId { get; set; } = null!;
+    public IStep<SCLInt>? ParentFolderId { get; set; } = null!;
 }

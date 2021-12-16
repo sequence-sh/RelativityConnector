@@ -2,7 +2,6 @@
 using System.Text;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using OneOf;
 using Reductech.EDR.Connectors.Relativity.Errors;
 using Reductech.EDR.Core.Entities.Schema;
 using ReductechEntityImport;
@@ -223,7 +222,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     [StepProperty(2)][Required] public IStep<Array<Entity>> Entities { get; set; } = null!;
 
@@ -232,42 +231,42 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
     [StepProperty(4)]
     [DefaultValueExplanation("Control Number")]
     public IStep<StringStream> ControlNumberField { get; set; } =
-        new StringConstant("Control Number");
+        new SCLConstant<StringStream>("Control Number");
 
     [StepProperty(5)]
     [DefaultValueExplanation("No file path")]
-    public IStep<StringStream> FilePathField { get; set; } = new StringConstant("");
+    public IStep<StringStream> FilePathField { get; set; } = new SCLConstant<StringStream>("");
 
     [StepProperty(6)]
     [DefaultValueExplanation("No folder path")]
-    public IStep<StringStream> FolderPathField { get; set; } = new StringConstant("");
+    public IStep<StringStream> FolderPathField { get; set; } = new SCLConstant<StringStream>("");
 
     private static Result<ImportObject.Types.FieldValue, IErrorBuilder> GetFieldValue(
-        EntityValue entityValue)
+        ISCLObject entityValue)
     {
         switch (entityValue)
         {
-            case EntityValue.Boolean boolean:
+            case SCLBool boolean:
                 return
                     new ImportObject.Types.FieldValue { BoolValue = boolean.Value };
-            case EntityValue.DateTime dateTime:
+            case SCLDateTime dateTime:
                 return
-                    new ImportObject.Types.FieldValue { DateValue = dateTime.ToString() };
-            case EntityValue.Double d:
+                    new ImportObject.Types.FieldValue { DateValue = dateTime.Serialize(SerializeOptions.Primitive) };
+            case SCLDouble d:
                 return
                     new ImportObject.Types.FieldValue { DoubleValue = d.Value };
-            case EntityValue.EnumerationValue enumerationValue:
+            case ISCLEnum enumerationValue:
                 return
                     new ImportObject.Types.FieldValue
                     {
-                        StringValue = enumerationValue.Value.Value
+                        StringValue = enumerationValue.EnumValue
                     };
-            case EntityValue.Integer integer:
+            case SCLInt integer:
                 return
                     new ImportObject.Types.FieldValue { IntValue = integer.Value };
-            case EntityValue.String s:
+            case StringStream s:
                 return
-                    new ImportObject.Types.FieldValue { StringValue = s.Value };
+                    new ImportObject.Types.FieldValue { StringValue = s.GetString() };
             default:
                 return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(
                     $"Cannot import {entityValue}"

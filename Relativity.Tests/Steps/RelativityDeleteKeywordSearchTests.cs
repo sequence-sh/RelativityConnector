@@ -12,9 +12,9 @@ public partial class
         {
             yield return new StepCase(
                     "Delete Keyword Search",
-                    new RelativityDeleteKeywordSearch()
+                    new RelativityDeleteKeywordSearch
                     {
-                        Workspace = new OneOfStep<int, StringStream>(Constant(123)),
+                        Workspace = new OneOfStep<SCLInt, StringStream>(Constant(123)),
                         SearchId  = Constant(456),
                     },
                     Unit.Default

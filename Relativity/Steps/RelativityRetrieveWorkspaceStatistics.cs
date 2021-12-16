@@ -1,5 +1,4 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Workspace.Models;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
@@ -10,7 +9,7 @@ namespace Reductech.EDR.Connectors.Relativity.Steps;
     ExecuteInTests = false
 )]
 public sealed class
-    RelativityRetrieveWorkspaceStatistics : RelativityApiRequest<int, IWorkspaceManager1,
+    RelativityRetrieveWorkspaceStatistics : RelativityApiRequest<SCLInt, IWorkspaceManager1,
         WorkspaceSummary, Entity>
 {
     
@@ -29,14 +28,14 @@ public sealed class
     public override async Task<WorkspaceSummary> SendRequest(
         IStateMonad stateMonad,
         IWorkspaceManager1 service,
-        int requestObject,
+        SCLInt requestObject,
         CancellationToken cancellationToken)
     {
         return await service.GetWorkspaceSummaryAsync(requestObject);
     }
 
     /// <inheritdoc />
-    public override Task<Result<int, IError>> TryCreateRequest(
+    public override Task<Result<SCLInt, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
@@ -49,5 +48,5 @@ public sealed class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 }

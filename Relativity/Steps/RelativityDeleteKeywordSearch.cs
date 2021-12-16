@@ -1,10 +1,9 @@
-﻿using OneOf;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
 
 namespace Reductech.EDR.Connectors.Relativity.Steps;
 
 public class
-    RelativityDeleteKeywordSearch : RelativityApiRequest<(int workspaceId, int searchId),
+    RelativityDeleteKeywordSearch : RelativityApiRequest<(SCLInt workspaceId, SCLInt searchId),
         IKeywordSearchManager1,
         Unit,
         Unit>
@@ -23,7 +22,7 @@ public class
     public override async Task<Unit> SendRequest(
         IStateMonad stateMonad,
         IKeywordSearchManager1 service,
-        (int workspaceId, int searchId) requestObject,
+        (SCLInt workspaceId, SCLInt searchId) requestObject,
         CancellationToken cancellationToken)
     {
         await service.DeleteSingleAsync(requestObject.workspaceId, requestObject.searchId);
@@ -32,11 +31,11 @@ public class
     }
 
     /// <inheritdoc />
-    public override Task<Result<(int workspaceId, int searchId), IError>> TryCreateRequest(
+    public override Task<Result<(SCLInt workspaceId, SCLInt searchId), IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
-        return stateMonad.RunStepsAsync(Workspace.WrapArtifact(Relativity.ArtifactType.Case,stateMonad, this), SearchId, cancellation);
+        return stateMonad.RunStepsAsync(Workspace.WrapArtifact(ArtifactType.Case,stateMonad, this), SearchId, cancellation);
     }
 
     /// <summary>
@@ -45,12 +44,12 @@ public class
     /// </summary>
     [StepProperty(1)]
     [Required]
-    public IStep<OneOf<int, StringStream>> Workspace { get; set; } = null!;
+    public IStep<SCLOneOf<SCLInt, StringStream>> Workspace { get; set; } = null!;
 
     /// <summary>
     /// The Id of the search to read
     /// </summary>
     [StepProperty(2)]
     [Required]
-    public IStep<int> SearchId { get; set; } = null!;
+    public IStep<SCLInt> SearchId { get; set; } = null!;
 }

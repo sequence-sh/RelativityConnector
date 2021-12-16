@@ -13,10 +13,10 @@ public partial class RelativityImportTests : StepTestBase<RelativityImport, Unit
         {
             yield return new StepCase(
                         "Basic Import",
-                        new RelativityImport()
+                        new RelativityImport
                         {
                             FilePath             = Constant("C:/Data"),
-                            Workspace            = new OneOfStep<int, StringStream>(Constant(1234)),
+                            Workspace            = new OneOfStep<SCLInt, StringStream>(Constant(1234)),
                             SettingsFilePath     = Constant("C:/Settings"),
                             FileImportType       = Constant(FileImportType.Object),
                             LoadFileEncoding     = Constant(456),
@@ -33,7 +33,7 @@ public partial class RelativityImportTests : StepTestBase<RelativityImport, Unit
                                 x => x.RunExternalProcess(
                                     "C:/DesktopClientPath",
                                     It.IsAny<IErrorHandler>(),
-                                    new List<string>()
+                                    new List<string>
                                     {
                                         "-f:C:/Data",
                                         "-c:1234",

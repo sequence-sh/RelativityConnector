@@ -6,7 +6,6 @@ using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Field;
 using Relativity.Services.Objects.DataContracts;
 using FieldRef = Relativity.Services.Objects.DataContracts.FieldRef;
-using QueryRequest = Relativity.Services.Objects.DataContracts.QueryRequest;
 
 namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
 
@@ -21,20 +20,20 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
 
             yield return new StepCase(
                     "Export with condition",
-                    new ForEach<Entity>()
+                    new ForEach<Entity>
                     {
-                        Array = new RelativityExport()
+                        Array = new RelativityExport
                         {
-                            Workspace  = new OneOfStep<int, StringStream>(Constant(12345)),
+                            Workspace  = new OneOfStep<SCLInt, StringStream>(Constant(12345)),
                             Condition  = Constant("'Extracted Text' ISSET "),
                             FieldNames = Array("ShortField", "LongField"),
                             BatchSize  = Constant(10)
                         },
                         Action = new LambdaFunction<Entity, Unit>(
                             null,
-                            new Log<StringStream>()
+                            new Log
                             {
-                                Value = new GetAutomaticVariable<StringStream>()
+                                Value = new GetAutomaticVariable<Entity>()
                             }
                         )
                     },
@@ -47,12 +46,12 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                     new MockSetup<IObjectManager1, ExportInitializationResults>(
                         manager =>
                             manager.InitializeExportAsync(12345, It.IsAny<QueryRequest>(), 0),
-                        new ExportInitializationResults()
+                        new ExportInitializationResults
                         {
                             RecordCount = 10,
                             RunID       = runId,
                             FieldData =
-                                new List<FieldMetadata>()
+                                new List<FieldMetadata>
                                 {
                                     new() { Name = "ShortField" }, new() { Name = "LongField" },
                                 }
@@ -64,10 +63,10 @@ public partial class RelativityExportTests : StepTestBase<RelativityExport, Arra
                         d => d.RetrieveNextResultsBlockFromExportAsync(12345, runId, 10),
                         new[]
                         {
-                            new RelativityObjectSlim()
+                            new RelativityObjectSlim
                             {
                                 ArtifactID = 111,
-                                Values = new List<object>()
+                                Values = new List<object>
                                 {
                                     "Hello", RelativityExportHelpers.LongStringToken
                                 }
