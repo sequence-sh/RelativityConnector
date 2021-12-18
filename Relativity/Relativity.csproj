@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
     <PackageReference Include="Reductech.EDR.Connectors.EntityImportClient.Proto" Version="0.2.0" GeneratePathProperty="true" />
-    <PackageReference Include="Reductech.EDR.Core" Version="0.13.0-a.main.2112161035">
+    <PackageReference Include="Reductech.EDR.Core" Version="0.13.0-a.main.2112171536">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Relativity.API" Version="17.0.4" />
