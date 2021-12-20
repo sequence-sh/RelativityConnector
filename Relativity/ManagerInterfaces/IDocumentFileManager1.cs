@@ -1,8 +1,8 @@
-﻿using Reductech.EDR.Connectors.Relativity.Managers;
+﻿using Reductech.Sequence.Connectors.Relativity.Managers;
 using Relativity.Kepler.Services;
 using Relativity.Kepler.Transport;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
 /// Exposes the methods for working with files associated with documents

@@ -2,11 +2,11 @@
 using System.Text;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using Reductech.EDR.Connectors.Relativity.Errors;
-using Reductech.EDR.Core.Entities.Schema;
+using Reductech.Sequence.Connectors.Relativity.Errors;
+using Reductech.Sequence.Core.Entities.Schema;
 using ReductechEntityImport;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Import Entities into Relativity
@@ -209,7 +209,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
         var clientPath = Path.Combine(
             Path.GetDirectoryName(assembly.Location) ?? string.Empty,
-            "EDR.EntityImportClient",
+            "Sequence.EntityImportClient",
             importClientName
         );
 

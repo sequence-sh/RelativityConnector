@@ -1,6 +1,6 @@
 ﻿using Relativity.Services.ServiceProxy;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 /// <summary>
 /// Produces IServiceFactories

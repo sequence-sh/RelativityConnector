@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Objects.DataContracts;
 using ObjectTypeRef = Relativity.Services.Objects.DataContracts.ObjectTypeRef;
 using QueryRequest = Relativity.Services.Objects.DataContracts.QueryRequest;
 using Sort = Relativity.Services.Objects.DataContracts.Sort;
 using SortEnum = Relativity.Services.Objects.DataContracts.SortEnum;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Query for Workspaces, Documents, RDOs and System Types

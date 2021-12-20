@@ -3,8 +3,8 @@
 //using Flurl.Http.Testing;
 //using Microsoft.Extensions.Logging;
 //using Microsoft.Extensions.Logging.Xunit;
-//using Reductech.EDR.Core;
-//using Reductech.EDR.Core.Internal;
+//using Reductech.Sequence.Core;
+//using Reductech.Sequence.Core.Internal;
 //using Xunit;
 //using Xunit.Abstractions;
 

@@ -2,7 +2,7 @@
 using Flurl;
 using Flurl.Http;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 public static class FlurlHelpers
 {

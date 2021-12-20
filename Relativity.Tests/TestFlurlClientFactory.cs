@@ -3,7 +3,7 @@ using System.Reflection;
 using Flurl.Http;
 using Flurl.Http.Testing;
 
-namespace Reductech.EDR.Connectors.Relativity.TestHelpers;
+namespace Reductech.Sequence.Connectors.Relativity.TestHelpers;
 
 public class TestFlurlClientFactory
 {

@@ -4,9 +4,9 @@
 //using Microsoft.Extensions.Logging;
 //using Microsoft.Extensions.Logging.Xunit;
 //using Moq;
-//using Reductech.EDR.Core;
-//using Reductech.EDR.Core.Internal;
-//using Reductech.EDR.Core.Util;
+//using Reductech.Sequence.Core;
+//using Reductech.Sequence.Core.Internal;
+//using Reductech.Sequence.Core.Util;
 //using Reductech.Utilities.Testing;
 //using Xunit;
 //using Xunit.Abstractions;

@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using Moq;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Field;
 using Relativity.Services.Objects.DataContracts;
 using FieldRef = Relativity.Services.Objects.DataContracts.FieldRef;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityExportTests : StepTestBase<RelativityExport, Array<Entity>>
 {

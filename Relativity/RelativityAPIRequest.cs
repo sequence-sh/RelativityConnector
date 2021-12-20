@@ -1,6 +1,6 @@
-﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 public abstract class
     RelativityApiRequest<TRequest, TService, TServiceOutput, TOutput> : CompoundStep<TOutput>

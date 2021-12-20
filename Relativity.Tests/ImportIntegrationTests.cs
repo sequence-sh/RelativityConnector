@@ -4,17 +4,17 @@
 //using System.Threading.Tasks;
 //using Divergic.Logging.Xunit;
 //using Microsoft.Extensions.Logging;
-//using Reductech.EDR.ConnectorManagement.Base;
-//using Reductech.EDR.Connectors.Relativity.Steps;
-//using Reductech.EDR.Core.Abstractions;
-//using Reductech.EDR.Core.Internal;
-//using Reductech.EDR.Core.Internal.Serialization;
-//using Reductech.EDR.Core.TestHarness;
+//using Reductech.Sequence.ConnectorManagement.Base;
+//using Reductech.Sequence.Connectors.Relativity.Steps;
+//using Reductech.Sequence.Core.Abstractions;
+//using Reductech.Sequence.Core.Internal;
+//using Reductech.Sequence.Core.Internal.Serialization;
+//using Reductech.Sequence.Core.TestHarness;
 //using Xunit;
 //using Xunit.Abstractions;
-//using static Reductech.EDR.Core.TestHarness.StaticHelpers;
+//using static Reductech.Sequence.Core.TestHarness.StaticHelpers;
 
-//namespace Reductech.EDR.Connectors.Relativity.Tests
+//namespace Reductech.Sequence.Connectors.Relativity.Tests
 //{
 
 //    [AutoTheory.UseTestOutputHelper]
@@ -36,7 +36,7 @@
 //            var sfs = StepFactoryStore.Create(new ConnectorData(
 //                new ConnectorSettings()
 //                {
-//                    Id = "Reductech.EDR.Connectors.Relativity",
+//                    Id = "Reductech.Sequence.Connectors.Relativity",
 //                    Enable = true,
 //                    Version = "0.10.0",
 //                    Settings = new RelativitySettings()

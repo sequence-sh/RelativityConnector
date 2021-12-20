@@ -1,8 +1,8 @@
 ﻿using Moq;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Workspace.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityCreateWorkspaceTests : StepTestBase<RelativityCreateWorkspace, Entity>

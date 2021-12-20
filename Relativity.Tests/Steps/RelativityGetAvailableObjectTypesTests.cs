@@ -1,12 +1,12 @@
 ﻿//using System.Collections.Generic;
-//using Reductech.EDR.Connectors.Relativity.Steps;
-//using Reductech.EDR.Core;
-//using Reductech.EDR.Core.TestHarness;
-//using Reductech.EDR.Core.Util;
+//using Reductech.Sequence.Connectors.Relativity.Steps;
+//using Reductech.Sequence.Core;
+//using Reductech.Sequence.Core.TestHarness;
+//using Reductech.Sequence.Core.Util;
 //using Relativity.Services.Interfaces.Field;
 //using Relativity.Services.Interfaces.Shared.Models;
 
-//namespace Reductech.EDR.Connectors.Relativity.Tests.Steps
+//namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps
 //{
 
 //public partial class

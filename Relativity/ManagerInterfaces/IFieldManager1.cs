@@ -4,7 +4,7 @@ using Relativity.Services.Interfaces.Field.Models;
 using Relativity.Services.Interfaces.Shared;
 using Relativity.Services.Interfaces.Shared.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 //I had to create this because ObjectType needs to be a securable object identifier
 

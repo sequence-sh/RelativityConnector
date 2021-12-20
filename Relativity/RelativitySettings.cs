@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Text;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 [DataContract]
 public sealed class RelativitySettings : IEntityConvertible

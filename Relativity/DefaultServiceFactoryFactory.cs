@@ -1,6 +1,6 @@
 ﻿using Relativity.Services.ServiceProxy;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 /// <summary>
 /// Creates Service Factories which connect to a relativity server

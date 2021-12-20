@@ -1,7 +1,7 @@
-﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Objects.DataContracts;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 [SCLExample(
     "RelativityDeleteDocument Workspace: 11 ObjectArtifactId: 22",

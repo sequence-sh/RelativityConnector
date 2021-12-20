@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Reductech.EDR.Connectors.Relativity.Tests")]
+[assembly: InternalsVisibleTo("Reductech.Sequence.Connectors.Relativity.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

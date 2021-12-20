@@ -1,7 +1,7 @@
 ﻿using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Kepler.Services;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Workspace Manager")]
 [ServiceAudience(Audience.Public)]

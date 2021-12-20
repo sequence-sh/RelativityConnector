@@ -1,8 +1,8 @@
-﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Creates a new Relativity Workspace

@@ -1,6 +1,6 @@
-﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 [SCLExample(
     "RelativityExport Workspace: 12345 Condition: \"'Extracted Text' ISSET \" FieldNames: [\"Field1\", \"Field2\"] BatchSize: 10",

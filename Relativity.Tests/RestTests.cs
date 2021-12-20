@@ -1,14 +1,14 @@
-//using System.Net.Http;
+﻿//using System.Net.Http;
 //using System.Threading;
 //using System.Threading.Tasks;
 //using FluentAssertions;
 //using Flurl.Http;
-//using Reductech.EDR.Core.Internal.Errors;
-//using Reductech.EDR.Core.TestHarness;
+//using Reductech.Sequence.Core.Internal.Errors;
+//using Reductech.Sequence.Core.TestHarness;
 //using Xunit;
 //using Xunit.Abstractions;
 
-//namespace Reductech.EDR.Connectors.Relativity.Tests
+//namespace Reductech.Sequence.Connectors.Relativity.Tests
 //{
 //    public class Tests //These are integration tests. At some point we need to set up ci for them properly
 //    {

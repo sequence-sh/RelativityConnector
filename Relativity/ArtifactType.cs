@@ -1,4 +1,4 @@
-﻿namespace Reductech.EDR.Connectors.Relativity;
+﻿namespace Reductech.Sequence.Connectors.Relativity;
 
 /// <summary>
 /// Relativity Artifact Type

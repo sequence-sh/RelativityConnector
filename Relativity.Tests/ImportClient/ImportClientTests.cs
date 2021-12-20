@@ -3,7 +3,7 @@ using Grpc.Core;
 using Moq;
 using ReductechEntityImport;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.ImportClient;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.ImportClient;
 
 public class ImportClientTests
 {
