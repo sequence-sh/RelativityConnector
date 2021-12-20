@@ -377,4 +377,4 @@ nupkg/
 ####
 **/StrykerOutput/
 version.env
-EDR.EntityImportClient/
+Sequence.EntityImportClient/

@@ -1,6 +1,6 @@
-﻿using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
+﻿using static Reductech.Sequence.Core.TestHarness.SchemaHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests;
+namespace Reductech.Sequence.Connectors.Relativity.Tests;
 
 public class ExampleTests
 {
@@ -343,7 +343,7 @@ public class ExampleTests
         var connectorData = new ConnectorData(
             new ConnectorSettings
             {
-                Id      = "Reductech.EDR.Connectors.Relativity",
+                Id      = "Reductech.Sequence.Connectors.Relativity",
                 Enable  = true,
                 Version = "0.10.0",
                 Settings = new RelativitySettings

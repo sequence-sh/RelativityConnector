@@ -1,9 +1,9 @@
-﻿using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Shared.V1.Models;
 using Action = Relativity.Shared.V1.Models.Action;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityRetrieveWorkspaceTests : StepTestBase<RelativityRetrieveWorkspace, Entity>

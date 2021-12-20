@@ -1,8 +1,8 @@
 ﻿using Flurl.Http;
-using Reductech.EDR.Connectors.Relativity.Managers;
-using Reductech.EDR.Core.Connectors;
+using Reductech.Sequence.Connectors.Relativity.Managers;
+using Reductech.Sequence.Core.Connectors;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 public sealed class ConnectorInjection : IConnectorInjection
 {

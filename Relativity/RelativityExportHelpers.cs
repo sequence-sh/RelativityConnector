@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Runtime.CompilerServices;
-using Reductech.EDR.Connectors.Relativity.Errors;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.Errors;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Objects.DataContracts;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 /// <summary>
 /// Contains methods to help with Relativity export

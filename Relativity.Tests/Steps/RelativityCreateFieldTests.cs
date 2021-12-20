@@ -1,7 +1,7 @@
 ﻿using Moq;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityCreateFieldTests : StepTestBase<RelativityCreateField, SCLInt>
 {

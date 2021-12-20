@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using OneOf;
-using Reductech.EDR.Connectors.Relativity.Errors;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.Errors;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services;
 using Relativity.Services.Objects.DataContracts;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 public static class RelativityStepMaps
 {

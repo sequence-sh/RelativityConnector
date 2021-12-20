@@ -1,4 +1,4 @@
-﻿namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
 /// Indicates that this property should be included in the generated JSON to post.

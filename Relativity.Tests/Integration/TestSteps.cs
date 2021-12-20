@@ -1,6 +1,6 @@
-﻿using static Reductech.EDR.Core.TestHarness.SchemaHelpers;
+﻿using static Reductech.Sequence.Core.TestHarness.SchemaHelpers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Integration;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.Integration;
 
 internal static class TestSteps
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Relativity.Services.DataContracts.DTOs;
 
-namespace Reductech.EDR.Connectors.Relativity;
+namespace Reductech.Sequence.Connectors.Relativity;
 
 public class ProgressReportProgress : IProgress<ProgressReport>
 {

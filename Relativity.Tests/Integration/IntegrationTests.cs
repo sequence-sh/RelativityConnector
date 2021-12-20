@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Integration;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.Integration;
 
 public class IntegrationTests
 {
@@ -12,7 +12,7 @@ public class IntegrationTests
 
     public ITestOutputHelper TestOutputHelper { get; set; }
         
-    public const string SkipAll = "manual";
+    public const string SkipAll = "skip";
 
     [Fact(Skip = SkipAll)]
     public async void TestImportConcordance()
@@ -208,13 +208,12 @@ public class IntegrationTests
         var connectorData = new ConnectorData(
             new ConnectorSettings
             {
-                Id      = "Reductech.EDR.Connectors.Relativity",
+                Id      = "Reductech.Sequence.Connectors.Relativity",
                 Enable  = true,
-                Version = "0.10.0",
+                Version = "0.13.0",
                 Settings = new RelativitySettings
                 {
                     RelativityUsername = "relativity.admin@relativity.com",
-                    //RelativityUsername = "mark@reduc.tech",
                     RelativityPassword = "Test1234!",
                     Url                = "http://relativitydevvm/",
                     APIVersionNumber   = 1,

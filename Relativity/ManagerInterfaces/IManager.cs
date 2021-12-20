@@ -1,3 +1,3 @@
-﻿namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+﻿namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 public interface IManager : IDisposable { }

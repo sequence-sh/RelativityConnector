@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Flurl.Http;
 
-namespace Reductech.EDR.Connectors.Relativity.Managers;
+namespace Reductech.Sequence.Connectors.Relativity.Managers;
 
 public abstract class ManagerBase : IDisposable
 {

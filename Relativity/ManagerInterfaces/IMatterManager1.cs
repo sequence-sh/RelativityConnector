@@ -2,7 +2,7 @@
 using Relativity.Kepler.Services;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Matter Manager")]
 [ServiceAudience(Audience.Public)]

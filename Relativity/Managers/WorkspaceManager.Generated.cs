@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Flurl.Http;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Matter.Models;
@@ -16,7 +16,7 @@ using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Shared.Models;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.EDR.Connectors.Relativity.Managers
+namespace Reductech.Sequence.Connectors.Relativity.Managers
 {
 [GeneratedCode("CodeGenerator", "1")]
 public class TemplateWorkspaceManager1 : ManagerBase, IWorkspaceManager1

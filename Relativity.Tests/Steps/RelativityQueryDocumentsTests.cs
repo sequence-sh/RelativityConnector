@@ -2,13 +2,13 @@
 using FluentAssertions;
 using Moq;
 using Moq.Language.Flow;
-using Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.DataContracts.DTOs;
 using Relativity.Services.Objects.DataContracts;
-using Entity = Reductech.EDR.Core.Entity;
+using Entity = Reductech.Sequence.Core.Entity;
 using SortEnum = Relativity.Services.Objects.DataContracts.SortEnum;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityQueryDocumentsTests : StepTestBase<RelativitySendQuery, Array<Entity>>

@@ -1,4 +1,4 @@
-﻿namespace Reductech.EDR.Connectors.Relativity.Steps;
+﻿namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 public enum UpdateBehaviour
 {

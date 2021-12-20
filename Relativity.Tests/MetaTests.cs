@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests;
+namespace Reductech.Sequence.Connectors.Relativity.Tests;
 
 /// <summary>
 /// Makes sure all steps have a test class

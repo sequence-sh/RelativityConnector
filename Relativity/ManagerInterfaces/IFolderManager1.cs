@@ -1,7 +1,7 @@
 ﻿using Relativity.Kepler.Services;
 using Relativity.Services.Folder;
 
-namespace Reductech.EDR.Connectors.Relativity.ManagerInterfaces;
+namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Folder Manager")]
 [ServiceAudience(Audience.Public)]

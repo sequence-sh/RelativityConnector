@@ -1,4 +1,4 @@
-﻿namespace Reductech.EDR.Connectors.Relativity.Tests.Steps;
+﻿namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityImportEntitiesTests : StepTestBase<RelativityImportEntities, Unit>
 {
@@ -23,7 +23,7 @@ public partial class RelativityImportEntitiesTests : StepTestBase<RelativityImpo
                     errorCase.Name,
                     errorCase.Step,
                     ErrorCode.MissingStepSettings.ToErrorBuilder(
-                        "Reductech.EDR.Connectors.Relativity"
+                        "Reductech.Sequence.Connectors.Relativity"
                     )
                 );
             }

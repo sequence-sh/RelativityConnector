@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using Reductech.EDR.Core.ExternalProcesses;
+using Reductech.Sequence.Core.ExternalProcesses;
 
-namespace Reductech.EDR.Connectors.Relativity.Steps;
+namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Imports a load file into Relativity using the desktop client

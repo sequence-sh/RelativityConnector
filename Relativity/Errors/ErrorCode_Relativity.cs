@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Reductech.EDR.Connectors.Relativity.Errors;
+namespace Reductech.Sequence.Connectors.Relativity.Errors;
 
 /// <summary>
 /// Error Code for Nuix

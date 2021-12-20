@@ -1,6 +1,6 @@
-﻿using Reductech.EDR.Connectors.Relativity.Managers;
+﻿using Reductech.Sequence.Connectors.Relativity.Managers;
 
-namespace Reductech.EDR.Connectors.Relativity.Tests;
+namespace Reductech.Sequence.Connectors.Relativity.Tests;
 
 public class CodeGeneration
 {

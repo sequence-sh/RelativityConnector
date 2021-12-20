@@ -1,31 +1,26 @@
-# EDR Connector for Relativity®
+# Sequence® Connector for Relativity®
 
-The EDR Connector for Relativity® allows users to automate ediscovery
+The Sequence Connector for Relativity® allows users to automate ediscovery
 and forensic workflows that use [Relativity](https://www.relativity.com/).
 
-This connector has [Steps](https://docs.reductech.io/edr/steps/relativity.html) to:
+This connector has [Steps](https://docs.reductech.io/sequence/steps/relativity.html) to:
 
 - Create new matters and workspaces
 - Ingest data from CSV/Concordance or as entities
 - Search and tag items
 - Export Data as entities
 
-### [Try EDR Connector for Relativity®](https://gitlab.com/reductech/edr/edr/-/releases)
-
-Using [EDR](https://gitlab.com/reductech/edr/edr),
-the command line tool for running Sequences.
-
 ## Documentation
 
 Documentation is available here: https://docs.reductech.io
 
-- [SCL Examples](https://docs.reductech.io/edr/examples/relativity.html)
-- [Connector Help](https://docs.reductech.io/edr/connectors/relativity.html)
-- [Connector Steps](https://docs.reductech.io/edr/steps/Relativity.html)
+- [SCL Examples](https://docs.reductech.io/sequence/examples/relativity.html)
+- [Connector Help](https://docs.reductech.io/sequence/connectors/relativity.html)
+- [Connector Steps](https://docs.reductech.io/sequence/steps/Relativity.html)
 
 ## Connector Settings
 
-The EDR Connector for Relativity® requires additional configuration
+The Sequence Connector for Relativity® requires additional configuration
 which can be provided using the `settings` key in `connectors.json`.
 
 ### Supported Settings
@@ -41,8 +36,8 @@ which can be provided using the `settings` key in `connectors.json`.
 ### Example `connectors.json` Entry
 
 ```json
-"Reductech.EDR.Connectors.Nuix": {
-  "id": "Reductech.EDR.Connectors.Relativity",
+"Reductech.Sequence.Connectors.Relativity": {
+  "id": "Reductech.Sequence.Connectors.Relativity",
   "enable": true,
   "version": "0.11.0",
   "settings": {
@@ -56,20 +51,20 @@ which can be provided using the `settings` key in `connectors.json`.
 
 ## Developing
 
-To successfully run integration tests, a copy of the [EntityImportClient](https://gitlab.com/reductech/edr/connectors/entityimportclient)
-needs to be in the `EDR.EntityImportClient` directory in the solution root.
+To successfully run integration tests, a copy of the [EntityImportClient](https://gitlab.com/reductech/sequence/connectors/entityimportclient)
+needs to be in the `Sequence.EntityImportClient` directory in the solution root.
 
 Download the latest:
 
-- [Release](https://gitlab.com/reductech/edr/connectors/entityimportclient/-/releases)
-- [Main branch build](https://gitlab.com/reductech/edr/connectors/entityimportclient/-/jobs/artifacts/main/download?job=package+exe+dev)
+- [Release](https://gitlab.com/reductech/sequence/connectors/entityimportclient/-/releases)
+- [Main branch build](https://gitlab.com/reductech/sequence/connectors/entityimportclient/-/jobs/artifacts/main/download?job=package+exe+dev)
 
 The EntityImportClient is automatically downloaded and included in the connector
 package when building using the CI.
 
 ## Releases
 
-Can be downloaded from the [Releases page](https://gitlab.com/reductech/edr/connectors/relativity/-/releases).
+Can be downloaded from the [Releases page](https://gitlab.com/reductech/sequence/connectors/relativity/-/releases).
 
 ## Licensing
 
