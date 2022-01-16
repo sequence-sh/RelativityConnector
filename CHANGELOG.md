@@ -1,3 +1,12 @@
+# v0.13.0 (2022-01-16)
+
+## Issues Closed in this Release
+
+### Maintenance
+
+- Rename EDR to Sequence #59
+- Update Core to latest version #55
+
 # v0.12.0 (2021-11-26)
 
 Maintenance release - dependency updates only.
@@ -112,4 +121,5 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
 
