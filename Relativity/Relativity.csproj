@@ -30,8 +30,8 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
-    <PackageReference Include="Reductech.Sequence.Connectors.EntityImportClient.Proto" Version="0.2.0-a.main.2112201656" />
-    <PackageReference Include="Reductech.Sequence.Core" Version="0.13.0-a.main.2201030211">
+    <PackageReference Include="Reductech.Sequence.Connectors.EntityImportClient.Proto" Version="0.3.0" />
+    <PackageReference Include="Reductech.Sequence.Core" Version="0.13.0">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Relativity.API" Version="17.0.4" />

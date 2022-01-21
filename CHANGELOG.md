@@ -1,3 +1,23 @@
+# v0.13.0 (2022-01-16)
+
+EDR is now Sequence. The following has changed:
+
+- The GitLab group has moved to https://gitlab.com/reductech/sequence
+- The root namespace is now `Reductech.Sequence`
+- The documentation site has moved to https://sequence.sh
+
+Everything else is still the same - automation, simplified.
+
+The project has now been updated to use .NET 6.
+
+## Issues Closed in this Release
+
+### Maintenance
+
+- Rename EDR to Sequence #59
+- Update Core to support SCLObject types #55
+- Upgrade to use .net 6 #54
+
 # v0.12.0 (2021-11-26)
 
 Maintenance release - dependency updates only.
@@ -112,4 +132,5 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
 

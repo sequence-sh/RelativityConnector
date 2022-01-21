@@ -10,14 +10,6 @@ This connector has [Steps](https://docs.reductech.io/sequence/steps/relativity.h
 - Search and tag items
 - Export Data as entities
 
-## Documentation
-
-Documentation is available here: https://docs.reductech.io
-
-- [SCL Examples](https://docs.reductech.io/sequence/examples/relativity.html)
-- [Connector Help](https://docs.reductech.io/sequence/connectors/relativity.html)
-- [Connector Steps](https://docs.reductech.io/sequence/steps/Relativity.html)
-
 ## Connector Settings
 
 The Sequence Connector for Relativity® requires additional configuration
