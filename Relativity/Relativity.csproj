@@ -20,18 +20,18 @@
 
     <PackageProjectUrl>https://gitlab.com/reductech/sequence/connectors/relativity</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/reductech/sequence/connectors/relativity.git</RepositoryUrl>
-    <PackageReleaseNotes>Please see https://gitlab.com/reductech/sequence/connectors/relativity/-/blob/master/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>https://gitlab.com/reductech/sequence/connectors/relativity/-/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
     <Authors>Reductech</Authors>
     <Company>Reductech</Company>
-    <Copyright>Copyright (c) 2021 Reductech Ltd</Copyright>
+    <Copyright>Copyright (c) 2022 Reductech Ltd</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.2" />
     <PackageReference Include="Reductech.Sequence.Connectors.EntityImportClient.Proto" Version="0.3.0" />
-    <PackageReference Include="Reductech.Sequence.Core" Version="0.14.0-a.main.2203231647">
+    <PackageReference Include="Reductech.Sequence.Core" Version="0.14.0">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Relativity.API" Version="17.0.4" />

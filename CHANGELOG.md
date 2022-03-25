@@ -1,3 +1,7 @@
+# v0.14.0 (2022-03-25)
+
+Maintenance release - dependency updates only.
+
 # v0.13.0 (2022-01-16)
 
 EDR is now Sequence. The following has changed:
@@ -132,5 +136,6 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
 
 
