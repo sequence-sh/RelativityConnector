@@ -20,12 +20,12 @@
 
     <PackageProjectUrl>https://gitlab.com/reductech/sequence/connectors/relativity</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/reductech/sequence/connectors/relativity.git</RepositoryUrl>
-    <PackageReleaseNotes>Please see https://gitlab.com/reductech/sequence/connectors/relativity/-/blob/master/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>https://gitlab.com/reductech/sequence/connectors/relativity/-/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
     <Authors>Reductech</Authors>
     <Company>Reductech</Company>
-    <Copyright>Copyright (c) 2021 Reductech Ltd</Copyright>
+    <Copyright>Copyright (c) 2022 Reductech Ltd</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

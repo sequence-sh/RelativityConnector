@@ -3,7 +3,7 @@
 The Sequence Connector for Relativity® allows users to automate ediscovery
 and forensic workflows that use [Relativity](https://www.relativity.com/).
 
-This connector has [Steps](https://docs.reductech.io/sequence/steps/relativity.html) to:
+This connector has [Steps](https://sequence.sh/steps/Relativity) to:
 
 - Create new matters and workspaces
 - Ingest data from CSV/Concordance or as entities
@@ -40,6 +40,10 @@ which can be provided using the `settings` key in `connectors.json`.
   }
 }
 ```
+
+## Documentation
+
+Documentation available at https://sequence.sh
 
 ## Developing
 
