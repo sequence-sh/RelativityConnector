@@ -87,7 +87,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                     .WithLocation(this)
             );
 
-        foreach (var (key, (node, required)) in entityNode.EntityPropertiesData.Nodes)
+        foreach (var (key, (node, required, _)) in entityNode.EntityPropertiesData.Nodes)
         {
             var dt = GetDataType(node);
 
@@ -141,7 +141,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                                 )
                             )));
 
-                foreach (var (key, (node, required)) in entityNode.EntityPropertiesData.Nodes)
+                foreach (var (key, (node, required, _)) in entityNode.EntityPropertiesData.Nodes)
                 {
                     var value = entity.TryGetValue(key);
 
