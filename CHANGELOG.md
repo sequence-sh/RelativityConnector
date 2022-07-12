@@ -1,3 +1,7 @@
+# v0.16.0 (2022-07-13)
+
+Maintenance release - dependency updates only.
+
 # v0.15.0 (2022-05-27)
 
 Maintenance release - dependency updates only.
@@ -140,6 +144,7 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
 
 
 
