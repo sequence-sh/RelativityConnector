@@ -31,7 +31,7 @@ which can be provided using the `settings` key in `connectors.json`.
 "Reductech.Sequence.Connectors.Relativity": {
   "id": "Reductech.Sequence.Connectors.Relativity",
   "enable": true,
-  "version": "0.11.0",
+  "version": "0.16.0",
   "settings": {
     "RelativityUsername": "YourUsername",
     "RelativityPassword": "YourPassword",
@@ -41,9 +41,17 @@ which can be provided using the `settings` key in `connectors.json`.
 }
 ```
 
-## Documentation
+# Documentation
 
-Documentation available at https://sequence.sh
+https://sequence.sh
+
+# Download
+
+https://sequence.sh/download
+
+# Try SCL and Core
+
+https://sequence.sh/playground
 
 ## Developing
 
@@ -58,9 +66,13 @@ Download the latest:
 The EntityImportClient is automatically downloaded and included in the connector
 package when building using the CI.
 
-## Releases
+# Package Releases
 
 Can be downloaded from the [Releases page](https://gitlab.com/reductech/sequence/connectors/relativity/-/releases).
+
+# NuGet Packages
+
+Release nuget packages are available from [nuget.org](https://www.nuget.org/profiles/Sequence).
 
 ## Licensing
 
