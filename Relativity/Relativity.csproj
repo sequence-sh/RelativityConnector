@@ -14,22 +14,50 @@
   <PropertyGroup>
     <PackageId>Reductech.Sequence.Connectors.Relativity</PackageId>
     <Title>Sequence® Connector for Relativity®</Title>
-    <Description>Class library for building sequences that interact with the Relativity e-discovery review platform.</Description>
+    <Description>
+      Sequence connector for automating workflows that interact with the Relativity
+      e-discovery review platform.
+    </Description>
     <Product>Sequence®</Product>
     <PackageTags>ediscovery;forensics;relativity;automation;orchestration;edrm;sequence</PackageTags>
 
-    <PackageProjectUrl>https://gitlab.com/reductech/sequence/connectors/relativity</PackageProjectUrl>
+    <PackageProjectUrl>https://sequence.sh</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/reductech/sequence/connectors/relativity.git</RepositoryUrl>
     <PackageReleaseNotes>https://gitlab.com/reductech/sequence/connectors/relativity/-/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <Authors>Reductech</Authors>
     <Company>Reductech</Company>
     <Copyright>Copyright (c) 2022 Reductech Ltd</Copyright>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(CI)' != ''">
+    <!-- deterministic builds for Source Link -->
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Source Link and symbols -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../CHANGELOG.md" Pack="true" PackagePath="/" />
+    <None Include="../LICENSE" Pack="true" PackagePath="/" />
+    <None Include="../NOTICE" Pack="true" PackagePath="/" />
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
+    <PackageReference Include="Microsoft.SourceLink.GitLab" Version="1.1.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Reductech.Sequence.Connectors.EntityImportClient.Proto" Version="0.3.0" />
     <PackageReference Include="Reductech.Sequence.Core" Version="0.16.0-a.main.2207111038">
       <ExcludeAssets>runtime</ExcludeAssets>
@@ -64,15 +92,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup Condition="$(PackConnector) != ''">
-    <None Include="..\README.md" Pack="true" PackagePath="\" />
-    <None Include="..\LICENSE" Pack="true" PackagePath="\" />
-    <None Include="..\NOTICE" Pack="true" PackagePath="\" />
-  </ItemGroup>
-
   <PropertyGroup Condition="$(PackConnector) != ''">
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>
