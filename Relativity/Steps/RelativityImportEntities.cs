@@ -1,10 +1,12 @@
 ﻿using System.Linq;
 using System.Text;
 using Grpc.Core;
+using Json.More;
 using Microsoft.Extensions.Logging;
 using Reductech.Sequence.Connectors.Relativity.Errors;
 using Reductech.Sequence.Core.Entities.Schema;
 using ReductechEntityImport;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
@@ -129,7 +131,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
             {
                 var io = new ImportObject();
 
-                var validateResult = schema.Validate(entity.ToJsonElement());
+                var validateResult = schema.Validate(entity.ToJsonElement().AsNode());
 
                 if (!validateResult.IsValid)
                     return Result.Failure<ImportObject, IErrorBuilder>(
@@ -244,34 +246,22 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
     private static Result<ImportObject.Types.FieldValue, IErrorBuilder> GetFieldValue(
         ISCLObject entityValue)
     {
-        switch (entityValue)
+        return entityValue switch
         {
-            case SCLBool boolean:
-                return
-                    new ImportObject.Types.FieldValue { BoolValue = boolean.Value };
-            case SCLDateTime dateTime:
-                return
-                    new ImportObject.Types.FieldValue { DateValue = dateTime.Serialize(SerializeOptions.Primitive) };
-            case SCLDouble d:
-                return
-                    new ImportObject.Types.FieldValue { DoubleValue = d.Value };
-            case ISCLEnum enumerationValue:
-                return
-                    new ImportObject.Types.FieldValue
-                    {
-                        StringValue = enumerationValue.EnumValue
-                    };
-            case SCLInt integer:
-                return
-                    new ImportObject.Types.FieldValue { IntValue = integer.Value };
-            case StringStream s:
-                return
-                    new ImportObject.Types.FieldValue { StringValue = s.GetString() };
-            default:
-                return ErrorCode_Relativity.Unsuccessful.ToErrorBuilder(
-                    $"Cannot import {entityValue}"
-                );
-        }
+            SCLBool boolean => new ImportObject.Types.FieldValue { BoolValue = boolean.Value },
+            SCLDateTime dateTime => new ImportObject.Types.FieldValue
+            {
+                DateValue = dateTime.Serialize(SerializeOptions.Primitive)
+            },
+            SCLDouble d => new ImportObject.Types.FieldValue { DoubleValue = d.Value },
+            ISCLEnum enumerationValue => new ImportObject.Types.FieldValue
+            {
+                StringValue = enumerationValue.EnumValue
+            },
+            SCLInt integer => new ImportObject.Types.FieldValue { IntValue = integer.Value },
+            StringStream s => new ImportObject.Types.FieldValue { StringValue = s.GetString() },
+            _ => ErrorCode_Relativity.Unsuccessful.ToErrorBuilder($"Cannot import {entityValue}")
+        };
     }
 
     private static Result<StartImportCommand.Types.DataField.Types.DataType, IErrorBuilder>

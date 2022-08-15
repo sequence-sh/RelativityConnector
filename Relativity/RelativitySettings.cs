@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Text;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity;
 

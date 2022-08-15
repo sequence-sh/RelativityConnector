@@ -14,6 +14,7 @@ using Relativity.Environment.V1.Matter.Models;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Environment.V1.Workspace;
 using Relativity.Shared.V1.Models;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity.Managers
 {

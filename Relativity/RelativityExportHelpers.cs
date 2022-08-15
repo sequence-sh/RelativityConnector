@@ -5,6 +5,7 @@ using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Objects.DataContracts;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity;
 

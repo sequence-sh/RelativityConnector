@@ -3,6 +3,10 @@ using Relativity.Services.Field.Models;
 using Relativity.Services.Interfaces.Field.Models;
 using Relativity.Services.Interfaces.Shared;
 using Relativity.Services.Interfaces.Shared.Models;
+#pragma warning disable CS1591
+// ReSharper disable UnusedMember.Global
+// ReSharper disable InconsistentNaming
+#pragma warning disable CS8618
 
 namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 

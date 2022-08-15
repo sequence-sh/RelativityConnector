@@ -1,6 +1,7 @@
 ﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Interfaces.Field.Models;
 using Relativity.Services.Interfaces.Shared.Models;
+#pragma warning disable CS8618
 
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 

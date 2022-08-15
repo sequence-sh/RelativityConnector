@@ -1,5 +1,5 @@
 ﻿namespace Reductech.Sequence.Connectors.Relativity;
-
+#pragma warning disable CS1591
 /// <summary>
 /// Relativity Artifact Type
 /// </summary>

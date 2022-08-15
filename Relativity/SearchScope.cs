@@ -1,4 +1,5 @@
 ﻿namespace Reductech.Sequence.Connectors.Relativity;
+#pragma warning disable CS1591
 
 /// <summary>
 /// The scope of a relativity search

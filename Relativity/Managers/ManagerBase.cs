@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Flurl.Http;
-
+#pragma warning disable CS1591
 namespace Reductech.Sequence.Connectors.Relativity.Managers;
 
 public abstract class ManagerBase : IDisposable

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Reductech.Sequence.Core.ExternalProcesses;
-
+#pragma warning disable CS1591
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 /// <summary>

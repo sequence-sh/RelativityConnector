@@ -1,7 +1,7 @@
 ﻿using Reductech.Sequence.Connectors.Relativity.Managers;
 using Relativity.Kepler.Services;
 using Relativity.Kepler.Transport;
-
+#pragma warning disable CS1591
 namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
@@ -17,10 +17,11 @@ public interface IDocumentFileManager1 : IManager //Relativity.Services.Interfac
     /// <param name="documentID">The ArtifactID of the document</param>
     /// <returns>A stream that contains the native file associated with the document</returns>
     [HttpGet]
+    // ReSharper disable once StringLiteralTypo
     [Route("downloadnativefile/{documentID:int}/")]
     Task<IKeplerStream> DownloadNativeFileAsync(int workspaceID, int documentID);
 
     [SkipCodeGeneration]
-    Task<string> DownloadDataAsync(Int32 workspaceID, Int32 documentID);
+    Task<string> DownloadDataAsync(int workspaceID, int documentID);
 
 }

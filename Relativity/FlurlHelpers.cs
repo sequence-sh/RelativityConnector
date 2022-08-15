@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Flurl;
 using Flurl.Http;
-
+#pragma warning disable CS1591
 namespace Reductech.Sequence.Connectors.Relativity;
 
 public static class FlurlHelpers
