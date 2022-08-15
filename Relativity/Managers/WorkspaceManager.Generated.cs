@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,7 @@ using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Environment.V1.Workspace;
 using Relativity.Environment.V1.Shared.Models;
 using Relativity.Shared.V1.Models;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity.Managers
 {

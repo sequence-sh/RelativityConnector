@@ -1,7 +1,7 @@
 ﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Shared.V1.Models;
-
+#pragma warning disable CS1591
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
 public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatterManager1, int, SCLInt>

@@ -1,5 +1,6 @@
 ﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Workspace.Models;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 

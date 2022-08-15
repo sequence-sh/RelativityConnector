@@ -8,6 +8,7 @@ using Relativity.Services.Folder;
 using Relativity.Services.Interfaces.Shared.Models;
 using Relativity.Services.Objects.DataContracts;
 using Relativity.Services.Search;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity;
 

@@ -7,6 +7,8 @@ using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Services;
 using Relativity.Services.ServiceProxy;
 
+#pragma warning disable CS1591
+
 namespace Reductech.Sequence.Connectors.Relativity.Managers;
 
 public class SkipCodeGenerationAttribute : Attribute { }
@@ -14,16 +16,16 @@ public class SkipCodeGenerationAttribute : Attribute { }
 public record ManagerGenerator(
     Type Type,
     IReadOnlyList<string> ServicePrefixes,
-    IReadOnlyList<string> ExtraNamespaces) { }
+    IReadOnlyList<string> ExtraNamespaces);
 
 public class CodeGenerator
 {
-    public static readonly IReadOnlyList<string> RelativityObjectModelPrefixes = new List<string>()
+    public static readonly IReadOnlyList<string> RelativityObjectModelPrefixes = new List<string>
     {
         "relativity-object-model", "v{RelativitySettings.APIVersionNumber}",
     };
 
-    public static readonly IReadOnlyList<string> RelativityEnvironmentPrefixes = new List<string>()
+    public static readonly IReadOnlyList<string> RelativityEnvironmentPrefixes = new List<string>
     {
         "relativity-environment", "v{RelativitySettings.APIVersionNumber}",
     };
@@ -35,13 +37,13 @@ public class CodeGenerator
             yield return new ManagerGenerator(
                 typeof(IMatterManager1),
                 RelativityEnvironmentPrefixes,
-                new List<string>() { "Relativity.Shared.V1.Models" }
+                new List<string> { "Relativity.Shared.V1.Models" }
             );
 
             yield return new ManagerGenerator(
                 typeof(IWorkspaceManager1),
                 RelativityEnvironmentPrefixes,
-                new List<string>()
+                new List<string>
                 {
                     "Relativity.Environment.V1.Shared.Models", "Relativity.Shared.V1.Models",
                 }
@@ -49,8 +51,8 @@ public class CodeGenerator
 
             yield return new ManagerGenerator(
                 typeof(IObjectManager1),
-                new List<string>() { "Relativity.Objects" },
-                new List<string>()
+                new List<string> { "Relativity.Objects" },
+                new List<string>
                 {
                     "Relativity.Services.Objects",
                     "Relativity.Services.Objects.DataContracts",
@@ -63,7 +65,7 @@ public class CodeGenerator
             yield return new ManagerGenerator(
                 typeof(IDocumentFileManager1),
                 RelativityObjectModelPrefixes,
-                new List<string>()
+                new List<string>
                 {
                     "Relativity.Services.Interfaces.Document",
                     "Relativity.Services.Interfaces.Document.Models",
@@ -72,11 +74,11 @@ public class CodeGenerator
 
             yield return new ManagerGenerator(
                 typeof(IKeywordSearchManager1),
-                new List<string>()
+                new List<string>
                 {
                     "Relativity.Services.Search.ISearchModule", "Keyword Search Manager"
                 },
-                new List<string>()
+                new List<string>
                 {
                     "Relativity.Services.Search",
                     "Relativity.Services.Interfaces.Document",
@@ -86,8 +88,8 @@ public class CodeGenerator
 
             yield return new ManagerGenerator(
                 typeof(IFolderManager1),
-                new List<string>() { "Relativity.Services.Folder.IFolderModule", "Folder Manager" },
-                new List<string>()
+                new List<string> { "Relativity.Services.Folder.IFolderModule", "Folder Manager" },
+                new List<string>
                 {
                     "Relativity.Services.Interfaces.Document",
                     "Relativity.Services.Interfaces.Document.Models",
@@ -97,7 +99,7 @@ public class CodeGenerator
             yield return new ManagerGenerator(
                 typeof(IFieldManager1),
                 RelativityObjectModelPrefixes,
-                new List<string>()
+                new List<string>
                 {
                     "Relativity.Services.Interfaces.Field.Models"
                 }
@@ -248,7 +250,7 @@ public class CodeGenerator
 
         if (route is null)
             throw new Exception(
-                $"{methodInfo.DeclaringType.FullName}.{methodInfo.Name} does not have a route attribute"
+                $"{methodInfo.DeclaringType?.FullName}.{methodInfo.Name} does not have a route attribute"
             );
 
         sb.AppendLine($"var route = $\"{routePrefix}/{FixRouteTemplate(route.Template)}\";");
@@ -290,7 +292,7 @@ public class CodeGenerator
             }
             else
             {
-                sb.AppendLine($"return PostJsonAsync(route, jsonObject, cancellationToken);");
+                sb.AppendLine("return PostJsonAsync(route, jsonObject, cancellationToken);");
             }
         }
         else if (methodInfo.GetCustomAttribute<HttpPutAttribute>() is not null)
@@ -307,7 +309,7 @@ public class CodeGenerator
             }
             else
             {
-                sb.AppendLine($"return PutAsync(route, jsonObject, cancellationToken);");
+                sb.AppendLine("return PutAsync(route, jsonObject, cancellationToken);");
             }
         }
         else if (methodInfo.GetCustomAttribute<HttpGetAttribute>() is not null)
@@ -317,7 +319,7 @@ public class CodeGenerator
         }
         else if (methodInfo.GetCustomAttribute<HttpDeleteAttribute>() is not null)
         {
-            sb.AppendLine($"return DeleteAsync(route, cancellationToken);");
+            sb.AppendLine("return DeleteAsync(route, cancellationToken);");
         }
 
         else
@@ -365,7 +367,7 @@ public class CodeGenerator
     private class CodeStringBuilder
     {
         private StringBuilder StringBuilder { get; } = new();
-        private int Indentation { get; set; } = 0;
+        private int Indentation { get; set; }
 
         public void AppendLine(string s)
         {

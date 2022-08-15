@@ -3,7 +3,7 @@ using System.Reflection;
 using Flurl.Http;
 using Flurl.Http.Testing;
 
-namespace Reductech.Sequence.Connectors.Relativity.TestHelpers;
+namespace Reductech.Sequence.Connectors.Relativity.Tests;
 
 public class TestFlurlClientFactory
 {
@@ -16,7 +16,7 @@ public class TestFlurlClientFactory
             BindingFlags.Instance | BindingFlags.NonPublic
         );
 
-        var httpClient = (HttpClient)property.GetValue(httpTest);
+        var httpClient = (HttpClient)property!.GetValue(httpTest)!;
 
         return new FlurlClient(httpClient);
     }

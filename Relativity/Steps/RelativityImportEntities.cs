@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Reductech.Sequence.Connectors.Relativity.Errors;
 using Reductech.Sequence.Core.Entities.Schema;
 using ReductechEntityImport;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 

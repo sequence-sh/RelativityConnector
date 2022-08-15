@@ -1,7 +1,7 @@
 ﻿using Relativity.Environment.V1.Matter.Models;
 using Relativity.Kepler.Services;
 using Relativity.Shared.V1.Models;
-
+#pragma warning disable CS1591
 namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Matter Manager")]

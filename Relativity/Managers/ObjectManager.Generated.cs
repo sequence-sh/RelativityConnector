@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +17,7 @@ using Relativity.Services.Objects.DataContracts;
 using Relativity.Services.DataContracts.DTOs;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Interfaces.Shared;
+#pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity.Managers
 {
