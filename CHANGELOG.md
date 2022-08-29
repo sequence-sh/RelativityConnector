@@ -1,3 +1,7 @@
+# v0.17.0 (2022-08-29)
+
+Maintenance release - dependency updates only.
+
 # v0.16.0 (2022-07-13)
 
 - Enabled [Source Link](https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink)
@@ -146,3 +150,4 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
