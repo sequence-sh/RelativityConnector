@@ -1,3 +1,9 @@
+# v0.17.0 (2022-08-29)
+
+- Updated `EntityImportClient` to `0.4.0`
+- Updated `Relativity.DataExchange.Client.SDK` to `1.17.7`
+- Updated `Relativity.Services.Interfaces.SDK` to `13.6.2`
+
 # v0.16.0 (2022-07-13)
 
 - Enabled [Source Link](https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink)
@@ -146,3 +152,4 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
