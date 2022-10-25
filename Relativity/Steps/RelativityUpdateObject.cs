@@ -46,7 +46,7 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
 
     /// <inheritdoc />
     public override async
-        Task<Result<(int workspaceId, UpdateRequest updateRequest, UpdateOptions updateOptions),
+        ValueTask<Result<(int workspaceId, UpdateRequest updateRequest, UpdateOptions updateOptions),
             IError>> TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         var r = await stateMonad.RunStepsAsync(
@@ -78,11 +78,11 @@ public sealed class RelativityUpdateObject : RelativityApiRequest<(int workspace
 
         static IEnumerable<FieldRefValuePair> GetFieldRefValuePairs(Entity entity)
         {
-            foreach (var (key, value) in entity.Dictionary)
+            foreach (var (key, value) in entity)
             {
                 yield return new FieldRefValuePair()
                 {
-                    Field = new FieldRef() { Name = key }, Value = value.Value.ToCSharpObject()
+                    Field = new FieldRef() { Name = key.Inner }, Value = value.ToCSharpObject()
                 };
             }
         }

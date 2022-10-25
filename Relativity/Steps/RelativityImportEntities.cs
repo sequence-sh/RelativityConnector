@@ -20,7 +20,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
         new SimpleStepFactory<RelativityImportEntities, Unit>();
 
     /// <inheritdoc />
-    protected override async Task<Result<Unit, IError>> Run(
+    protected override async ValueTask<Result<Unit, IError>> Run(
         IStateMonad stateMonad,
         CancellationToken cancellationToken)
     {
@@ -89,7 +89,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                     .WithLocation(this)
             );
 
-        foreach (var (key, (node, required, _)) in entityNode.EntityPropertiesData.Nodes)
+        foreach (var (key, (node, _, _)) in entityNode.EntityPropertiesData.Nodes)
         {
             var dt = GetDataType(node);
 
@@ -143,7 +143,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                                 )
                             )));
 
-                foreach (var (key, (node, required, _)) in entityNode.EntityPropertiesData.Nodes)
+                foreach (var (key, (_, required, _)) in entityNode.EntityPropertiesData.Nodes)
                 {
                     var value = entity.TryGetValue(key);
 

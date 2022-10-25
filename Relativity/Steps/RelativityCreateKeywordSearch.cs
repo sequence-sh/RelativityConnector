@@ -3,6 +3,7 @@ using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Field;
 using Relativity.Services.Folder;
 using Relativity.Services.Search;
+using CSharpFunctionalExtensions.ValueTasks;
 
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
@@ -35,7 +36,7 @@ public class RelativityCreateKeywordSearch : RelativityApiRequest<(SCLInt worksp
     }
 
     /// <inheritdoc />
-    public override Task<Result<(SCLInt workspaceID, KeywordSearch search), IError>> TryCreateRequest(
+    public override ValueTask<Result<(SCLInt workspaceID, KeywordSearch search), IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {

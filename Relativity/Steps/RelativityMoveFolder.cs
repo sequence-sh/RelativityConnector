@@ -45,7 +45,7 @@ public sealed class RelativityMoveFolder : RelativityApiRequest<(SCLInt workspac
     }
 
     /// <inheritdoc />
-    public override Task<Result<(SCLInt workspaceId, SCLInt folderId, SCLInt destinationFolderId), IError>>
+    public override ValueTask<Result<(SCLInt workspaceId, SCLInt folderId, SCLInt destinationFolderId), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(

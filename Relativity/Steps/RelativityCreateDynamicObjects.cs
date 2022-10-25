@@ -42,7 +42,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
     }
 
     /// <inheritdoc />
-    public override async Task<Result<(int workspaceId, MassCreateRequest createRequest), IError>>
+    public override async ValueTask<Result<(int workspaceId, MassCreateRequest createRequest), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         var stepsResult = await stateMonad.RunStepsAsync(
@@ -84,7 +84,7 @@ public class RelativityCreateDynamicObjects : RelativityApiRequest<(int workspac
             createRequest.ParentObject =
                 new RelativityObjectRef() { ArtifactID = parentArtifactId.Value };
 
-        var fieldsNames = entities.SelectMany(x => x.Dictionary.Keys)
+        var fieldsNames = entities.SelectMany(x => x.Headers).Select(x=>x.Inner)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 

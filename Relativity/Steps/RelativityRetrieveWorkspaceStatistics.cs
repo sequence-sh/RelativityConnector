@@ -36,7 +36,7 @@ public sealed class
     }
 
     /// <inheritdoc />
-    public override Task<Result<SCLInt, IError>> TryCreateRequest(
+    public override ValueTask<Result<SCLInt, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {

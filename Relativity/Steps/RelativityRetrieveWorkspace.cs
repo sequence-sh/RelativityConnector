@@ -62,7 +62,7 @@ public sealed class
 
     /// <inheritdoc />
     public override async
-        Task<Result<(SCLInt workspaceId, SCLBool includeMetadata, SCLBool includeActions), IError>>
+        ValueTask<Result<(SCLInt workspaceId, SCLBool includeMetadata, SCLBool includeActions), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return await stateMonad.RunStepsAsync(

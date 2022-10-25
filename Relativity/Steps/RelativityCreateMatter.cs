@@ -1,6 +1,7 @@
 ﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Shared.V1.Models;
+using CSharpFunctionalExtensions.ValueTasks;
 #pragma warning disable CS1591
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
 
@@ -27,7 +28,7 @@ public class RelativityCreateMatter : RelativityApiRequest<MatterRequest, IMatte
     }
 
     /// <inheritdoc />
-    public override Task<Result<MatterRequest, IError>> TryCreateRequest(
+    public override ValueTask<Result<MatterRequest, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {

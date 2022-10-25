@@ -35,7 +35,7 @@ public class RelativityGetMatterStatuses : RelativityApiRequest<Unit, IMatterMan
     }
 
     /// <inheritdoc />
-    public override async Task<Result<Unit, IError>> TryCreateRequest(
+    public override async ValueTask<Result<Unit, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {
