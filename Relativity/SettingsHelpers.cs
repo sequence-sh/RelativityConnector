@@ -17,7 +17,7 @@ public static class SettingsHelpers
         this Entity settings)
     {
         var connectorEntityValue = settings.TryGetValue(
-            new EntityPropertyKey(
+            new EntityNestedKey(
                 StateMonad.ConnectorsKey,
                 RelativityConnectorKey,
                 nameof(ConnectorSettings.Settings)

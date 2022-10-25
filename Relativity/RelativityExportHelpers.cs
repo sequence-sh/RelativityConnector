@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Immutable;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Reductech.Sequence.Connectors.Relativity.Errors;
 using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Objects.DataContracts;
+
 #pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity;
@@ -60,7 +62,7 @@ public static class RelativityExportHelpers
     /// </summary>
     public const string LongStringToken = "#KCURA99DF2F0FEB88420388879F1282A55760#";
 
-    public const string NativeFileKey = "NativeFile";
+    public static readonly EntityKey NativeFileKey = new("NativeFile");
 
     public static async IAsyncEnumerable<Entity> GetResultElements(
         ExportInitializationResults exportResult,
@@ -89,7 +91,8 @@ public static class RelativityExportHelpers
             {
                 foreach (var resultElement in resultElements)
                 {
-                    var properties = new List<EntityProperty>();
+                    var headers = ImmutableArray.CreateBuilder<EntityKey>();
+                    var values  = ImmutableArray.CreateBuilder<ISCLObject>();
 
                     var pairs = fields.Zip(resultElement.Values);
 
@@ -110,23 +113,13 @@ public static class RelativityExportHelpers
                             if (v.IsFailure)
                                 throw new ErrorException(v.Error.WithLocation(errorLocation));
 
-                            properties.Add(
-                                new EntityProperty(
-                                    field.Name,
-                                    new StringStream(v.Value),
-                                    order
-                                )
-                            );
+                            headers.Add(new EntityKey(field.Name));
+                            values.Add(new StringStream(v.Value));
                         }
                         else
                         {
-                            properties.Add(
-                                new EntityProperty(
-                                    field.Name,
-                                    ISCLObject.CreateFromCSharpObject(fieldValue),
-                                    order
-                                )
-                            );
+                            headers.Add(new EntityKey(field.Name));
+                            values.Add(ISCLObject.CreateFromCSharpObject(fieldValue));
                         }
 
                         order++;
@@ -137,7 +130,10 @@ public static class RelativityExportHelpers
                     try
                     {
                         data =
-                            await documentFileManager .DownloadDataAsync(workspaceId, resultElement.ArtifactID);
+                            await documentFileManager.DownloadDataAsync(
+                                workspaceId,
+                                resultElement.ArtifactID
+                            );
                     }
                     catch (Exception e)
                     {
@@ -147,15 +143,10 @@ public static class RelativityExportHelpers
                         );
                     }
 
-                    properties.Add(
-                        new EntityProperty(
-                            NativeFileKey,
-                            new StringStream(data),
-                            order
-                        )
-                    );
+                    headers.Add(NativeFileKey);
+                    values.Add(ISCLObject.CreateFromCSharpObject(new StringStream(data)));
 
-                    var entity = new Entity(properties);
+                    var entity = new Entity(headers.ToImmutable(), values.ToImmutable());
 
                     yield return entity;
                 }
@@ -164,8 +155,6 @@ public static class RelativityExportHelpers
             current += batchSize;
         }
     }
-
-    
 
     public static async Task<Result<ExportInitializationResults, IErrorBuilder>> SetupExportAsync(
         int workspaceId,

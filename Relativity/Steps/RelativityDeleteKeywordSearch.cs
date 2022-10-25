@@ -31,7 +31,7 @@ public class
     }
 
     /// <inheritdoc />
-    public override Task<Result<(SCLInt workspaceId, SCLInt searchId), IError>> TryCreateRequest(
+    public override ValueTask<Result<(SCLInt workspaceId, SCLInt searchId), IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {

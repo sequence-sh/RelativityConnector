@@ -14,7 +14,7 @@ public sealed class RelativityImport : CompoundStep<Unit>
     //SEE: https://help.relativity.com/RelativityOne/Content/System_Guides/Command_line_import.htm
 
     /// <inheritdoc />
-    protected override async Task<Result<Unit, IError>> Run(
+    protected override async ValueTask<Result<Unit, IError>> Run(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {

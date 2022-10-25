@@ -13,3 +13,4 @@ global using Reductech.Sequence.Connectors.Relativity.Steps;
 global using Reductech.Sequence.Core.Entities;
 global using Reductech.Sequence.Core.Internal.Errors;
 global using Entity = Reductech.Sequence.Core.Entity;
+global using CSharpFunctionalExtensions.ValueTasks;

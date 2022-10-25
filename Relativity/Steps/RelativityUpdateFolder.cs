@@ -36,7 +36,7 @@ public sealed class
     }
 
     /// <inheritdoc />
-    public override async Task<Result<(Folder folder, int workspaceId), IError>> TryCreateRequest(
+    public override async ValueTask<Result<(Folder folder, int workspaceId), IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation)
     {

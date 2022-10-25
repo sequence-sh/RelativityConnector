@@ -8,7 +8,7 @@ public abstract class
 where TOutput : ISCLObject
 {
     /// <inheritdoc />
-    protected override async Task<Result<TOutput, IError>> Run(
+    protected override async ValueTask<Result<TOutput, IError>> Run(
         IStateMonad stateMonad,
         CancellationToken cancellationToken)
     {
@@ -47,7 +47,7 @@ where TOutput : ISCLObject
         TRequest requestObject,
         CancellationToken cancellationToken);
 
-    public abstract Task<Result<TRequest, IError>> TryCreateRequest(
+    public abstract ValueTask<Result<TRequest, IError>> TryCreateRequest(
         IStateMonad stateMonad,
         CancellationToken cancellation);
 }

@@ -1,5 +1,6 @@
 ﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Objects.DataContracts;
+using CSharpFunctionalExtensions.ValueTasks;
 #pragma warning disable CS1591
 
 namespace Reductech.Sequence.Connectors.Relativity.Steps;
@@ -39,7 +40,7 @@ public sealed class RelativityDeleteDocument : RelativityApiRequest<(SCLInt work
     }
 
     /// <inheritdoc />
-    public override Task<Result<(SCLInt workspaceId, DeleteRequest deleteRequest), IError>>
+    public override ValueTask<Result<(SCLInt workspaceId, DeleteRequest deleteRequest), IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         return stateMonad.RunStepsAsync(Workspace.WrapArtifact(ArtifactType.Case,stateMonad, this), ObjectArtifactId, cancellation)

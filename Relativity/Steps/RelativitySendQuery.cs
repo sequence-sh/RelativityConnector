@@ -75,7 +75,7 @@ public sealed class RelativitySendQuery : RelativityApiRequest<(int workspaceId,
 
     /// <inheritdoc />
     public override async
-        Task<Result<(int workspaceId, QueryRequest request, int indexOfFirst, int lengthOfResults),
+        ValueTask<Result<(int workspaceId, QueryRequest request, int indexOfFirst, int lengthOfResults),
             IError>>
         TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {

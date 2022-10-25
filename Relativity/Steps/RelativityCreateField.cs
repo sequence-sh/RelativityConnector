@@ -1,4 +1,5 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using CSharpFunctionalExtensions;
+using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Interfaces.Field.Models;
 using Relativity.Services.Interfaces.Shared.Models;
 #pragma warning disable CS8618
@@ -70,7 +71,7 @@ public sealed class RelativityCreateField : RelativityApiRequest<(FixedLengthFie
     public IStep<SCLInt> Length { get; set; } = new SCLConstant<SCLInt>(100.ConvertToSCLObject());
 
     /// <inheritdoc />
-    public override async Task<Result<(FixedLengthFieldRequest1 fieldRequest, int workspaceId), IError>> TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
+    public override async ValueTask<Result<(FixedLengthFieldRequest1 fieldRequest, int workspaceId), IError>> TryCreateRequest(IStateMonad stateMonad, CancellationToken cancellation)
     {
         var r = await stateMonad.RunStepsAsync(
             Workspace.WrapArtifact(ArtifactType.Case, stateMonad, this) , FieldName.WrapStringStream(), Length, CancellationToken.None

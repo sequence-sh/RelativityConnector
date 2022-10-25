@@ -67,7 +67,7 @@ public static class RelativityStepMaps
         }
 
         /// <inheritdoc />
-        public async Task<Result<SCLInt, IError>> Map(
+        public async ValueTask<Result<SCLInt, IError>> Map(
             OneOf<SCLInt, TKey> t,
             CancellationToken cancellationToken)
         {
@@ -170,7 +170,7 @@ public static class RelativityStepMaps
         }
 
         /// <inheritdoc />
-        public async Task<Result<ArtifactType, IError>> Map(
+        public async ValueTask<Result<ArtifactType, IError>> Map(
             SCLOneOf<SCLEnum<ArtifactType>, SCLInt> t,
             CancellationToken cancellationToken)
         {
