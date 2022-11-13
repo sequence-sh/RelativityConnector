@@ -1,7 +1,7 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Shared.V1.Models;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
+namespace Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityGetMatterStatusesTests : StepTestBase<RelativityGetMatterStatuses, Array<Entity>>

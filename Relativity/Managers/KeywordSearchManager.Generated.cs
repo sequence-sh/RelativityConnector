@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Flurl.Http;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Matter.Models;
@@ -17,7 +17,7 @@ using Relativity.Services.Interfaces.Document;
 using Relativity.Services.Interfaces.Document.Models;
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity.Managers
+namespace Sequence.Connectors.Relativity.Managers
 {
 [GeneratedCode("CodeGenerator", "1")]
 public class TemplateKeywordSearchManager1 : ManagerBase, IKeywordSearchManager1

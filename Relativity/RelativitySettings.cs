@@ -2,7 +2,7 @@
 using System.Text;
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 [DataContract]
 public sealed class RelativitySettings : IEntityConvertible

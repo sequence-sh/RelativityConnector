@@ -1,10 +1,10 @@
 ﻿using Moq;
-using Reductech.Sequence.Connectors.Relativity.Errors;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.Errors;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 using Relativity.Services.Objects.DataContracts;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
+namespace Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityDeleteUnusedFoldersTests : StepTestBase<RelativityDeleteUnusedFolders, Unit>

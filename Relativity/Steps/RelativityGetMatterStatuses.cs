@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Shared.V1.Models;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 [SCLExample(
     "RelativityGetMatterStatuses",

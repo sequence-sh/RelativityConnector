@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Field;
 using Relativity.Services.Folder;
 using Relativity.Services.Search;
 using CSharpFunctionalExtensions.ValueTasks;
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Creates a keyword search. Returns the artifact id of the created search.

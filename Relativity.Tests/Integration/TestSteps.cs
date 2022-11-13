@@ -1,6 +1,6 @@
-﻿using static Reductech.Sequence.Core.TestHarness.SchemaHelpers;
+﻿using static Sequence.Core.TestHarness.SchemaHelpers;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests.Integration;
+namespace Sequence.Connectors.Relativity.Tests.Integration;
 
 internal static class TestSteps
 {

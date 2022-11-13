@@ -1,6 +1,6 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 public class
     RelativityDeleteKeywordSearch : RelativityApiRequest<(SCLInt workspaceId, SCLInt searchId),

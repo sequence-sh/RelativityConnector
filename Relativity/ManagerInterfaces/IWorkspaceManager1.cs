@@ -1,7 +1,7 @@
 ﻿using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Kepler.Services;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+namespace Sequence.Connectors.Relativity.ManagerInterfaces;
 
 [WebService("Workspace Manager")]
 [ServiceAudience(Audience.Public)]

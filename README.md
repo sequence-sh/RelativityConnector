@@ -28,8 +28,8 @@ which can be provided using the `settings` key in `connectors.json`.
 ### Example `connectors.json` Entry
 
 ```json
-"Reductech.Sequence.Connectors.Relativity": {
-  "id": "Reductech.Sequence.Connectors.Relativity",
+"Sequence.Connectors.Relativity": {
+  "id": "Sequence.Connectors.Relativity",
   "enable": true,
   "version": "0.16.0",
   "settings": {
@@ -55,20 +55,20 @@ https://sequence.sh/playground
 
 ## Developing
 
-To successfully run integration tests, a copy of the [EntityImportClient](https://gitlab.com/reductech/sequence/connectors/entityimportclient)
+To successfully run integration tests, a copy of the [EntityImportClient](https://gitlab.com/sequence/connectors/entityimportclient)
 needs to be in the `Sequence.EntityImportClient` directory in the solution root.
 
 Download the latest:
 
-- [Release](https://gitlab.com/reductech/sequence/connectors/entityimportclient/-/releases)
-- [Main branch build](https://gitlab.com/reductech/sequence/connectors/entityimportclient/-/jobs/artifacts/main/download?job=package+exe+dev)
+- [Release](https://gitlab.com/sequence/connectors/entityimportclient/-/releases)
+- [Main branch build](https://gitlab.com/sequence/connectors/entityimportclient/-/jobs/artifacts/main/download?job=package+exe+dev)
 
 The EntityImportClient is automatically downloaded and included in the connector
 package when building using the CI.
 
 # Package Releases
 
-Can be downloaded from the [Releases page](https://gitlab.com/reductech/sequence/connectors/relativity/-/releases).
+Can be downloaded from the [Releases page](https://gitlab.com/sequence/connectors/relativity/-/releases).
 
 # NuGet Packages
 

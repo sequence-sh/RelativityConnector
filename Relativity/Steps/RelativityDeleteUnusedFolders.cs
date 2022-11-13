@@ -1,8 +1,8 @@
-﻿using Reductech.Sequence.Connectors.Relativity.Errors;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.Errors;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Deletes unused folders in a relativity workspace

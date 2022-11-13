@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Relativity.Services.ServiceProxy;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.TestHelpers;
+namespace Sequence.Connectors.Relativity.TestHelpers;
 
 public class TestServiceFactoryFactory : IServiceFactoryFactory
 {

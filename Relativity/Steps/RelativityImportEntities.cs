@@ -3,12 +3,12 @@ using System.Text;
 using Grpc.Core;
 using Json.More;
 using Microsoft.Extensions.Logging;
-using Reductech.Sequence.Connectors.Relativity.Errors;
-using Reductech.Sequence.Core.Entities.Schema;
-using ReductechEntityImport;
+using Sequence.Connectors.Relativity.Errors;
+using Sequence.Core.Entities.Schema;
+using SequenceEntityImport;
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Import Entities into Relativity
@@ -67,7 +67,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
         Channel channel = new("127.0.0.1:30051", ChannelCredentials.Insecure);
 
-        var client = new Reductech_Entity_Import.Reductech_Entity_ImportClient(channel);
+        var client = new Sequence_Entity_Import.Sequence_Entity_ImportClient(channel);
 
         var importRequest = new StartImportCommand()
         {
@@ -137,7 +137,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                     return Result.Failure<ImportObject, IErrorBuilder>(
                         ErrorBuilderList.Combine(
                             validateResult.GetErrorMessages().Select(
-                                x => ErrorCode.SchemaViolation.ToErrorBuilder(
+                                x => ErrorCode.SchemaViolated.ToErrorBuilder(
                                     x.message,
                                     x.location
                                 )

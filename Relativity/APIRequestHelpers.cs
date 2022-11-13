@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Flurl.Http;
-using Reductech.Sequence.Connectors.Relativity.Errors;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.Errors;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Matter.Models;
 using Relativity.Environment.V1.Workspace.Models;
 using Relativity.Services.Folder;
@@ -10,7 +10,7 @@ using Relativity.Services.Objects.DataContracts;
 using Relativity.Services.Search;
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 /// <summary>
 /// Contains methods for converting Relativity objects to entities

@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using Moq;
-using Reductech.Sequence.Core.ExternalProcesses;
+using Sequence.Core.ExternalProcesses;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
+namespace Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class RelativityImportTests : StepTestBase<RelativityImport, Unit>
 {

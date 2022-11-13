@@ -1,8 +1,8 @@
 ﻿using Flurl.Http;
-using Reductech.Sequence.Connectors.Relativity.Managers;
-using Reductech.Sequence.Core.Connectors;
+using Sequence.Connectors.Relativity.Managers;
+using Sequence.Core.Connectors;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 public sealed class ConnectorInjection : IConnectorInjection
 {

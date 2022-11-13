@@ -8,7 +8,7 @@ using Relativity.Services.Interfaces.Shared.Models;
 // ReSharper disable InconsistentNaming
 #pragma warning disable CS8618
 
-namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+namespace Sequence.Connectors.Relativity.ManagerInterfaces;
 
 //I had to create this because ObjectType needs to be a securable object identifier
 
