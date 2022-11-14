@@ -59,7 +59,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Sequence.Connectors.EntityImportClient.Proto" Version="0.5.0-a.main.2211131459" />
-    <PackageReference Include="Sequence.Core" Version="0.18.0-a.main.2211102318">
+    <PackageReference Include="Sequence.Core" Version="0.18.0-a.main.2211141306">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Relativity.API" Version="17.0.4" />
@@ -69,7 +69,7 @@
     <PackageReference Include="Relativity.ObjectManager" Version="12.1.171.20" />
     <PackageReference Include="Relativity.Services.Interfaces.SDK" Version="13.6.2" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="7.0.0" />
     <PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
   </ItemGroup>
 
