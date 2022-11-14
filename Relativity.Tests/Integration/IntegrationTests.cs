@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests.Integration;
+namespace Sequence.Connectors.Relativity.Tests.Integration;
 
 public class IntegrationTests
 {
@@ -208,7 +208,7 @@ public class IntegrationTests
         var connectorData = new ConnectorData(
             new ConnectorSettings
             {
-                Id      = "Reductech.Sequence.Connectors.Relativity",
+                Id      = "Sequence.Connectors.Relativity",
                 Enable  = true,
                 Version = "0.13.0",
                 Settings = new RelativitySettings
@@ -218,7 +218,7 @@ public class IntegrationTests
                     Url                = "http://relativitydevvm/",
                     APIVersionNumber   = 1,
                     ImportClientPath =
-                        "C:\\Users\\wainw\\source\\repos\\Reductech\\entityimportclient\\EntityImportClient\\bin\\Debug\\EntityImportClient.exe",
+                        "C:\\dev\\Sequence\\connectors\\entityimportclient\\EntityImportClient\\bin\\Debug\\EntityImportClient.exe",
                     DesktopClientPath =
                         @"C:\Program Files\kCura Corporation\Relativity Desktop Client\Relativity.Desktop.Client.exe"
                 }.ToDictionary()

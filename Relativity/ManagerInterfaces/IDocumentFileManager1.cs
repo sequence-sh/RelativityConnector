@@ -1,8 +1,8 @@
-﻿using Reductech.Sequence.Connectors.Relativity.Managers;
+﻿using Sequence.Connectors.Relativity.Managers;
 using Relativity.Kepler.Services;
 using Relativity.Kepler.Transport;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+namespace Sequence.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
 /// Exposes the methods for working with files associated with documents

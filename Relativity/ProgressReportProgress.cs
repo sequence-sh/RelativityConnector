@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Relativity.Services.DataContracts.DTOs;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 public class ProgressReportProgress : IProgress<ProgressReport>
 {

@@ -1,15 +1,15 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Reductech.Sequence.Connectors.Relativity.Errors;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.Errors;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Objects.DataContracts;
 
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 /// <summary>
 /// Contains methods to help with Relativity export

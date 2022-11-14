@@ -1,6 +1,6 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Deletes a relativity workspace

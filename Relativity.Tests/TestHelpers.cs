@@ -4,12 +4,12 @@ using CSharpFunctionalExtensions;
 using Flurl.Http.Testing;
 using Moq;
 using Moq.Language.Flow;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
-using Reductech.Sequence.Connectors.Relativity.Managers;
-using Reductech.Sequence.Connectors.Relativity.TestHelpers;
-using Entity = Reductech.Sequence.Core.Entity;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.Managers;
+using Sequence.Connectors.Relativity.TestHelpers;
+using Entity = Sequence.Core.Entity;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests;
+namespace Sequence.Connectors.Relativity.Tests;
 
 public interface IMockSetup
 {

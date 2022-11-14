@@ -1,7 +1,7 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Create a folder in a relativity workspace

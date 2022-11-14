@@ -1,4 +1,4 @@
-﻿namespace Reductech.Sequence.Connectors.Relativity;
+﻿namespace Sequence.Connectors.Relativity;
 #pragma warning disable CS1591
 
 /// <summary>

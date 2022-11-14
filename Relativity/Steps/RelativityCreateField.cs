@@ -1,10 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Interfaces.Field.Models;
 using Relativity.Services.Interfaces.Shared.Models;
 #pragma warning disable CS8618
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Creates a new Fixed Length Field and returns the ArtifactId of that field

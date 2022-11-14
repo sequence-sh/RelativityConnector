@@ -378,3 +378,4 @@ nupkg/
 **/StrykerOutput/
 version.env
 Sequence.EntityImportClient/
+Cobertura.xml

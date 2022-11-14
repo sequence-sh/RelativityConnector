@@ -1,7 +1,7 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Search;
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Reads a search

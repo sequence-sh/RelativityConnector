@@ -1,6 +1,6 @@
-﻿using Reductech.Sequence.ConnectorManagement.Base;
+﻿using Sequence.ConnectorManagement.Base;
 
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 /// <summary>
 /// Contains helper methods for Relativity settings

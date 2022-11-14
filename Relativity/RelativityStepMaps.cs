@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using OneOf;
-using Reductech.Sequence.Connectors.Relativity.Errors;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.Errors;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services;
 using Relativity.Services.Objects.DataContracts;
 using Relativity.Shared.V1.Models;
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 public static class RelativityStepMaps
 {

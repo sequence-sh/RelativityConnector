@@ -1,7 +1,7 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Environment.V1.Matter.Models;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 public class
     RelativityRetrieveMatter : RelativityApiRequest<SCLInt, IMatterManager1, MatterResponse, Entity>

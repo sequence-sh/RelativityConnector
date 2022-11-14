@@ -3,12 +3,12 @@ using System.Text;
 using Grpc.Core;
 using Json.More;
 using Microsoft.Extensions.Logging;
-using Reductech.Sequence.Connectors.Relativity.Errors;
-using Reductech.Sequence.Core.Entities.Schema;
-using ReductechEntityImport;
+using Sequence.Connectors.Relativity.Errors;
+using Sequence.Core.Entities.Schema;
+using SequenceEntityImport;
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Import Entities into Relativity
@@ -67,7 +67,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
 
         Channel channel = new("127.0.0.1:30051", ChannelCredentials.Insecure);
 
-        var client = new Reductech_Entity_Import.Reductech_Entity_ImportClient(channel);
+        var client = new Sequence_Entity_Import.Sequence_Entity_ImportClient(channel);
 
         var importRequest = new StartImportCommand()
         {
@@ -115,11 +115,14 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                     .WithLocation(this)
             );
 
-        using var call = client.ImportData(new CallOptions());
+        using var call       = client.ImportData(new CallOptions());
+        var       rowNumber = 0;
 
         async ValueTask<Result<Unit, IError>> WriteEntity(Entity e, CancellationToken _1)
         {
-            var importObject = Create(e);
+            var transformRoot = new TransformRoot(rowNumber, e);
+            rowNumber++;
+            var importObject  = Create(e);
 
             if (importObject.IsFailure)
                 return importObject.ConvertFailure<Unit>().MapError(x => x.WithLocation(this));
@@ -136,8 +139,8 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                 if (!validateResult.IsValid)
                     return Result.Failure<ImportObject, IErrorBuilder>(
                         ErrorBuilderList.Combine(
-                            validateResult.GetErrorMessages().Select(
-                                x => ErrorCode.SchemaViolation.ToErrorBuilder(
+                            validateResult.GetErrorMessages(transformRoot).Select(
+                                x => ErrorCode.SchemaViolated.ToErrorBuilder(
                                     x.message,
                                     x.location
                                 )
@@ -179,6 +182,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
             }
         }
 
+        
         var writeResult = await entities.ForEach(WriteEntity, cancellationToken);
 
         if (writeResult.IsFailure)

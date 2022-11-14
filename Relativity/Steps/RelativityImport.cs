@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using Reductech.Sequence.Core.ExternalProcesses;
+using Sequence.Core.ExternalProcesses;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 /// <summary>
 /// Imports a load file into Relativity using the desktop client

@@ -3,13 +3,13 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Flurl.Http;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Services;
 using Relativity.Services.ServiceProxy;
 
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity.Managers;
+namespace Sequence.Connectors.Relativity.Managers;
 
 public class SkipCodeGenerationAttribute : Attribute { }
 
@@ -118,7 +118,7 @@ public class CodeGenerator
 
         sb.AppendLine();
 
-        sb.AppendLine("namespace Reductech.Sequence.Connectors.Relativity.Managers");
+        sb.AppendLine("namespace Sequence.Connectors.Relativity.Managers");
         sb.AppendLine("{");
 
         var text = GetFileText(managerGenerator);
@@ -143,7 +143,7 @@ public class CodeGenerator
             yield return "System.Threading";
             yield return "System.Threading.Tasks";
             yield return "Flurl.Http";
-            yield return "Reductech.Sequence.Connectors.Relativity.ManagerInterfaces";
+            yield return "Sequence.Connectors.Relativity.ManagerInterfaces";
 
             yield return "Relativity.Kepler.Transport";
             yield return "Relativity.Environment.V1.Matter";

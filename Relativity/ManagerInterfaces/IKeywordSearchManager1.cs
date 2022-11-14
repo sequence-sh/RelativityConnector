@@ -1,7 +1,7 @@
 ﻿using Relativity.Kepler.Services;
 using Relativity.Services.Search;
 
-namespace Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+namespace Sequence.Connectors.Relativity.ManagerInterfaces;
 
 /// <summary>
 /// IdtSearchManager interface enables interaction with Relativity dtSearch.

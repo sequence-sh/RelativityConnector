@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using Grpc.Core;
 using Moq;
-using ReductechEntityImport;
+using SequenceEntityImport;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests.ImportClient;
+namespace Sequence.Connectors.Relativity.Tests.ImportClient;
 
 public class ImportClientTests
 {
@@ -37,7 +37,7 @@ public class ImportClientTests
             ;
 
         var client =
-            new Reductech_Entity_Import.Reductech_Entity_ImportClient(mockInvoker.Object);
+            new Sequence_Entity_Import.Sequence_Entity_ImportClient(mockInvoker.Object);
 
         var response = client.StartImport(startCommand);
 
@@ -83,7 +83,7 @@ public class ImportClientTests
             ;
 
         var client =
-            new Reductech_Entity_Import.Reductech_Entity_ImportClient(mockInvoker.Object);
+            new Sequence_Entity_Import.Sequence_Entity_ImportClient(mockInvoker.Object);
 
         var response = await client.StartImportAsync(startCommand).ResponseAsync;
 
@@ -107,7 +107,7 @@ public class ImportClientTests
 
         mockInvoker.Setup(x => x.AsyncClientStreamingCall(
                               It.Is<Method<ImportObject, ImportDataReply>>(
-                                  c => c.Name == nameof(Reductech_Entity_Import.Reductech_Entity_ImportClient.ImportData)
+                                  c => c.Name == nameof(Sequence_Entity_Import.Sequence_Entity_ImportClient.ImportData)
                               ),
                               It.IsAny<string>(),
                               It.IsAny<CallOptions>()
@@ -123,7 +123,7 @@ public class ImportClientTests
                      ));
 
         var client =
-            new Reductech_Entity_Import.Reductech_Entity_ImportClient(mockInvoker.Object);
+            new Sequence_Entity_Import.Sequence_Entity_ImportClient(mockInvoker.Object);
 
 
         var call = client.ImportData(new CallOptions());

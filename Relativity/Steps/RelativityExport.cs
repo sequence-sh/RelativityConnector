@@ -1,6 +1,6 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity.Steps;
+namespace Sequence.Connectors.Relativity.Steps;
 
 [SCLExample(
     "RelativityExport Workspace: 12345 Condition: \"'Extracted Text' ISSET \" FieldNames: [\"Field1\", \"Field2\"] BatchSize: 10",

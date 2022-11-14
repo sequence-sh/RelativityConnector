@@ -1,6 +1,6 @@
-﻿using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+﻿using Sequence.Connectors.Relativity.ManagerInterfaces;
 #pragma warning disable CS1591
-namespace Reductech.Sequence.Connectors.Relativity;
+namespace Sequence.Connectors.Relativity;
 
 public abstract class
     RelativityApiRequest<TRequest, TService, TServiceOutput, TOutput> : CompoundStep<TOutput>

@@ -1,6 +1,6 @@
-﻿using Reductech.Sequence.Connectors.Relativity.Managers;
+﻿using Sequence.Connectors.Relativity.Managers;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests;
+namespace Sequence.Connectors.Relativity.Tests;
 
 public class CodeGeneration
 {

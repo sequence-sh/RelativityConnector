@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Flurl.Http;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Kepler.Transport;
 using Relativity.Environment.V1.Matter;
 using Relativity.Environment.V1.Matter.Models;
@@ -19,7 +19,7 @@ using Relativity.Services.DataContracts.DTOs.Results;
 using Relativity.Services.Interfaces.Shared;
 #pragma warning disable CS1591
 
-namespace Reductech.Sequence.Connectors.Relativity.Managers
+namespace Sequence.Connectors.Relativity.Managers
 {
 [GeneratedCode("CodeGenerator", "1")]
 public class TemplateObjectManager1 : ManagerBase, IObjectManager1

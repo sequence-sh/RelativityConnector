@@ -4,16 +4,16 @@
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <RootNamespace>Reductech.Sequence.Connectors.Relativity</RootNamespace>
-    <AssemblyName>Reductech.Sequence.Connectors.Relativity</AssemblyName>
+    <RootNamespace>Sequence.Connectors.Relativity</RootNamespace>
+    <AssemblyName>Sequence.Connectors.Relativity</AssemblyName>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <Nullable>enable</Nullable>
     <Version>0.18.0$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Reductech.Sequence.Connectors.Relativity</PackageId>
-    <Title>Sequence® Connector for Relativity®</Title>
+    <PackageId>Sequence.Connectors.Relativity</PackageId>
+    <Title>Sequence Connector for Relativity®</Title>
     <Description>
       Sequence connector for automating workflows that interact with the Relativity
       e-discovery review platform.
@@ -22,12 +22,12 @@
     <PackageTags>ediscovery;forensics;relativity;automation;orchestration;edrm;sequence</PackageTags>
 
     <PackageProjectUrl>https://sequence.sh</PackageProjectUrl>
-    <RepositoryUrl>https://gitlab.com/reductech/sequence/connectors/relativity.git</RepositoryUrl>
-    <PackageReleaseNotes>https://gitlab.com/reductech/sequence/connectors/relativity/-/blob/master/CHANGELOG.md</PackageReleaseNotes>
+    <RepositoryUrl>https://gitlab.com/sequence/connectors/relativity.git</RepositoryUrl>
+    <PackageReleaseNotes>https://gitlab.com/sequence/connectors/relativity/-/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
-    <Authors>Reductech</Authors>
+    <Authors>MarkWainwright;antonyoni</Authors>
     <Company>Reductech</Company>
     <Copyright>Copyright (c) 2022 Reductech Ltd</Copyright>
   </PropertyGroup>
@@ -58,8 +58,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Reductech.Sequence.Connectors.EntityImportClient.Proto" Version="0.4.0" />
-    <PackageReference Include="Reductech.Sequence.Core" Version="0.18.0-a.main.2211070211">
+    <PackageReference Include="Sequence.Connectors.EntityImportClient.Proto" Version="0.5.0-a.main.2211131459" />
+    <PackageReference Include="Sequence.Core" Version="0.18.0-a.main.2211102318">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Relativity.API" Version="17.0.4" />
@@ -74,7 +74,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="$(PkgReductech_Sequence_Connectors_EntityImportClient_Proto)/content/Proto/*.proto" />
+    <Protobuf Include="$(PkgSequence_Connectors_EntityImportClient_Proto)/content/Proto/*.proto" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,8 @@
 ﻿using Castle.Components.DictionaryAdapter;
-using Reductech.Sequence.Connectors.Relativity.ManagerInterfaces;
+using Sequence.Connectors.Relativity.ManagerInterfaces;
 using Relativity.Services.Folder;
 
-namespace Reductech.Sequence.Connectors.Relativity.Tests.Steps;
+namespace Sequence.Connectors.Relativity.Tests.Steps;
 
 public partial class
     RelativityGetSubfoldersTests : StepTestBase<RelativityGetSubfolders, Array<Entity>>
