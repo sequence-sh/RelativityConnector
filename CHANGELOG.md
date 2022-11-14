@@ -1,3 +1,11 @@
+# v0.18.0 (2022-11-14)
+
+## Issues Closed in this Release
+
+### Other
+
+- Update namespace and paths after move to Sequence group #199
+
 # v0.17.0 (2022-08-29)
 
 - Updated `EntityImportClient` to `0.4.0`
@@ -152,4 +160,5 @@ This release adds the following Steps:
 ### Other
 
 - Add more tests to improve code coverage #35
+
 
