@@ -115,11 +115,14 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                     .WithLocation(this)
             );
 
-        using var call = client.ImportData(new CallOptions());
+        using var call       = client.ImportData(new CallOptions());
+        var       rowNumber = 0;
 
         async ValueTask<Result<Unit, IError>> WriteEntity(Entity e, CancellationToken _1)
         {
-            var importObject = Create(e);
+            var transformRoot = new TransformRoot(rowNumber, e);
+            rowNumber++;
+            var importObject  = Create(e);
 
             if (importObject.IsFailure)
                 return importObject.ConvertFailure<Unit>().MapError(x => x.WithLocation(this));
@@ -136,7 +139,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
                 if (!validateResult.IsValid)
                     return Result.Failure<ImportObject, IErrorBuilder>(
                         ErrorBuilderList.Combine(
-                            validateResult.GetErrorMessages().Select(
+                            validateResult.GetErrorMessages(transformRoot).Select(
                                 x => ErrorCode.SchemaViolated.ToErrorBuilder(
                                     x.message,
                                     x.location
@@ -179,6 +182,7 @@ public sealed class RelativityImportEntities : CompoundStep<Unit>
             }
         }
 
+        
         var writeResult = await entities.ForEach(WriteEntity, cancellationToken);
 
         if (writeResult.IsFailure)
