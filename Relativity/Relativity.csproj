@@ -58,8 +58,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Sequence.Connectors.EntityImportClient.Proto" Version="0.5.0-a.main.2211131459" />
-    <PackageReference Include="Sequence.Core" Version="0.18.0-a.main.2211141306">
+    <PackageReference Include="Sequence.Connectors.EntityImportClient.Proto" Version="0.5.0" />
+    <PackageReference Include="Sequence.Core" Version="0.18.0">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Relativity.API" Version="17.0.4" />
